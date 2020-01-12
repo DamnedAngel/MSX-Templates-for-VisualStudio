@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{FA0FC3F7-4453-4B8F-9919-FBE620D9396A}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>Make\make $(Configuration) "$(ProjectName)"</NMakeBuildCommandLine>
+    <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
+    <NMakeCleanCommandLine>Make\make $(Configuration) "$(ProjectName)" clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>Make\make $(Configuration) "$(ProjectName)" clean all</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>WIN32_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <NMakeBuildCommandLine>make $(Configuration) $(ProjectName)</NMakeBuildCommandLine>
+    <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
+    <NMakeCleanCommandLine>make $(Configuration) $(ProjectName) clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>make $(Configuration) $(ProjectName) clean all</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeBuildCommandLine>Make\make $(Configuration) "$(ProjectName)"</NMakeBuildCommandLine>
+    <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
+    <NMakeCleanCommandLine>Make\make $(Configuration) "$(ProjectName)" clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>Make\make $(Configuration) "$(ProjectName)" clean all</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>WIN32NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <NMakeBuildCommandLine>make $(Configuration) $(ProjectName)</NMakeBuildCommandLine>
+    <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
+    <NMakeCleanCommandLine>make $(Configuration) $(ProjectName) clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>make $(Configuration) $(ProjectName) clean all</NMakeReBuildCommandLine>
+    <NMakePreprocessorDefinitions>NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="MSX\BIOS\msxbios.h" />
+    <ClInclude Include="targetconfig.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="memorymap.s" />
+    <None Include="msxbinapp.s" />
+    <None Include="Make\make.bat" />
+    <None Include="Make\symbol.p" />
+    <None Include="MSX\BIN\msxbin.s" />
+    <None Include="MSX\BIOS\msxbios.s" />
+    <None Include="MSX\Profiling\openmsxprofiling.s" />
+    <None Include="targetconfig.s" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ApplicationSources.txt" />
+    <Text Include="IncludeDirectories.txt" />
+    <Text Include="LibrarySources.txt" />
+    <Text Include="MemoryMap.txt" />
+    <Text Include="RELs.txt" />
+    <Text Include="TargetConfig_Debug.txt" />
+    <Text Include="TargetConfig_Release.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="msxbinapp.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

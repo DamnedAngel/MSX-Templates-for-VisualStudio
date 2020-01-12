@@ -1,0 +1,41 @@
+;----------------------------------------------------------
+;	MemoryMap.txt - by Danilo Angelo, 2020
+;
+;	Registers the initial address of the application
+;	and the routines that will be available for
+;	BASIC USR routines.
+;----------------------------------------------------------
+
+;----------------------------------------------------------
+;	Initial address of the binary file
+FILESTART			0xb000
+
+;----------------------------------------------------------
+;	BASIC USR routined index
+;
+; NOT MANDATORY!
+; Use this to have an address table to
+; access from other routines - or from BASIC.
+;
+; BASIC usage example (for the standard app)
+; 10 BLOAD "MSXAPP.BIN",R:REM Prints "Hello, MSX from <LANGUAGE>!"
+; 20 DEFUSR = PEEK(&hB000)+256*PEEK(&HB001):REM Gets the first address in the index (_printFromBasic)
+; 30 M$="Hi MSX from a BASIC USR call!"
+; 40 FOR I=1 to LEN (M$)
+; 50 POKE &HC000+I-1, ASC(MID$(M$, I, 1))
+; 60 NEXT
+; 70 POKE &HC000+I-1, 13:REM CR
+; 80 POKE &HC000+I, 10:REM LF
+; 90 POKE &HC000+I+1, 0:REM EOL
+; 100 A=USR(&hC000):REM Prints "Hi MSX from a BASIC USR call!"
+;
+SYMBOL			_printFromBasic			; USR/USR0
+;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR1
+;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR2
+;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR3
+;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR4
+;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR5
+;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR6
+;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR7
+;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR8
+;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR9
