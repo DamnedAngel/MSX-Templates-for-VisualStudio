@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{FA0FC3F7-4453-4B8F-9919-FBE620D9396A}</ProjectGuid>
+    <ProjectGuid>{a637dd30-0fda-4530-a224-bc166dcfda72}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -101,7 +101,7 @@
     <None Include="msxbinapp.s" />
     <None Include="Make\make.bat" />
     <None Include="Make\symbol.p" />
-    <None Include="MSX\BIN\msxbin.s" />
+    <None Include="MSX\BIN\msxbincrt0.s" />
     <None Include="MSX\BIOS\msxbios.s" />
     <None Include="MSX\Profiling\openmsxprofiling.s" />
     <None Include="targetconfig.s" />

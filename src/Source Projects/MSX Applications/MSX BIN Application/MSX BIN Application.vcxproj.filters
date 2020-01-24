@@ -53,9 +53,6 @@
     <None Include="MSX\BIOS\msxbios.s">
       <Filter>ASM Source FIles\MSX\BIOS</Filter>
     </None>
-    <None Include="MSX\BIN\msxbin.s">
-      <Filter>ASM Source FIles\MSX\BIN</Filter>
-    </None>
     <None Include="MSX\Profiling\openmsxprofiling.s">
       <Filter>ASM Source FIles\Profiling</Filter>
     </None>
@@ -73,6 +70,9 @@
     </None>
     <None Include="memorymap.s">
       <Filter>ASM Source FIles</Filter>
+    </None>
+    <None Include="MSX\BIN\msxbincrt0.s">
+      <Filter>ASM Source FIles\MSX\BIN</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

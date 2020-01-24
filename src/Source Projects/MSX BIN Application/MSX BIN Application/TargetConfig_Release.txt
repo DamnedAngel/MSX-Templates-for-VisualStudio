@@ -1,9 +1,0 @@
-;----------------------------------------------------------
-;	TargetConfig_Release.txt - by Danilo Angelo, 2020
-;
-;	Configuration for the RELEASE profile
-;----------------------------------------------------------
-
-DEBUG				_OFF
-OPENMSX_PROFILING	_OFF
-FILENAME			MSXAPP
