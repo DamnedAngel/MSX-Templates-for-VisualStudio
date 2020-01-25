@@ -16,8 +16,8 @@ MSX\MSX-DOS\msxdoscrt0.s
 ;	THIS IS YOUR PROGRAM!
 ;	Choose ONE and ONLY ONE of the lines below,
 ;	and leave the other commented!
-msxdosapp.s
-;msxdosapp.c
+;msxdosapp.s
+msxdosapp.c
 
 ;----------------------------------------------------------
 ;	Additional source files
