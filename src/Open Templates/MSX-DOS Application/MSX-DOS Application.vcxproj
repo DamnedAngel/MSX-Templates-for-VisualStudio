@@ -98,11 +98,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="memorymap.s" />
-    <None Include="msxbinapp.s" />
+    <None Include="msxdosapp.s" />
     <None Include="Make\make.bat" />
     <None Include="Make\symbol.p" />
-    <None Include="MSX\BIN\msxbincrt0.s" />
     <None Include="MSX\BIOS\msxbios.s" />
+    <None Include="MSX\MSX-DOS\msxdoscrt0.s" />
     <None Include="MSX\Profiling\openmsxprofiling.s" />
     <None Include="targetconfig.s" />
   </ItemGroup>
@@ -116,7 +116,7 @@
     <Text Include="TargetConfig_Release.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="msxbinapp.c" />
+    <ClCompile Include="msxdosapp.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

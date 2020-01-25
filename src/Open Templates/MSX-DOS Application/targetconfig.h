@@ -1,6 +1,6 @@
 //-------------------------------------------------	
 // targetconfig.h created automatically by makefile	
-// on  8:16:36.75 , 25-Jan-20 				
+// on  8:16:35.46 , 25-Jan-20 				
 //														
 // DO NOT BOTHER EDITING THIS.							
 // ALL CHANGES YOUR BE LOST.							
@@ -12,6 +12,6 @@
 //#define DEBUG								
 //#define OPENMSX_PROFILING								
 #define GLOBALS_INITIALIZER								
-#define PUBLISH_FILESTART								
+//#define CMDLINE_PARAMETERS								
 														
 #endif	//  __TARGETCONFIG_H__							

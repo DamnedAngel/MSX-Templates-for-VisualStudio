@@ -1,14 +1,28 @@
 ;----------------------------------------------------------
 ;	MemoryMap.txt - by Danilo Angelo, 2020
 ;
-;	Registers the initial address of the application
+;	Registers addresses of the application
 ;	and the routines that will be available for
 ;	BASIC USR routines.
 ;----------------------------------------------------------
 
 ;----------------------------------------------------------
-;	Initial address of the binary file
-FILESTART			0xb000
+;	Binary file start address
+FILESTART				0xb000
+
+;----------------------------------------------------------
+;	Code segment (.area _CODE) start address
+;	If you don't know what you are doing,
+;	LEAVE IT COMMENTED for automatic setting.
+;CODE_LOC				0xb000
+
+;----------------------------------------------------------
+;	Data segment (.area _DATA) start address
+;		0 -> data segment immediately after code
+;		other value -> data segment address
+;	If you don't know what you are doing,
+;	LEAVE IT AT 0 OR COMMENTED for automatic setting.
+;DATA_LOC				0
 
 ;----------------------------------------------------------
 ;	BASIC USR routined index
@@ -19,15 +33,18 @@ FILESTART			0xb000
 ;
 ; BASIC usage example (for the standard app)
 ; 10 BLOAD "MSXAPP.BIN",R:REM Prints "Hello, MSX from <LANGUAGE>!"
-; 20 DEFUSR = PEEK(&hB000)+256*PEEK(&HB001):REM Gets the first address in the index (_printFromBasic)
-; 30 M$="Hi MSX from a BASIC USR call!"
-; 40 FOR I=1 to LEN (M$)
-; 50 POKE &HC000+I-1, ASC(MID$(M$, I, 1))
-; 60 NEXT
-; 70 POKE &HC000+I-1, 13:REM CR
-; 80 POKE &HC000+I, 10:REM LF
-; 90 POKE &HC000+I+1, 0:REM EOL
-; 100 A=USR(&hC000):REM Prints "Hi MSX from a BASIC USR call!"
+; 20 HM = PEEK(&HFC4A)+256*PEEK(&HFC4B)-2:REM Gets himem
+; 30 FS = PEEK(HM)+256*PEEK(HM+1):REM Gets filestart (NEEDS TargetConfig|PUBLISH_FILESTART ON)
+; 40 PRINT "Program starts at "; HEX$(FS);"."
+; 50 DEFUSR = PEEK(FS)+256*PEEK(FS+1):REM Gets the first address in the index (_printFromBasic)
+; 60 M$="Hi MSX from a BASIC USR call!"
+; 70 FOR I=1 TO LEN (M$)
+; 80 POKE &HC000+I-1, ASC(MID$(M$, I, 1))
+; 90 NEXT
+; 100 POKE &HC000+I-1, 13:REM CR
+; 110 POKE &HC000+I, 10:REM LF
+; 120 POKE &HC000+I+1, 0:REM EOL
+; 130 A=USR(&HC000):REM Prints "Hi MSX from a BASIC USR call!"
 ;
 SYMBOL			_printFromBasic			; USR/USR0
 ;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR1

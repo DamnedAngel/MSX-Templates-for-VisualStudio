@@ -1,13 +1,13 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
-    <Name>MSX BIN Application</Name>
-    <Description>A project for creating BLOADable BIN programs for MSX computers.</Description>
+    <Name>MSX-DOS Application</Name>
+    <Description>A project for creating MSX-DOS programs for MSX computers.</Description>
     <ProjectType>VC</ProjectType>
     <ProjectSubType>
     </ProjectSubType>
     <SortOrder>1000</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>MSX BIN Application</DefaultName>
+    <DefaultName>MSX-DOS Application</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <LocationField>Enabled</LocationField>
     <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
@@ -15,15 +15,15 @@
     <PreviewImage>__PreviewImage.png</PreviewImage>
   </TemplateData>
   <TemplateContent>
-    <Project TargetFileName="MSX BIN Application.vcxproj" File="MSX BIN Application.vcxproj" ReplaceParameters="true">
-      <ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.vcxproj.filters">MSX BIN Application.vcxproj.filters</ProjectItem>
+    <Project TargetFileName="MSX-DOS Application.vcxproj" File="MSX-DOS Application.vcxproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.vcxproj.filters">MSX-DOS Application.vcxproj.filters</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="ApplicationSources.txt">ApplicationSources.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="IncludeDirectories.txt">IncludeDirectories.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="LibrarySources.txt">LibrarySources.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="memorymap.s">memorymap.s</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="MemoryMap.txt">MemoryMap.txt</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="msxbinapp.c">msxbinapp.c</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="msxbinapp.s">msxbinapp.s</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="msxdosapp.c">msxdosapp.c</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="msxdosapp.s">msxdosapp.s</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="RELs.txt">RELs.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="targetconfig.h">targetconfig.h</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="targetconfig.s">targetconfig.s</ProjectItem>
@@ -31,9 +31,9 @@
       <ProjectItem ReplaceParameters="false" TargetFileName="TargetConfig_Release.txt">TargetConfig_Release.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="make.bat">Make\make.bat</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="symbol.p">Make\symbol.p</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="msxbincrt0.s">MSX\BIN\msxbincrt0.s</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="msxbios.h">MSX\BIOS\msxbios.h</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="msxbios.s">MSX\BIOS\msxbios.s</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="msxdoscrt0.s">MSX\MSX-DOS\msxdoscrt0.s</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="openmsxprofiling.s">MSX\Profiling\openmsxprofiling.s</ProjectItem>
     </Project>
   </TemplateContent>
