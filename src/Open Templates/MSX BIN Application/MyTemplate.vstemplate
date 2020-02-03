@@ -17,24 +17,24 @@
   <TemplateContent>
     <Project TargetFileName="MSX BIN Application.vcxproj" File="MSX BIN Application.vcxproj" ReplaceParameters="true">
       <ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.vcxproj.filters">MSX BIN Application.vcxproj.filters</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="targetconfig.h">targetconfig.h</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="msxbios.h">MSX\BIOS\msxbios.h</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="memorymap.s">memorymap.s</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="msxbinapp.s">msxbinapp.s</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="targetconfig.s">targetconfig.s</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="msxbios.s">MSX\BIOS\msxbios.s</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="msxbincrt0.s">MSX\BIN\msxbincrt0.s</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="openmsxprofiling.s">MSX\PROFILING\openmsxprofiling.s</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="make.bat">MAKE\make.bat</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="symbol.p">MAKE\symbol.p</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="ApplicationSources.txt">ApplicationSources.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="IncludeDirectories.txt">IncludeDirectories.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="LibrarySources.txt">LibrarySources.txt</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="memorymap.s">memorymap.s</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="MemoryMap.txt">MemoryMap.txt</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="msxbinapp.c">msxbinapp.c</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="msxbinapp.s">msxbinapp.s</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="RELs.txt">RELs.txt</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="targetconfig.h">targetconfig.h</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="targetconfig.s">targetconfig.s</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="RelocatableLibraries.txt">RelocatableLibraries.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="TargetConfig_Debug.txt">TargetConfig_Debug.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="TargetConfig_Release.txt">TargetConfig_Release.txt</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="make.bat">Make\make.bat</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="symbol.p">Make\symbol.p</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="msxbincrt0.s">MSX\BIN\msxbincrt0.s</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="msxbios.h">MSX\BIOS\msxbios.h</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="msxbios.s">MSX\BIOS\msxbios.s</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="openmsxprofiling.s">MSX\Profiling\openmsxprofiling.s</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="msxbinapp.c">msxbinapp.c</ProjectItem>
     </Project>
   </TemplateContent>
 </VSTemplate>

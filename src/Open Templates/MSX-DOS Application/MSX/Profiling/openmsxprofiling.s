@@ -1,5 +1,5 @@
 ; To be used with profile.tcl under OpenMSX
-	.include "targetconfig.s"
+.include "targetconfig.s"
 
 PROFILING_SECTION_PORT	.equ 0x2c
 PROFILING_FRAME_PORT	.equ 0x2d

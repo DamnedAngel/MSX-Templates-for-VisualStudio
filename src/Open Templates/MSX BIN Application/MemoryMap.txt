@@ -25,7 +25,7 @@ FILESTART				0xb000
 ;DATA_LOC				0
 
 ;----------------------------------------------------------
-;	BASIC USR routined index
+;	BASIC USR routines index
 ;
 ; NOT MANDATORY!
 ; Use this to have an address table to
