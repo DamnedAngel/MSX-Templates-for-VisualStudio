@@ -82,9 +82,6 @@
     <Text Include="LibrarySources.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="RELs.txt">
-      <Filter>Project Config</Filter>
-    </Text>
     <Text Include="TargetConfig_Debug.txt">
       <Filter>Project Config</Filter>
     </Text>
@@ -95,6 +92,9 @@
       <Filter>Project Config</Filter>
     </Text>
     <Text Include="MemoryMap.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="RelocatableLibraries.txt">
       <Filter>Project Config</Filter>
     </Text>
   </ItemGroup>
