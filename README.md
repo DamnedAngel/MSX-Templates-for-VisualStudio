@@ -2,6 +2,7 @@
 ## MSX Application Template Pack for MS Visual Studio.
 
 ### Version 0.3.1 released!
+
 Feb 03rd, 2020
 
 [Link](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases/tag/v0.3.1) to release page.
@@ -26,6 +27,7 @@ Danilo Angelo / Damned Angel - 2020
 
 ### Version 0.3.0 released!
 **MSX-DOS application template also available now!**
+
 Jan 25th, 2020
 
 [Link](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases/tag/v0.3.0) to release page.
