@@ -18,6 +18,8 @@ set MSX_LIB_PATH=%MSX_DEV_PATH%\libs
 set OBJLIST=
 set INCDIRS=
 
+set BIN_SIZE=
+set FILE_START=0x0100
 set CODE_LOC=
 set DATA_LOC=0
 set PARAM_HANDLING_ROUTINE=0
@@ -30,7 +32,7 @@ echo // targetconfig.h created automatically by makefile	>> TargetConfig.h
 echo // on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%				>> TargetConfig.h
 echo //														>> TargetConfig.h
 echo // DO NOT BOTHER EDITING THIS.							>> TargetConfig.h
-echo // ALL CHANGES YOUR BE LOST.							>> TargetConfig.h
+echo // ALL CHANGES WILL BE LOST.							>> TargetConfig.h
 echo //-------------------------------------------------	>> TargetConfig.h
 echo.														>> TargetConfig.h
 echo #ifndef  __TARGETCONFIG_H__							>> TargetConfig.h
@@ -42,7 +44,7 @@ echo ; targetconfig.s created automatically by makefile		>> TargetConfig.s
 echo ; on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%				>> TargetConfig.s
 echo ;														>> TargetConfig.s
 echo ; DO NOT BOTHER EDITING THIS.							>> TargetConfig.s
-echo ; ALL CHANGES YOUR BE LOST.							>> TargetConfig.s
+echo ; ALL CHANGES WILL BE LOST.							>> TargetConfig.s
 echo ;-------------------------------------------------		>> TargetConfig.s
 echo.														>> TargetConfig.s
 
@@ -107,7 +109,7 @@ if NOT EXIST "%MSX_BIN_PATH%" (
 	echo Done creating BIN path.
 )
 
-goto MEMORYMAPPING
+goto APPLICATIONSETTINGS
 
 :CREATE_DIR
 set ACC_PATH=.
@@ -128,35 +130,45 @@ FOR /F "tokens=1* delims=\" %%A IN ("%NEW_PATH%") DO (
 if defined NEW_PATH goto :CREATE_DIR_LOOP
 EXIT /B
 
-:MEMORYMAPPING
-IF EXIST MemoryMap.txt (
+:APPLICATIONSETTINGS
+IF EXIST ApplicationSettings.txt (
 	echo -----------------------------------------------------------------------------------
-	echo Building memory mapping file...
-	echo ;-------------------------------------------------	>  memorymap.s
-	echo ; memorymap.s created automatically by makefile	>> memorymap.s
-	echo ; on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%			>> memorymap.s
-	echo ;													>> memorymap.s
-	echo ; DO NOT BOTHER EDITING THIS.						>> memorymap.s
-	echo ; ALL CHANGES YOUR BE LOST.						>> memorymap.s
-	echo ;-------------------------------------------------	>> memorymap.s
-	echo.													>> memorymap.s
+	echo Building application settings file...
+	echo ;-------------------------------------------------	>  applicationsettings.s
+	echo ; applicationsettings.s created automatically		>> applicationsettings.s
+	echo ; by makefile										>> applicationsettings.s
+	echo ; on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%			>> applicationsettings.s
+	echo ;													>> applicationsettings.s
+	echo ; DO NOT BOTHER EDITING THIS.						>> applicationsettings.s
+	echo ; ALL CHANGES WILL BE LOST.						>> applicationsettings.s
+	echo ;-------------------------------------------------	>> applicationsettings.s
+	echo.													>> applicationsettings.s
 
 	set USR_CALLS_FLAG=0
 	echo.													> usrcalls.tmp
-	for /F "tokens=1,2" %%A in  (MemoryMap.txt) do  (
+	for /F "tokens=1,2" %%A in  (ApplicationSettings.txt) do  (
 		set TAG=%%A
 		echo !TAG!
 		if NOT "!TAG:~0,1!"==";" (
-			if /I ".!TAG!"==".FILESTART" (
-				echo fileStart .equ %%B						>> memorymap.s
+			if /I ".!TAG!"==".BIN_FILESTART" (
+				echo fileStart .equ %%B						>> applicationsettings.s
 				set CODE_LOC=%%B
+			) else if /I ".!TAG!"==".ROM_FILESTART" (
+				echo fileStart .equ %%B						>> applicationsettings.s
+				set FILE_START=%%B
+			) else if /I ".!TAG!"==".ROM_SIZE" (
+				if /I "%%B"=="16k" (
+					set BIN_SIZE=4000
+				) else (
+					set BIN_SIZE=8000
+				)
 			) else if /I ".!TAG!"==".CODE_LOC" (
 				set CODE_LOC=%%B
 			) else if /I ".!TAG!"==".DATA_LOC" (
 				set DATA_LOC=%%B
 			) else if /I ".!TAG!"==".PARAM_HANDLING_ROUTINE" (
-				echo paramHandlingRoutine .equ %%B			>> memorymap.s
-				echo PARAM_HANDLING_ROUTINE = %%B			>> memorymap.s
+				echo paramHandlingRoutine .equ %%B			>> applicationsettings.s
+				echo PARAM_HANDLING_ROUTINE = %%B			>> applicationsettings.s
 			) else if /I ".!TAG!"==".SYMBOL" (
 				echo .globl %%B								>> usrcalls.tmp
 				echo .dw %%B								>> usrcalls.tmp
@@ -164,6 +176,16 @@ IF EXIST MemoryMap.txt (
 			) else if /I ".!TAG!"==".ADDRESS" (
 				echo .dw %%B								>> usrcalls.tmp
 				set USR_CALLS_FLAG=1
+			) else (
+				if /I "%%B"=="_off" (
+					echo %%A = 0							>> applicationsettings.s
+				) else if /I "%%B"=="_on" (
+					echo %%A = 1							>> applicationsettings.s
+				) else if /I "%%B"=="" (
+					echo %%A = 1							>> applicationsettings.s
+				) else (
+					echo %%A = %%B							>> applicationsettings.s
+			)			
 			)
 		)
 	)
@@ -171,16 +193,16 @@ IF EXIST MemoryMap.txt (
 	echo.													>> usrcalls.tmp
 
 	if /I "!USR_CALLS_FLAG!"=="1" (
-		echo.												>> memorymap.s
-		echo .area _CODE									>> memorymap.s
-		echo.												>> memorymap.s
-		echo .macro USRCALLSINDEX							>> memorymap.s
-		type usrcalls.tmp									>> memorymap.s
-		echo .endm											>> memorymap.s
+		echo.												>> applicationsettings.s
+rem		echo .area _CODE									>> applicationsettings.s
+		echo.												>> applicationsettings.s
+		echo .macro USRCALLSINDEX							>> applicationsettings.s
+		type usrcalls.tmp									>> applicationsettings.s
+		echo .endm											>> applicationsettings.s
 	)
 	del usrcalls.tmp
 
-	echo Done building memory mapping file.
+	echo Done building application settings file.
 )
 
 if /I not "%2"=="clean" GOTO :BUILD
@@ -276,13 +298,21 @@ echo Done building application modules.
 IF "%CODE_LOC%"=="" (
 	echo -----------------------------------------------------------------------------------
 	echo Determining CODE-LOC...
-	for /F "tokens=2,4" %%A in  (%MSX_OBJ_PATH%\msxdoscrt0.rel) do  (
-		if "x%%A"=="x_HEADER0" (
-			set /A DEC_CODE_LOC=0x0100+0x%%B
-			call cmd /c exit /b !DEC_CODE_LOC!
-			set CODE_LOC=0x!=exitcode!
+	for %%f IN (%MSX_OBJ_PATH%\msx*crt0.rel) DO (
+		echo Analyzing %%f...
+		for /F "tokens=2,4" %%A in  (%%f) do  (
+			if "x%%A"=="x_HEADER0" (
+				set /A DEC_HEADER_SIZE=0x%%B
+				set /A DEC_CODE_LOC=%FILE_START%+!DEC_HEADER_SIZE!
+				call cmd /c exit /b !DEC_HEADER_SIZE!
+				set HEADER_SIZE=0x!=exitcode!
+				call cmd /c exit /b !DEC_CODE_LOC!
+				set CODE_LOC=0x!=exitcode!
+			)
 		)
 	)
+	echo FILE_START is %FILE_START%.
+	echo _HEADER segment size is !HEADER_SIZE!.
 	echo CODE-LOC determined to be !CODE_LOC!.
 )
 
@@ -308,7 +338,11 @@ echo Done compiling.
 
 echo -----------------------------------------------------------------------------------
 echo Generating binary...
-hex2bin -e %MSX_FILE_EXTENSION% %MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX
+if ".%BIN_SIZE%"=="." (
+	hex2bin -e %MSX_FILE_EXTENSION% %MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX
+) else (
+	hex2bin -e %MSX_FILE_EXTENSION% -l %BIN_SIZE% %MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX
+)
 if %errorlevel% NEQ 0 (
 EXIT %errorlevel%
 )

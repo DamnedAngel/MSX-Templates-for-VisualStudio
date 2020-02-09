@@ -8,9 +8,7 @@
 ;	Build settings
 .COMPILE
 DEBUG				_OFF						; _OFF: not defined ; _ON: defined; 1-n defined with debug level
-OPENMSX_PROFILING	_OFF						; _ON / _OFF
-GLOBALS_INITIALIZER	_ON							; _ON / _OFF
-CMDLINE_PARAMETERS	_ON						; _ON / _OFF
+OPENMSX_PROFILING	_OFF						; _ON: enable OpenMSX Profiling routines; _OFF: Disable routines
 
 ;----------------------------------------------------------
 ;	Filesystem settings

@@ -28,9 +28,6 @@
     <Filter Include="ASM Source FIles\MSX\BIOS">
       <UniqueIdentifier>{9a550870-19f7-4aa4-9d94-69e2ce1f9403}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ASM Source FIles\MSX\BIN">
-      <UniqueIdentifier>{b4394834-d571-48ed-a6b8-66a93731e6b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ASM Source FIles\Profiling">
       <UniqueIdentifier>{7615ad5b-1aef-4941-9bfd-f7606082964d}</UniqueIdentifier>
     </Filter>
@@ -39,6 +36,9 @@
     </Filter>
     <Filter Include="Header Files\MSX\BIOS">
       <UniqueIdentifier>{a28f4563-9c19-4eb8-8b3a-b326d570df42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Source FIles\MSX\ROM">
+      <UniqueIdentifier>{2b022b14-0048-4205-bb70-eb6b0eb45df3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -65,11 +65,11 @@
     <None Include="Make\symbol.p">
       <Filter>Make</Filter>
     </None>
-    <None Include="msxbinapp.s">
-      <Filter>ASM Source FIles</Filter>
+    <None Include="MSX\ROM\msxromcrt0.s">
+      <Filter>ASM Source FIles\MSX\ROM</Filter>
     </None>
-    <None Include="MSX\BIN\msxbincrt0.s">
-      <Filter>ASM Source FIles\MSX\BIN</Filter>
+    <None Include="msxromapp.s">
+      <Filter>ASM Source FIles</Filter>
     </None>
     <None Include="applicationsettings.s">
       <Filter>ASM Source FIles</Filter>
@@ -99,7 +99,7 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="msxbinapp.c">
+    <ClCompile Include="msxromapp.c">
       <Filter>C Source Files</Filter>
     </ClCompile>
   </ItemGroup>

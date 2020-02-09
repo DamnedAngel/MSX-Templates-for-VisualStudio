@@ -71,7 +71,7 @@
     <None Include="msxdosapp.s">
       <Filter>ASM Source FIles</Filter>
     </None>
-    <None Include="memorymap.s">
+    <None Include="applicationsettings.s">
       <Filter>ASM Source FIles</Filter>
     </None>
   </ItemGroup>
@@ -91,10 +91,10 @@
     <Text Include="ApplicationSources.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="MemoryMap.txt">
+    <Text Include="RelocatableLibraries.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="RelocatableLibraries.txt">
+    <Text Include="ApplicationSettings.txt">
       <Filter>Project Config</Filter>
     </Text>
   </ItemGroup>

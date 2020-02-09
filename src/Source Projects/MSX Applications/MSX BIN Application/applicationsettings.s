@@ -1,14 +1,16 @@
 ;-------------------------------------------------	
-; memorymap.s created automatically by makefile	
-; on 11:11:39.83 , 31-Jan-20 			
+; applicationsettings.s created automatically		
+; by makefile										
+; on 21:52:33.18 , 08-Feb-20 			
 ;													
 ; DO NOT BOTHER EDITING THIS.						
-; ALL CHANGES YOUR BE LOST.						
+; ALL CHANGES WILL BE LOST.						
 ;-------------------------------------------------	
 													
+GLOBALS_INITIALIZER = 1							
+PUBLISH_FILESTART = 1							
 fileStart .equ 0xb000						
 												
-.area _CODE									
 												
 .macro USRCALLSINDEX							
 													
