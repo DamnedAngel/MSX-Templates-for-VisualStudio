@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{7beea898-1a22-42bf-98a1-809b8bad1591}</ProjectGuid>
+    <ProjectGuid>{bea37db8-c5a3-4d0b-b876-115fbfca14f1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -99,12 +99,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="applicationsettings.s" />
-    <None Include="msxdosapp.s" />
+    <None Include="msxromapp.s" />
     <None Include="Make\make.bat" />
     <None Include="Make\symbol.p" />
     <None Include="MSX\BIOS\msxbios.s" />
-    <None Include="MSX\MSX-DOS\msxdoscrt0.s" />
     <None Include="MSX\Profiling\openmsxprofiling.s" />
+    <None Include="MSX\ROM\msxromcrt0.s" />
     <None Include="targetconfig.s" />
   </ItemGroup>
   <ItemGroup>
@@ -117,7 +117,7 @@
     <Text Include="TargetConfig_Release.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="msxdosapp.c" />
+    <ClCompile Include="msxromapp.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
