@@ -1,7 +1,7 @@
 ;----------------------------------------------------------
 ;	ApplicationSettings.txt - by Danilo Angelo, 2020
 ;
-;	Sets general application configuration and addresses.
+;	MSX ROM project general configuration.
 ;----------------------------------------------------------
 
 ;----------------------------------------------------------
@@ -13,11 +13,37 @@ SET_PAGE_2				_OFF						; _ON: Enables page 2 on the same slot/subslot as page 1
 
 ;----------------------------------------------------------
 ;	ROM settings
+ROM_SIZE				32k							; 16k/32k
 ROM_FILESTART			0x4000						; Typically, 0x4000 for 32kb ROM or 0x8000 for 16kb ROM
 CALL_EXPANSION			_OFF						; _ON: expands BASIC's CALL instruction; _OFF: Don't expand
 DEVICE_EXPANSION		_OFF						; _ON: creates BASIC's device; _OFF: Don't create
 BASIC_PROGRAM			0							; 0 -> no BASIC program; other values: BASIC program address
-ROM_SIZE				32k							; 16k/32k
+
+;----------------------------------------------------------
+;	CALL Statement expansion
+;
+;	NOT MANDATORY!
+;	Use this to enable support to BASIC's CALL
+;	statements expansion.
+;	You can set 0, 1, or multiple new statements.
+;	LEAVE ALL LINES COMMENTED for no statement extension.
+STATEMENT				CMD1
+;STATEMENT				CMD2
+;STATEMENT				CMD3
+;STATEMENT				CMD4
+
+;----------------------------------------------------------
+;	Device expansion
+;
+;	NOT MANDATORY!
+;	Use this to enable support to BASIC's
+;	devices expansion.
+;	You can set 0, 1, or multiple new device.
+;	LEAVE ALL LINES COMMENTED for no devices extension.
+DEVICE					DEV1
+;DEVICE					DEV2
+;DEVICE					DEV3
+;DEVICE					DEV4
 
 ;----------------------------------------------------------
 ;	Code segment (.area _CODE) start address

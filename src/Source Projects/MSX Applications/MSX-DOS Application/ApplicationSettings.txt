@@ -1,7 +1,7 @@
 ;----------------------------------------------------------
 ;	ApplicationSettings.txt - by Danilo Angelo, 2020
 ;
-;	Registers addresses of the application
+;	MSX-DOS project general configuration.
 ;----------------------------------------------------------
 
 ;----------------------------------------------------------
