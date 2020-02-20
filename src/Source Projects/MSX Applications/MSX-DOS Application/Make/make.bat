@@ -1,7 +1,7 @@
 
 echo -----------------------------------------------------------------------------------
 echo MSX SDCC MAKEFILE by Danilo Angelo, 2020
-echo version 0.3.1 - Codename ISA
+echo version 0.3.2 - Codename ISA
 
 set MSX_BUILD_TIME=%TIME% 
 set MSX_BUILD_DATE=%DATE% 
@@ -200,6 +200,17 @@ if /I not "%3"=="all" GOTO END
 
 :ALL
 echo -----------------------------------------------------------------------------------
+echo Collecting Include Directories...
+for /F "tokens=*" %%A in (IncludeDirectories.txt) do (
+	set INCDIR=%%A
+	if NOT "%INCDIR:~0,1%"==";" (
+		set INCDIR=!INCDIR:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
+		set INCDIR=!INCDIR:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
+		set INCDIRS=!INCDIRS! -I!INCDIR!
+	)
+)
+
+echo -----------------------------------------------------------------------------------
 echo Building libraries...
 for /F "tokens=*" %%A in (LibrarySources.txt) do (
 	set LIBFILE=%%A
@@ -209,7 +220,7 @@ for /F "tokens=*" %%A in (LibrarySources.txt) do (
 		set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 		if /I "%%~xA"==".c" (
 			<NUL set /p=Processing C file !LIBFILE!... 
-			sdcc -mz80 -c -o !RELFILE! !LIBFILE!
+			sdcc -mz80 -c %INCDIRS% -o !RELFILE! !LIBFILE!
 		) else (
 			<NUL set /p=Processing ASM file !LIBFILE!... 
 			sdasz80 -o !RELFILE! !LIBFILE!
@@ -255,8 +266,8 @@ for /F "tokens=1" %%A in  (ApplicationSources.txt) do  (
 		set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 		if /I "%%~xA"==".c" (
 			<NUL set /p=Processing C file !APPFILE!... 
-			echo sdcc -mz80 -c -o !RELFILE! !APPFILE!
-			sdcc -mz80 -c -o !RELFILE! !APPFILE!
+			echo sdcc -mz80 -c %INCDIRS% -o !RELFILE! !APPFILE!
+			sdcc -mz80 -c %INCDIRS% -o !RELFILE! !APPFILE!
 		) else (
 			<NUL set /p=Processing ASM file !APPFILE!... 
 			echo sdasz80 -o !RELFILE! !APPFILE!
@@ -288,16 +299,6 @@ IF "%CODE_LOC%"=="" (
 
 echo -----------------------------------------------------------------------------------
 echo Compiling...
-
-for /F "tokens=*" %%A in (IncludeDirectories.txt) do (
-	set INCDIR=%%A
-	if NOT "%INCDIR:~0,1%"==";" (
-		set INCDIR=!INCDIR:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
-		set INCDIR=!INCDIR:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
-		set INCDIRS=!INCDIRS! -I!INCDIR!
-	)
-)
-
 set SDCC_CALL=sdcc --code-loc %CODE_LOC% --data-loc %DATA_LOC% -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 %OBJLIST% %INCDIRS% -o %MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX
 echo %SDCC_CALL%
 %SDCC_CALL%
