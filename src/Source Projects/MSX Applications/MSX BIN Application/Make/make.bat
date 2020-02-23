@@ -194,11 +194,6 @@ echo Done cleaning.
 if /I not "%3"=="all" GOTO END
 
 :BUILD
-if "%2"=="" GOTO COMPILE
-if /I "%2"=="all" GOTO ALL
-if /I not "%3"=="all" GOTO END
-
-:ALL
 echo -----------------------------------------------------------------------------------
 echo Collecting Include Directories...
 for /F "tokens=*" %%A in (IncludeDirectories.txt) do (
@@ -210,6 +205,11 @@ for /F "tokens=*" %%A in (IncludeDirectories.txt) do (
 	)
 )
 
+if "%2"=="" GOTO COMPILE
+if /I "%2"=="all" GOTO ALL
+if /I not "%3"=="all" GOTO END
+
+:ALL
 echo -----------------------------------------------------------------------------------
 echo Building libraries...
 for /F "tokens=*" %%A in (LibrarySources.txt) do (
