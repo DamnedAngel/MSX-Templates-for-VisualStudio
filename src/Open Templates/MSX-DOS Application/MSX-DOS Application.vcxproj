@@ -112,7 +112,7 @@
     <Text Include="IncludeDirectories.txt" />
     <Text Include="LibrarySources.txt" />
     <Text Include="MemoryMap.txt" />
-    <Text Include="RelocatableLibraries.txt" />
+    <Text Include="Libraries.txt" />
     <Text Include="TargetConfig_Debug.txt" />
     <Text Include="TargetConfig_Release.txt" />
   </ItemGroup>

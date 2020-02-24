@@ -94,7 +94,7 @@
     <Text Include="MemoryMap.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="RelocatableLibraries.txt">
+    <Text Include="Libraries.txt">
       <Filter>Project Config</Filter>
     </Text>
   </ItemGroup>
