@@ -16,8 +16,8 @@ MSX\BIN\msxbincrt0.s
 ;	THIS IS YOUR PROGRAM!
 ;	Choose ONE and ONLY ONE of the lines below,
 ;	and leave the other commented!
-msxbinapp.s
-;msxbinapp.c
+;msxbinapp.s
+msxbinapp.c
 
 ;----------------------------------------------------------
 ;	Additional source files
