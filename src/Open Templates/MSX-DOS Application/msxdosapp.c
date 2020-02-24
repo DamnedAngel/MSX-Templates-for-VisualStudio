@@ -27,9 +27,11 @@ _printMSG_loop :
 	or		a
 	ret z
 	push	hl
-	ld		iy, (#0xfcc0)	; BIOS_ROMSLT
-	ld		ix, #0x00a2		; BIOS_CHPUT
-	call	#0x001c			; BIOS_CALSLT
+	push	ix
+	ld		iy, (#0xfcc0); BIOS_ROMSLT
+	ld		ix, #0x00a2; BIOS_CHPUT
+	call	#0x001c; BIOS_CALSLT
+	pop		ix
 	pop		hl
 	inc		hl
 	jr		_printMSG_loop
@@ -55,8 +57,17 @@ void print(char* msg) {
 //
 //	Your fun starts here!!!
 //	Replace the code below with your art.
-int main(void) {
+//	Note: Only use argv and argc if you enabled
+//	CMDLINE_PARAMETERS on TargetConfig_XXXXX.txt
+int main(char** argv, int argc) {
 	print("Hello MSX from C!\r\n\0");
+#ifdef CMDLINE_PARAMETERS
+	print("Parameters:\r\n\0");
+	for (int i = 0; i < argc; i++) {
+		print(argv[i]);
+		print("\r\n\0");
+	}
+#endif
 	return 0;
 }
 

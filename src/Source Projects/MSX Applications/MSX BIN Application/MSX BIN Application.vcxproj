@@ -22,27 +22,28 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{a637dd30-0fda-4530-a224-bc166dcfda72}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -63,10 +64,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>Make\make $(Configuration) "$(ProjectName)"</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>Make\make $(Configuration)</NMakeBuildCommandLine>
     <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
-    <NMakeCleanCommandLine>Make\make $(Configuration) "$(ProjectName)" clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>Make\make $(Configuration) "$(ProjectName)" clean all</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>Make\make $(Configuration) clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>Make\make $(Configuration) clean all</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -77,10 +78,10 @@
     <NMakePreprocessorDefinitions>_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>Make\make $(Configuration) "$(ProjectName)"</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>Make\make $(Configuration)</NMakeBuildCommandLine>
     <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
-    <NMakeCleanCommandLine>Make\make $(Configuration) "$(ProjectName)" clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>Make\make $(Configuration) "$(ProjectName)" clean all</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>Make\make $(Configuration) clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>Make\make $(Configuration) clean all</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -111,7 +112,7 @@
     <Text Include="IncludeDirectories.txt" />
     <Text Include="LibrarySources.txt" />
     <Text Include="MemoryMap.txt" />
-    <Text Include="RELs.txt" />
+    <Text Include="Libraries.txt" />
     <Text Include="TargetConfig_Debug.txt" />
     <Text Include="TargetConfig_Release.txt" />
   </ItemGroup>
