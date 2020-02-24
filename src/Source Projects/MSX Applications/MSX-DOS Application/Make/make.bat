@@ -247,12 +247,12 @@ for /F "tokens=*" %%A in (LibrarySources.txt) do (
 	)
 )
 
-for /F "tokens=*" %%A in (RelocatableLibraries.txt) do (
-	set RELFILE=%%A
-	if NOT "%RELFILE:~0,1%"==";" (
-		set RELFILE=!RELFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
-		set RELFILE=!RELFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
-		set OBJLIST=!OBJLIST! !RELFILE!
+for /F "tokens=*" %%A in (Libraries.txt) do (
+	set LIBFILE=%%A
+	if NOT "%LIBFILE:~0,1%"==";" (
+		set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
+		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
+		set OBJLIST=!OBJLIST! !LIBFILE!
 	)
 )
 

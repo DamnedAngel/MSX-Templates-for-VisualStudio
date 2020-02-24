@@ -1,9 +1,0 @@
-;----------------------------------------------------------
-;	RELs.txt - by Danilo Angelo, 2020
-;
-;	List of all compiled libraries used by your application
-;	These will be not be processed by any
-;	build/make actions, only linked in the final binary.
-;----------------------------------------------------------
-
-;[MSX_LIB_PATH]\fusion-c\include\printf.rel
