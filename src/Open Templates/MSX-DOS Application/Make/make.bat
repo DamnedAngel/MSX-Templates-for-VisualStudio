@@ -1,7 +1,7 @@
 
 echo -----------------------------------------------------------------------------------
 echo MSX SDCC MAKEFILE by Danilo Angelo, 2020
-echo version 0.3.1 - Codename ISA
+echo version 0.3.2 - Codename ISA
 
 set MSX_BUILD_TIME=%TIME% 
 set MSX_BUILD_DATE=%DATE% 
@@ -194,6 +194,17 @@ echo Done cleaning.
 if /I not "%3"=="all" GOTO END
 
 :BUILD
+echo -----------------------------------------------------------------------------------
+echo Collecting Include Directories...
+for /F "tokens=*" %%A in (IncludeDirectories.txt) do (
+	set INCDIR=%%A
+	if NOT "%INCDIR:~0,1%"==";" (
+		set INCDIR=!INCDIR:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
+		set INCDIR=!INCDIR:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
+		set INCDIRS=!INCDIRS! -I!INCDIR!
+	)
+)
+
 if "%2"=="" GOTO COMPILE
 if /I "%2"=="all" GOTO ALL
 if /I not "%3"=="all" GOTO END
@@ -209,7 +220,7 @@ for /F "tokens=*" %%A in (LibrarySources.txt) do (
 		set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 		if /I "%%~xA"==".c" (
 			<NUL set /p=Processing C file !LIBFILE!... 
-			sdcc -mz80 -c -o !RELFILE! !LIBFILE!
+			sdcc -mz80 -c %INCDIRS% -o !RELFILE! !LIBFILE!
 		) else (
 			<NUL set /p=Processing ASM file !LIBFILE!... 
 			sdasz80 -o !RELFILE! !LIBFILE!
@@ -236,12 +247,12 @@ for /F "tokens=*" %%A in (LibrarySources.txt) do (
 	)
 )
 
-for /F "tokens=*" %%A in (RelocatableLibraries.txt) do (
-	set RELFILE=%%A
-	if NOT "%RELFILE:~0,1%"==";" (
-		set RELFILE=!RELFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
-		set RELFILE=!RELFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
-		set OBJLIST=!OBJLIST! !RELFILE!
+for /F "tokens=*" %%A in (Libraries.txt) do (
+	set LIBFILE=%%A
+	if NOT "%LIBFILE:~0,1%"==";" (
+		set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
+		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
+		set OBJLIST=!OBJLIST! !LIBFILE!
 	)
 )
 
@@ -255,8 +266,8 @@ for /F "tokens=1" %%A in  (ApplicationSources.txt) do  (
 		set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 		if /I "%%~xA"==".c" (
 			<NUL set /p=Processing C file !APPFILE!... 
-			echo sdcc -mz80 -c -o !RELFILE! !APPFILE!
-			sdcc -mz80 -c -o !RELFILE! !APPFILE!
+			echo sdcc -mz80 -c %INCDIRS% -o !RELFILE! !APPFILE!
+			sdcc -mz80 -c %INCDIRS% -o !RELFILE! !APPFILE!
 		) else (
 			<NUL set /p=Processing ASM file !APPFILE!... 
 			echo sdasz80 -o !RELFILE! !APPFILE!
@@ -288,16 +299,6 @@ IF "%CODE_LOC%"=="" (
 
 echo -----------------------------------------------------------------------------------
 echo Compiling...
-
-for /F "tokens=*" %%A in (IncludeDirectories.txt) do (
-	set INCDIR=%%A
-	if NOT "%INCDIR:~0,1%"==";" (
-		set INCDIR=!INCDIR:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
-		set INCDIR=!INCDIR:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
-		set INCDIRS=!INCDIRS! -I!INCDIR!
-	)
-)
-
 set SDCC_CALL=sdcc --code-loc %CODE_LOC% --data-loc %DATA_LOC% -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 %OBJLIST% %INCDIRS% -o %MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX
 echo %SDCC_CALL%
 %SDCC_CALL%
