@@ -69,12 +69,42 @@ for /F "tokens=1,2" %%A in  (TargetConfig_%PROFILE%.txt) do  (
 			)
 		) else if /I "!TARGET_SECTION!"==".FILESYSTEM" (
 			set VALUE=%%B
-			set VALUE=!VALUE:[MSX_FILE_NAME]=%MSX_FILE_NAME%!
-			set VALUE=!VALUE:[PROFILE]=%PROFILE%!
-			set VALUE=!VALUE:[MSX_DEV_PATH]=%MSX_DEV_PATH%!
-			set VALUE=!VALUE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
-			set VALUE=!VALUE:[MSX_BIN_PATH]=%MSX_BIN_PATH%!
-			set VALUE=!VALUE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
+
+			rem replaces PROFILE
+			set SEARCH_STR=[PROFILE]
+			set REPLACE_STR=!PROFILE!
+			call :STR_REPLACE
+			
+			rem replaces MSX_FILE_NAME 
+			set SEARCH_STR=[MSX_FILE_NAME]
+			set REPLACE_STR=!MSX_FILE_NAME!
+			call :STR_REPLACE
+
+			rem replaces MSX_FILE_EXTENSION
+			set SEARCH_STR=[MSX_FILE_EXTENSION]
+			set REPLACE_STR=!MSX_FILE_EXTENSION!
+			call :STR_REPLACE
+
+			rem replaces MSX_DEV_PATH
+			set SEARCH_STR=[MSX_DEV_PATH]
+			set REPLACE_STR=!MSX_DEV_PATH!
+			call :STR_REPLACE
+
+			rem replaces MSX_OBJ_PATH
+			set SEARCH_STR=[MSX_OBJ_PATH]
+			set REPLACE_STR=!MSX_OBJ_PATH!
+			call :STR_REPLACE
+			
+			rem replaces MSX_BIN_PATH
+			set SEARCH_STR=[MSX_BIN_PATH]
+			set REPLACE_STR=!MSX_BIN_PATH!
+			call :STR_REPLACE
+			
+			rem replaces MSX_LIB_PATH
+			set SEARCH_STR=[MSX_LIB_PATH]
+			set REPLACE_STR=!MSX_LIB_PATH!
+			call :STR_REPLACE
+			
 			set %%A=!VALUE!
 		)
 	)
@@ -84,6 +114,13 @@ echo.														>> TargetConfig.h
 echo #endif	//  __TARGETCONFIG_H__							>> TargetConfig.h
 echo Done target configuration files.
 
+goto FS_SETTINGS
+
+:STR_REPLACE
+set VALUE=!VALUE:%SEARCH_STR%=%REPLACE_STR%!
+EXIT /B
+
+:FS_SETTINGS
 echo -----------------------------------------------------------------------------------
 echo Filesystem settings:
 echo MSX_FILE_NAME=%MSX_FILE_NAME%
