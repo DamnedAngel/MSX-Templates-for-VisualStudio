@@ -1,7 +1,7 @@
 
 echo -----------------------------------------------------------------------------------
 echo MSX SDCC MAKEFILE by Danilo Angelo, 2020
-echo version 00.03.03 - Codename ISA
+echo version 00.04.XX - Codename BLUE
 
 set MSX_BUILD_TIME=%TIME% 
 set MSX_BUILD_DATE=%DATE% 
