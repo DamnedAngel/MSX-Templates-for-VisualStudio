@@ -1,7 +1,7 @@
 // ----------------------------------------------------------
-//		msxbinapp.c - by Danilo Angelo, 2020
+//		msxromapp.c - by Danilo Angelo, 2020
 //
-//		BIN program(BLOAD'able) for MSX example
+//		ROM program(cartridge) for MSX example
 //		C version
 // ----------------------------------------------------------
 
@@ -14,22 +14,28 @@
 //	You can safely remove it for your application.
 #pragma disable_warning 85	// because the var msg is not used in C context
 void _print(char* msg) {
-__asm
-	ld      hl, #2			; retrieve address from stack
-	add     hl, sp
-	ld		b, (hl)
-	inc		hl
-	ld		h, (hl)
-	ld		l, b
+	__asm
+		ld      hl, #2; retrieve address from stack
+		add     hl, sp
+		ld		b, (hl)
+		inc		hl
+		ld		h, (hl)
+		ld		l, b
 
-_printMSG_loop :
-	ld		a, (hl)			; print
-	or		a
-	ret z
-	call	0x00a2			; BIOS_CHPUT
-	inc		hl
-	jr		_printMSG_loop
-__endasm;
+		_printMSG_loop :
+		ld		a, (hl); print
+		or		a
+		ret z
+		push	hl
+		push	ix
+		ld		iy, (#0xfcc0); BIOS_ROMSLT
+		ld		ix, #0x00a2; BIOS_CHPUT
+		call	#0x001c; BIOS_CALSLT
+		pop		ix
+		pop		hl
+		inc		hl
+		jr		_printMSG_loop
+	__endasm;
 
 	return;
 }
@@ -47,26 +53,16 @@ void print(char* msg) {
 }
 
 // ----------------------------------------------------------
-//	This is an example of a C routine accessible by
-//	BASIC USR calls.
-//	Please also check the reference to the routine in 
-//	ApplicationSettings.txt file.
-//	This is only for the demo app.
-//	You can safely remove it for your application.
-void printFromBasic(void) {
-	unsigned int addr = (*((volatile unsigned int*)(BIOS_USRDATA)));
-	print((char*)addr);
-	return;
-}
-
-// ----------------------------------------------------------
 //	This is the main function for your C MSX APP!
 //
 //	Your fun starts here!!!
 //	Replace the code below with your art.
 void main(void) {
-	print("Hello MSX from C!\r\n\0");
-	return;
+	print("Hello MSX from C!\r\n"
+		"If you don't want your\r\n"
+		"ROM program to return to\r\n"
+		"BASIC/MSX-DOS, just avoid\r\n"
+		"main's return instruction.\r\n\0");
 }
 
 
