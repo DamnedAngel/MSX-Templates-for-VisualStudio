@@ -168,79 +168,94 @@ if defined NEW_PATH goto :CREATE_DIR_LOOP
 EXIT /B
 
 :APPLICATIONSETTINGS
-IF EXIST ApplicationSettings.txt (
-	echo -----------------------------------------------------------------------------------
-	echo Building application settings file...
-	echo ;-------------------------------------------------	>  applicationsettings.s
-	echo ; applicationsettings.s created automatically		>> applicationsettings.s
-	echo ; by makefile										>> applicationsettings.s
-	echo ; on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%			>> applicationsettings.s
-	echo ;													>> applicationsettings.s
-	echo ; DO NOT BOTHER EDITING THIS.						>> applicationsettings.s
-	echo ; ALL CHANGES WILL BE LOST.						>> applicationsettings.s
-	echo ;-------------------------------------------------	>> applicationsettings.s
-	echo.													>> applicationsettings.s
+echo -----------------------------------------------------------------------------------
+echo Building application settings file...
+echo ;-------------------------------------------------	>  applicationsettings.s
+echo ; applicationsettings.s created automatically		>> applicationsettings.s
+echo ; by makefile										>> applicationsettings.s
+echo ; on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%			>> applicationsettings.s
+echo ;													>> applicationsettings.s
+echo ; DO NOT BOTHER EDITING THIS.						>> applicationsettings.s
+echo ; ALL CHANGES WILL BE LOST.						>> applicationsettings.s
+echo ;-------------------------------------------------	>> applicationsettings.s
+echo.													>> applicationsettings.s
 
-	set USR_CALLS_FLAG=0
-	echo.													> usrcalls.tmp
-	for /F "tokens=1,2" %%A in  (ApplicationSettings.txt) do  (
-		set TAG=%%A
-		echo !TAG!
-		if NOT "!TAG:~0,1!"==";" (
-			if /I ".!TAG!"==".BIN_FILESTART" (
-				echo fileStart .equ %%B						>> applicationsettings.s
-				set CODE_LOC=%%B
-			) else if /I ".!TAG!"==".ROM_FILESTART" (
-				echo fileStart .equ %%B						>> applicationsettings.s
-				set FILE_START=%%B
-			) else if /I ".!TAG!"==".ROM_SIZE" (
-				if /I "%%B"=="16k" (
-					set BIN_SIZE=4000
-				) else (
-					set BIN_SIZE=8000
-				)
-			) else if /I ".!TAG!"==".CODE_LOC" (
-				set CODE_LOC=%%B
-			) else if /I ".!TAG!"==".DATA_LOC" (
-				set DATA_LOC=%%B
-			) else if /I ".!TAG!"==".PARAM_HANDLING_ROUTINE" (
-				echo paramHandlingRoutine .equ %%B			>> applicationsettings.s
-				echo PARAM_HANDLING_ROUTINE = %%B			>> applicationsettings.s
-			) else if /I ".!TAG!"==".SYMBOL" (
-				echo .globl %%B								>> usrcalls.tmp
-				echo .dw %%B								>> usrcalls.tmp
-				set USR_CALLS_FLAG=1
-			) else if /I ".!TAG!"==".ADDRESS" (
-				echo .dw %%B								>> usrcalls.tmp
-				set USR_CALLS_FLAG=1
+IF EXIST %MSX_OBJ_PATH%\bin_usrcalls.tmp del %MSX_OBJ_PATH%\bin_usrcalls.tmp
+IF EXIST %MSX_OBJ_PATH%\rom_callexpansion.tmp del %MSX_OBJ_PATH%\rom_callexpansion.tmp
+for /F "tokens=1,2" %%A in  (ApplicationSettings.txt) do  (
+	set TAG=%%A
+	echo !TAG!
+	if NOT "!TAG:~0,1!"==";" (
+		if /I ".!TAG!"==".BIN_FILESTART" (
+			echo fileStart .equ %%B						>> applicationsettings.s
+			set CODE_LOC=%%B
+		) else if /I ".!TAG!"==".ROM_FILESTART" (
+			echo fileStart .equ %%B						>> applicationsettings.s
+			set FILE_START=%%B
+		) else if /I ".!TAG!"==".ROM_SIZE" (
+			if /I "%%B"=="16k" (
+				set BIN_SIZE=4000
 			) else (
-				if /I "%%B"=="_off" (
-					echo %%A = 0							>> applicationsettings.s
-				) else if /I "%%B"=="_on" (
-					echo %%A = 1							>> applicationsettings.s
-				) else if /I "%%B"=="" (
-					echo %%A = 1							>> applicationsettings.s
-				) else (
-					echo %%A = %%B							>> applicationsettings.s
-				)
+				set BIN_SIZE=8000
+			)
+		) else if /I ".!TAG!"==".CODE_LOC" (
+			set CODE_LOC=%%B
+		) else if /I ".!TAG!"==".DATA_LOC" (
+			set DATA_LOC=%%B
+		) else if /I ".!TAG!"==".PARAM_HANDLING_ROUTINE" (
+			echo paramHandlingRoutine .equ %%B			>> applicationsettings.s
+			echo PARAM_HANDLING_ROUTINE = %%B			>> applicationsettings.s
+		) else if /I ".!TAG!"==".SYMBOL" (
+			IF NOT EXIST %MSX_OBJ_PATH%\bin_usrcalls.tmp (
+				echo.									>> %MSX_OBJ_PATH%\bin_usrcalls.tmp
+			)
+			echo .globl %%B								>> %MSX_OBJ_PATH%\bin_usrcalls.tmp
+			echo .dw %%B								>> %MSX_OBJ_PATH%\bin_usrcalls.tmp
+		) else if /I ".!TAG!"==".ADDRESS" (
+			IF NOT EXIST %MSX_OBJ_PATH%\bin_usrcalls.tmp (
+				echo.									>> %MSX_OBJ_PATH%\bin_usrcalls.tmp
+			)
+			echo .dw %%B								>> %MSX_OBJ_PATH%\bin_usrcalls.tmp
+		) else if /I ".!TAG!"==".CALL_STATEMENT" (
+rem 			IF NOT EXIST %MSX_OBJ_PATH%\rom_callexpansion.tmp (
+rem				echo.									>> %MSX_OBJ_PATH%\rom_callexpansion.tmp
+rem			)
+rem			echo .globl _onCall%%B						>> %MSX_OBJ_PATH%\rom_callexpansion.tmp
+			echo .globl _onCall%%B						>> applicationsettings.s
+		) else (
+			if /I "%%B"=="_off" (
+				echo %%A = 0							>> applicationsettings.s
+			) else if /I "%%B"=="_on" (
+				echo %%A = 1							>> applicationsettings.s
+			) else if /I "%%B"=="" (
+				echo %%A = 1							>> applicationsettings.s
+			) else (
+				echo %%A = %%B							>> applicationsettings.s
 			)
 		)
 	)
-
-	echo.													>> usrcalls.tmp
-
-	if /I "!USR_CALLS_FLAG!"=="1" (
-		echo.												>> applicationsettings.s
-rem		echo .area _CODE									>> applicationsettings.s
-		echo.												>> applicationsettings.s
-		echo .macro USRCALLSINDEX							>> applicationsettings.s
-		type usrcalls.tmp									>> applicationsettings.s
-		echo .endm											>> applicationsettings.s
-	)
-	del usrcalls.tmp
-
-	echo Done building application settings file.
 )
+
+echo.													>> usrcalls.tmp
+
+IF EXIST %MSX_OBJ_PATH%\bin_usrcalls.tmp (
+	echo.												>> applicationsettings.s
+	echo .macro USRCALLSINDEX							>> applicationsettings.s
+	echo _BASIC_USR_INDEX::								>> applicationsettings.s
+	type %MSX_OBJ_PATH%\bin_usrcalls.tmp				>> applicationsettings.s
+	echo .endm											>> applicationsettings.s
+	del %MSX_OBJ_PATH%\bin_usrcalls.tmp
+)
+
+IF EXIST %MSX_OBJ_PATH%\rom_callexpansion.tmp (
+	echo.												>> applicationsettings.s
+	echo .macro CALLSEXPANSION							>> applicationsettings.s
+ 	type %MSX_OBJ_PATH%\rom_callexpansion.tmp			>> applicationsettings.s
+	echo .endm											>> applicationsettings.s
+	del %MSX_OBJ_PATH%\rom_callexpansion.tmp
+)
+
+echo Done building application settings file.
 
 if /I not "%2"=="clean" GOTO :BUILD
 echo -----------------------------------------------------------------------------------

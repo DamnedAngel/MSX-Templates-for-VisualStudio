@@ -29,7 +29,7 @@
 ;	_CODE AREA
 ;	Includes USR Index, if any
 	.area	_CODE
-_BASIC_USR_INDEX::
+;	Call macro to build user call index
 	USRCALLSINDEX
 
 ;----------------------------------------------------------

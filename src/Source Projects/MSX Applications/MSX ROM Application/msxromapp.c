@@ -65,5 +65,28 @@ void main(void) {
 		"main's return instruction.\r\n\0");
 }
 
+// ----------------------------------------------------------
+//	This is a CALL handler example.
+//	CALL CMD1
+//
+char* onCallCMD1(char* cmd) {
+	print("Hello onCallCMD1.\r\n\0");
+	// seek end of command (0x00/EoL ou 0x3a/":")
+	while ((*cmd != 0) && (*cmd != 0x3a)) {
+		cmd++;
+	}
+	return cmd;
+}
 
-
+// ----------------------------------------------------------
+//	This is a CALL handler example.
+//	CALL CMD2
+//
+char* onCallCMD2(char* cmd) {
+	print("Hello onCallCMD2.\r\n\0");
+	// seek end of command (0x00/EoL ou 0x3a/":")
+	while ((*cmd != 0) && (*cmd != 0x3a)) {
+		cmd++;
+	}
+	return cmd;
+}
