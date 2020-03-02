@@ -1,13 +1,14 @@
-;-------------------------------------------------	
-; applicationsettings.s created automatically		
-; by makefile										
-; on 16:48:58.71 , 01-Mar-20 			
-;													
-; DO NOT BOTHER EDITING THIS.						
-; ALL CHANGES WILL BE LOST.						
-;-------------------------------------------------	
-													
-GLOBALS_INITIALIZER = 1							
-CMDLINE_PARAMETERS = 0							
-paramHandlingRoutine .equ 0			
-PARAM_HANDLING_ROUTINE = 0			
+;-------------------------------------------------		
+; applicationsettings.s created automatically			
+; by makefile											
+; on  5:48:58.24 , 02-Mar-20 				
+;														
+; DO NOT BOTHER EDITING THIS.							
+; ALL CHANGES WILL BE LOST.							
+;-------------------------------------------------		
+														
+PROJECT_TYPE = DOS							
+GLOBALS_INITIALIZER = 1								
+CMDLINE_PARAMETERS = 0								
+paramHandlingRoutine .equ 0				
+PARAM_HANDLING_ROUTINE = 0				

@@ -159,21 +159,6 @@ compareString::
 	jr		compareString
 .endif
 
-.if CALL_EXPANSION
-callStatementIndex::
-	.dw		callStatement_CMD1
-	.dw		callStatement_CMD2
-	.dw		#0
-
-callStatement_CMD1:
-	.ascii	'CMD1\0'
-	.dw		_onCallCMD1
-
-callStatement_CMD2:
-	.ascii	'CMD2\0'
-	.dw		_onCallCMD2
-.endif
-
 ;----------------------------------------------------------
 ;	Order of other segments
 	.area	_CODE
@@ -204,6 +189,11 @@ gsinit::
 gsinext:
 	.area   _GSFINAL
 	jp		_main
+
+	.area	_ROMDATA
+.if CALL_EXPANSION
+	MCR_CALLSEXPANSIONINDEX
+.endif
 
 	.area	_DATA
 _heap_top::

@@ -30,7 +30,7 @@
 ;	Includes USR Index, if any
 	.area	_CODE
 ;	Call macro to build user call index
-	USRCALLSINDEX
+	MCR_USRCALLSINDEX
 
 ;----------------------------------------------------------
 ;	Order of other segments

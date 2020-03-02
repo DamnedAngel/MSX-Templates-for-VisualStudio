@@ -5,6 +5,10 @@
 ;----------------------------------------------------------
 
 ;----------------------------------------------------------
+;	Project Type
+PROJECT_TYPE			ROM
+
+;----------------------------------------------------------
 ;	crt0 features
 GLOBALS_INITIALIZER		_ON							; _ON: Includes routine to initialize global variables; _OFF: Don't include
 RETURN_TO_BASIC			_ON							; _ON: Returns to basic; _OFF: Don't return

@@ -69,8 +69,15 @@ void main(void) {
 //	This is a CALL handler example.
 //	CALL CMD1
 //
+//	This is only for the demo app.
+//	To disable the support for BASIC's CALL statement:
+//	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
+//	To completely remove the support for BASIC's CALL statement from the project:
+//	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
+//	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
+//	3) Remove all onCallXXXXX functions from this file
 char* onCallCMD1(char* cmd) {
-	print("Hello onCallCMD1.\r\n\0");
+	print("CMD1 says hi!\r\n\0");
 	// seek end of command (0x00/EoL ou 0x3a/":")
 	while ((*cmd != 0) && (*cmd != 0x3a)) {
 		cmd++;
@@ -82,8 +89,15 @@ char* onCallCMD1(char* cmd) {
 //	This is a CALL handler example.
 //	CALL CMD2
 //
+//	This is only for the demo app.
+//	To disable the support for BASIC's CALL statement:
+//	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
+//	To completely remove the support for BASIC's CALL statement from the project:
+//	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
+//	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
+//	3) Remove all onCallXXXXX functions from this file
 char* onCallCMD2(char* cmd) {
-	print("Hello onCallCMD2.\r\n\0");
+	print("CMD2 says hi!\r\n\0");
 	// seek end of command (0x00/EoL ou 0x3a/":")
 	while ((*cmd != 0) && (*cmd != 0x3a)) {
 		cmd++;

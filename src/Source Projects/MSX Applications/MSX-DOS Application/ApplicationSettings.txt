@@ -5,6 +5,10 @@
 ;----------------------------------------------------------
 
 ;----------------------------------------------------------
+;	Project Type
+PROJECT_TYPE			DOS
+
+;----------------------------------------------------------
 ;	crt0 features
 GLOBALS_INITIALIZER		_ON							; _ON: include routine to initialize global variables; _OFF: Don't include
 CMDLINE_PARAMETERS		_OFF						; _ON: include routine to parse cmdline parameters; _OFF: Don't include
