@@ -28,38 +28,65 @@ _main::
 
 
 .if CALL_EXPANSION
-STRING_COMPARE = 1
-_call_expansion::
-;   Replace the two lines below with your own program logic
-    ld hl, #_call_msg
-    call _printMSG
+; ----------------------------------------------------------
+;	This is a CALL handler example.
+;	CALL CMD1
+;
+;	This is only for the demo app.
+;	To disable the support for BASIC's CALL statement:
+;	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
+;	To completely remove the support for BASIC's CALL statement from the project:
+;	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
+;	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
+;	3) Remove all onCallXXXXX functions from this file
+_onCallCMD1::
+    ld      hl, #_msgCMD1
+    call    _printMSG
 
-;   Return to BASIC
-    ret
-.endif
+	ld      hl, #2			; retrieve param address from stack
+	add     hl, sp
+	ld		b, (hl)
+	inc		hl
+	ld		h, (hl)
+	ld		l, b
+_onCallCMD1_findEndOfCommand:
+    ld      a, (hl)
+    cp      #0
+    ret z
+    cp      #0x3a
+    ret z
+    inc     hl
+    jr      _onCallCMD1_findEndOfCommand
 
+; ----------------------------------------------------------
+;	This is a CALL handler example.
+;	CALL CMD2
+;
+;	This is only for the demo app.
+;	To disable the support for BASIC's CALL statement:
+;	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
+;	To completely remove the support for BASIC's CALL statement from the project:
+;	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
+;	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
+;	3) Remove all onCallXXXXX functions from this file
+_onCallCMD2::
+    ld      hl, #_msgCMD2
+    call    _printMSG
 
-.if DEVICE_EXPANSION
-STRING_COMPARE = 1
-_device_expansion::
-;   Replace the two lines below with your own program logic
-
-;   Return to BASIC
-    ret
-.endif
-
-.if STRING_COMPARE
-_strcmp:
-	ld		a, (de)
-	ld		b, a
-	ld		a, (hl)
-	cp		b
-	ret nz
-	cp		#0
-	ret z
-	inc de
-	inc hl
-	jr _strcmp
+	ld      hl, #2			; retrieve param address from stack
+	add     hl, sp
+	ld		b, (hl)
+	inc		hl
+	ld		h, (hl)
+	ld		l, b
+_onCallCMD2_findEndOfCommand:
+    ld      a, (hl)
+    cp      #0
+    ret z
+    cp      #0x3a
+    ret z
+    inc     hl
+    jr      _onCallCMD2_findEndOfCommand
 .endif
 
 ; ----------------------------------------------------------
@@ -98,8 +125,12 @@ _msg::
 .ascii		"BASIC/MSX-DOS, just avoid\r\n"
 .ascii      "the RET instruction.\r\n\0"
 
-_call_msg::
-.ascii		"This is the CALL handling routine!\r\n\0"
+.if CALL_EXPANSION
+_msgCMD1::
+.ascii		"The ASM handler for CMD1 says hi!\r\n\0"
+_msgCMD2::
+.ascii		"The ASM handler for CMD2 says hi!\r\n\0"
+.endif
 
 ; ----------------------------------------------------------
 ;	Debug Message

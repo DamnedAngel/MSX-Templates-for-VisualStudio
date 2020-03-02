@@ -77,7 +77,7 @@ void main(void) {
 //	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 //	3) Remove all onCallXXXXX functions from this file
 char* onCallCMD1(char* cmd) {
-	print("CMD1 says hi!\r\n\0");
+	print("The C handler for CMD1 says hi!\r\n\0");
 	// seek end of command (0x00/EoL ou 0x3a/":")
 	while ((*cmd != 0) && (*cmd != 0x3a)) {
 		cmd++;
@@ -97,7 +97,7 @@ char* onCallCMD1(char* cmd) {
 //	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 //	3) Remove all onCallXXXXX functions from this file
 char* onCallCMD2(char* cmd) {
-	print("CMD2 says hi!\r\n\0");
+	print("The C handler for CMD2 says hi!\r\n\0");
 	// seek end of command (0x00/EoL ou 0x3a/":")
 	while ((*cmd != 0) && (*cmd != 0x3a)) {
 		cmd++;
