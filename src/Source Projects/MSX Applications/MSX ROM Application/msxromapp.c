@@ -65,5 +65,42 @@ void main(void) {
 		"main's return instruction.\r\n\0");
 }
 
+// ----------------------------------------------------------
+//	This is a CALL handler example.
+//	CALL CMD1
+//
+//	This is only for the demo app.
+//	To disable the support for BASIC's CALL statement:
+//	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
+//	To completely remove the support for BASIC's CALL statement from the project:
+//	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
+//	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
+//	3) Remove all onCallXXXXX functions from this file
+char* onCallCMD1(char* cmd) {
+	print("The C handler for CMD1 says hi!\r\n\0");
+	// seek end of command (0x00/EoL ou 0x3a/":")
+	while ((*cmd != 0) && (*cmd != 0x3a)) {
+		cmd++;
+	}
+	return cmd;
+}
 
-
+// ----------------------------------------------------------
+//	This is a CALL handler example.
+//	CALL CMD2
+//
+//	This is only for the demo app.
+//	To disable the support for BASIC's CALL statement:
+//	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
+//	To completely remove the support for BASIC's CALL statement from the project:
+//	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
+//	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
+//	3) Remove all onCallXXXXX functions from this file
+char* onCallCMD2(char* cmd) {
+	print("The C handler for CMD2 says hi!\r\n\0");
+	// seek end of command (0x00/EoL ou 0x3a/":")
+	while ((*cmd != 0) && (*cmd != 0x3a)) {
+		cmd++;
+	}
+	return cmd;
+}

@@ -1,10 +1,12 @@
 ;----------------------------------------------------------
 ;	ApplicationSettings.txt - by Danilo Angelo, 2020
 ;
-;	Registers addresses of the application
-;	and the routines that will be available for
-;	BASIC USR routines.
+;	MSX BIN project general configuration.
 ;----------------------------------------------------------
+
+;----------------------------------------------------------
+;	Project Type
+PROJECT_TYPE			BIN
 
 ;----------------------------------------------------------
 ;	crt0 features

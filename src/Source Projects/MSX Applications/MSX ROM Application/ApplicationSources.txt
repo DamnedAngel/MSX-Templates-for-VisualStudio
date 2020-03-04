@@ -16,8 +16,8 @@ MSX\ROM\msxromcrt0.s
 ;	THIS IS YOUR PROGRAM!
 ;	Choose ONE and ONLY ONE of the lines below,
 ;	and leave the other commented!
-;msxromapp.s
-msxromapp.c
+msxromapp.s
+;msxromapp.c
 
 ;----------------------------------------------------------
 ;	Additional source files

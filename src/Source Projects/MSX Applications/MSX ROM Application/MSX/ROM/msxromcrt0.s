@@ -15,13 +15,13 @@
     .globl  s__INITIALIZED
     .globl  s__INITIALIZER
 .endif
-.if CALL_EXPANSION
-    .globl  _call_expansion
-.endif
+
 .if DEVICE_EXPANSION
     .globl  _device_expansion
 .endif
 
+STR_COMPARE = 0
+	
 	.area _HEADER (ABS)
   	.org	#fileStart
 ;----------------------------------------------------------
@@ -86,7 +86,78 @@ init::
 .else
 	call	_main
 	RST		0 ;CHKRAM
-.endif  
+.endif 
+
+.if CALL_EXPANSION
+STR_COMPARE = 1
+_call_expansion::
+	exx
+	ld		hl, #callStatementIndex
+	jr		callExpansionParseStmt
+
+callExpansionStmtNotFound:
+	pop hl
+
+callExpansionParseStmt:	
+;	get pointer to statement in table
+	xor		a
+	ld		e, (hl)
+	inc		hl
+	ld		d, (hl)
+	cp		e
+	jr nz,	callExpansionNotEndOfList
+	cp		d
+	jr nz,	callExpansionNotEndOfList
+;	statement not found; end expansion
+	exx
+	scf
+	ret
+
+callExpansionNotEndOfList:
+	inc		hl
+	push	hl
+
+;	get pointer to statement in CALL
+	ld		hl, #BIOS_PROCNM
+	call	compareString
+	jr nz,	callExpansionStmtNotFound
+;	statement found; execute and exit
+	pop		hl
+	inc		de
+	push	de
+	exx
+	pop		de				; *handler
+	push	hl				; parameters
+	ld		hl, #callExpansionFinalize
+	push	hl				; finalize
+	ex		de, hl
+	ld		e, (hl)
+	inc		hl
+	ld		d, (hl)
+	push	de				; handler
+	ret						; calls handler with return to finalize below
+							; handler must return hl pointing to end of command (end of line or ":")
+	
+callExpansionFinalize:
+; at this point, hl must be pointing to end of command (end of line or ":")
+	pop		hl
+	or		a				; resets CY flag
+	ret
+.endif
+
+.if STR_COMPARE
+compareString::
+	ld		a, (hl)
+	ld		b, a
+	ld		a, (de)
+	cp		b
+	ret nz
+	cp		#0
+	ret z
+	inc		hl
+	inc		de
+	jr		compareString
+.endif
 
 ;----------------------------------------------------------
 ;	Order of other segments
@@ -118,6 +189,11 @@ gsinit::
 gsinext:
 	.area   _GSFINAL
 	jp		_main
+
+	.area	_ROMDATA
+.if CALL_EXPANSION
+	MCR_CALLSEXPANSIONINDEX
+.endif
 
 	.area	_DATA
 _heap_top::

@@ -1,8 +1,12 @@
 ;----------------------------------------------------------
 ;	ApplicationSettings.txt - by Danilo Angelo, 2020
 ;
-;	Registers addresses of the application
+;	MSX-DOS project general configuration.
 ;----------------------------------------------------------
+
+;----------------------------------------------------------
+;	Project Type
+PROJECT_TYPE			DOS
 
 ;----------------------------------------------------------
 ;	crt0 features
