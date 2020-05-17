@@ -109,14 +109,32 @@ char* onCallCMD2(char* param) {
 }
 
 // ----------------------------------------------------------
-//	This is a Device handler example.
-//	OPEN "DEV:"
+//	This is a DEVICE getID handler example.
+//	"DEV:"
 //
+//	This is only for the demo app.
+//	To disable the support for BASIC's devices:
+//	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
+//	To completely remove the support for BASIC's devices from the project:
+//	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
+//	2) Optionally, remove / comment all DEVICE items in ApplicationSettings.txt
+//	3) Remove all onDeviceXXXXX_getIdand onDeviceXXXXX_IO routines from this file
 char onDeviceDEV_getId() {
 	print("The C handler for DEV_getId says hi!\r\n\0");
 	return 0;
 }
 
+// ----------------------------------------------------------
+//	This is a DEVICE IO handler example.
+//	"DEV:"
+//
+//	This is only for the demo app.
+//	To disable the support for BASIC's devices:
+//	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
+//	To completely remove the support for BASIC's devices from the project:
+//	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
+//	2) Optionally, remove / comment all DEVICE items in ApplicationSettings.txt
+//	3) Remove all onDeviceXXXXX_getIdand onDeviceXXXXX_IO routines from this file
 void onDeviceDEV_IO(char* param, char cmd) {
 	print("The C handler for DEV_IO says hi!\r\n\0");
 }

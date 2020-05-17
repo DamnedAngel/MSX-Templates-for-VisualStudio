@@ -89,6 +89,41 @@ _onCallCMD2_findEndOfCommand:
     jr      _onCallCMD2_findEndOfCommand
 .endif
 
+.if DEVICE_EXPANSION
+; ----------------------------------------------------------
+;	This is a DEVICE getID handler example.
+;	"DEV:"
+;
+;	This is only for the demo app.
+;	To disable the support for BASIC's devices:
+;	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
+;	To completely remove the support for BASIC's devices from the project:
+;	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
+;	2) Optionally, remove/comment all DEVICE items in ApplicationSettings.txt
+;	3) Remove all onDeviceXXXXX_getId and onDeviceXXXXX_IO routines from this file
+_onDeviceDEV_getId::
+    ld      hl, #_msgDEV_getId
+    call    _printMSG
+    ld      l, #0
+    ret
+
+; ----------------------------------------------------------
+;	This is a DEVICE IO handler example.
+;	"DEV:"
+;
+;	This is only for the demo app.
+;	To disable the support for BASIC's devices:
+;	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
+;	To completely remove the support for BASIC's devices from the project:
+;	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
+;	2) Optionally, remove/comment all DEVICE items in ApplicationSettings.txt
+;	3) Remove all onDeviceXXXXX_getId and onDeviceXXXXX_IO routines from this file
+_onDeviceDEV_IO::
+    ld      hl, #_msgDEV_IO
+    call    _printMSG
+    ret
+.endif
+
 ; ----------------------------------------------------------
 ;   Once you replaced the commands in the _main routine
 ;   above with your own program, you should delete the
@@ -130,6 +165,13 @@ _msgCMD1::
 .ascii		"The ASM handler for CMD1 says hi!\r\n\0"
 _msgCMD2::
 .ascii		"The ASM handler for CMD2 says hi!\r\n\0"
+.endif
+
+.if DEVICE_EXPANSION
+_msgDEV_getId::
+.ascii		"The ASM handler for DEV_getId says hi!\r\n\0"
+_msgDEV_IO::
+.ascii		"The ASM handler for DEV_IO says hi!\r\n\0"
 .endif
 
 ; ----------------------------------------------------------
