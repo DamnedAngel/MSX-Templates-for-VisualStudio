@@ -1,7 +1,7 @@
 
 echo -----------------------------------------------------------------------------------
 echo MSX SDCC MAKEFILE by Danilo Angelo, 2020
-echo version 00.04.00 - Codename BLUE
+echo version 00.04.00 - Codename GZIP ^& BYTE
 
 set MSX_BUILD_TIME=%TIME% 
 set MSX_BUILD_DATE=%DATE% 
@@ -169,9 +169,10 @@ EXIT /B
 
 :APPLICATIONSETTINGS
 IF EXIST %MSX_OBJ_PATH%\bin_usrcalls.tmp del %MSX_OBJ_PATH%\bin_usrcalls.tmp
-IF EXIST %MSX_OBJ_PATH%\rom_callexpansion.tmp del %MSX_OBJ_PATH%\rom_callexpansion.tmp
 IF EXIST %MSX_OBJ_PATH%\rom_callexpansionindex.tmp del %MSX_OBJ_PATH%\rom_callexpansionindex.tmp
 IF EXIST %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp del %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp
+IF EXIST %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp del %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp
+IF EXIST %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp del %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
 
 echo -----------------------------------------------------------------------------------
 echo Building application settings file...
@@ -231,7 +232,18 @@ REM			echo PROJECT_TYPE = %%B							>> applicationsettings.s
 			echo callStatement_%%B::						>> %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp
 			echo .ascii		'%%B\0'							>> %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp
 			echo .dw		_onCall%%B						>> %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp
-			) else (
+		) else if /I ".!TAG!"==".DEVICE" (
+ 			IF NOT EXIST %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp (
+				echo deviceIndex::							>> %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp
+			)
+			echo .dw		device_%%B						>> %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp
+			echo .globl		_onDevice%%B_IO					>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+			echo .globl		_onDevice%%B_getId				>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+			echo device_%%B::								>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+			echo .ascii		'%%B\0'							>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+			echo .dw		_onDevice%%B_IO					>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+			echo .dw		_onDevice%%B_getId				>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+		) else (
 			if /I "%%B"=="_off" (
 				echo %%A = 0								>> applicationsettings.s
 			) else if /I "%%B"=="_on" (
@@ -260,22 +272,24 @@ if /I ".!PROJECT_TYPE!"==".BIN" (
 if /I ".!PROJECT_TYPE!"==".ROM" (
 	echo Adding specific ROM settings...
 	echo.													>> applicationsettings.s
-	echo .macro MCR_CALLSEXPANSION							>> applicationsettings.s
-	IF EXIST %MSX_OBJ_PATH%\rom_callexpansion.tmp (
-		echo.												>> applicationsettings.s
- 		type %MSX_OBJ_PATH%\rom_callexpansion.tmp			>> applicationsettings.s
-		del %MSX_OBJ_PATH%\rom_callexpansion.tmp
-	)
-	echo .endm												>> applicationsettings.s
-
-	echo.													>> applicationsettings.s
-	echo .macro MCR_CALLSEXPANSIONINDEX						>> applicationsettings.s
+	echo .macro MCR_CALLEXPANSIONINDEX						>> applicationsettings.s
 	IF EXIST %MSX_OBJ_PATH%\rom_callexpansionindex.tmp (
 		type %MSX_OBJ_PATH%\rom_callexpansionindex.tmp		>> applicationsettings.s
 		echo .dw	#0										>> applicationsettings.s
  		type %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp	>> applicationsettings.s
 		del %MSX_OBJ_PATH%\rom_callexpansionindex.tmp
 		del %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp
+	)
+	echo .endm												>> applicationsettings.s
+
+	echo.													>> applicationsettings.s
+	echo .macro MCR_DEVICEEXPANSIONINDEX					>> applicationsettings.s
+	IF EXIST %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp (
+		type %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp	>> applicationsettings.s
+		echo .dw	#0										>> applicationsettings.s
+ 		type %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp	>> applicationsettings.s
+		del %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp
+		del %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
 	)
 	echo .endm												>> applicationsettings.s
 )
