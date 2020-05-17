@@ -145,6 +145,79 @@ callExpansionFinalize:
 	ret
 .endif
 
+.if DEVICE_EXPANSION
+STR_COMPARE = 1
+_device_expansion::
+	exx
+	ex		af, af'			; saves phase of operation in af'
+	ld		hl, #deviceIndex
+	jr		deviceExpansionParseStmt
+
+deviceNotFound:
+	pop hl
+
+deviceExpansionParseStmt:	
+;	get pointer to device in table
+	xor		a
+	ld		e, (hl)
+	inc		hl
+	ld		d, (hl)
+	cp		e
+	jr nz,	deviceExpansionNotEndOfList
+	cp		d
+	jr nz,	deviceExpansionNotEndOfList
+;	statement not found; end expansion
+	exx
+	ex		af, af'			; restores phase of operation from af'
+	scf
+	ret
+
+deviceExpansionNotEndOfList:
+	inc		hl
+	push	hl
+
+;	get pointer to program´s device
+	ld		hl, #BIOS_PROCNM
+	call	compareString
+	jr nz,	deviceNotFound
+;	device found; execute and exit
+	ex		af, af'			; restores phase of operation from af'
+	cp		#0xff			; if device probe (getId)
+	jr nz,	deviceExpansionHandlerCall
+	inc		de
+	inc		de
+
+deviceExpansionHandlerCall:
+	pop		hl
+	push	de
+	exx
+	pop		de				; *handler
+	inc		de
+
+	push	hl				; parameters
+	ld		h, a
+	push	hl				; IO command
+	inc		sp
+	ld		hl,	#deviceExpansionFinalize
+	push	hl				; finalize
+	ex		de, hl
+	ld		e, (hl)
+	inc		hl
+	ld		d, (hl)
+	push	de				; handler
+	ret						; calls handler with return to finalize below
+							; handler must return hl pointing to end of command (end of line or ":")
+	
+deviceExpansionFinalize:
+; at this point, l must contain device number (0-3)
+	inc		sp
+	ld		a, l
+	pop		hl
+	or		a				; resets CY flag without destroying A
+	ret
+
+.endif
+
 .if STR_COMPARE
 compareString::
 	ld		a, (hl)
@@ -192,7 +265,11 @@ gsinext:
 
 	.area	_ROMDATA
 .if CALL_EXPANSION
-	MCR_CALLSEXPANSIONINDEX
+	MCR_CALLEXPANSIONINDEX
+.endif
+
+.if DEVICE_EXPANSION
+	MCR_DEVICEEXPANSIONINDEX
 .endif
 
 	.area	_DATA

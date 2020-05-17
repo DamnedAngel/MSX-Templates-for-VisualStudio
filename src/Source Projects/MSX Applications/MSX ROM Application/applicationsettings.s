@@ -1,7 +1,7 @@
 ;-------------------------------------------------		
 ; applicationsettings.s created automatically			
 ; by makefile											
-; on  8:14:35.30 , 02-Mar-20 				
+; on 16:45:46.87 , 17-May-20 				
 ;														
 ; DO NOT BOTHER EDITING THIS.							
 ; ALL CHANGES WILL BE LOST.							
@@ -11,15 +11,12 @@ GLOBALS_INITIALIZER = 1
 RETURN_TO_BASIC = 1								
 STACK_HIMEM = 0								
 SET_PAGE_2 = 0								
-fileStart .equ 0x4000							
+fileStart .equ 0x8000							
 CALL_EXPANSION = 1								
-DEVICE_EXPANSION = 0								
+DEVICE_EXPANSION = 1								
 BASIC_PROGRAM = 0								
 													
-.macro MCR_CALLSEXPANSION							
-.endm												
-													
-.macro MCR_CALLSEXPANSIONINDEX						
+.macro MCR_CALLEXPANSIONINDEX						
 callStatementIndex::					
 .dw		callStatement_CMD1				
 .dw		callStatement_CMD2				
@@ -32,4 +29,16 @@ callStatement_CMD1::
 callStatement_CMD2::						
 .ascii		'CMD2\0'							
 .dw		_onCallCMD2						
+.endm												
+													
+.macro MCR_DEVICEEXPANSIONINDEX					
+deviceIndex::							
+.dw		device_DEV						
+.dw	#0										
+.globl		_onDeviceDEV_IO					
+.globl		_onDeviceDEV_getId				
+device_DEV::								
+.ascii		'DEV\0'							
+.dw		_onDeviceDEV_IO					
+.dw		_onDeviceDEV_getId				
 .endm												
