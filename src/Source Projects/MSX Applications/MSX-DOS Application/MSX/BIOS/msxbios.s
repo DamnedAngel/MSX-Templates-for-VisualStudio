@@ -5,10 +5,6 @@
 ;		Standard MSX variables and routines addresses
 ;----------------------------------------------------------
 
-.area _DATA
-
-; 
-
 ; --- system variables ---
 BIOS_HWVER	.equ 0x002d
 

@@ -98,7 +98,7 @@
     <ClInclude Include="targetconfig.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="memorymap.s" />
+    <None Include="applicationsettings.s" />
     <None Include="msxdosapp.s" />
     <None Include="Make\make.bat" />
     <None Include="Make\symbol.p" />
@@ -111,7 +111,7 @@
     <Text Include="ApplicationSources.txt" />
     <Text Include="IncludeDirectories.txt" />
     <Text Include="LibrarySources.txt" />
-    <Text Include="MemoryMap.txt" />
+    <Text Include="ApplicationSettings.txt" />
     <Text Include="Libraries.txt" />
     <Text Include="TargetConfig_Debug.txt" />
     <Text Include="TargetConfig_Release.txt" />
