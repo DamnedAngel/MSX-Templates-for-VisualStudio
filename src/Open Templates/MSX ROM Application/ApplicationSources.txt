@@ -1,0 +1,28 @@
+;----------------------------------------------------------
+;	ApplicationSources.txt - by Danilo Angelo, 2020
+;
+;	List of all specific application C and ASM sources
+;	These will always be processed by any build actions
+;----------------------------------------------------------
+
+;----------------------------------------------------------
+;	General structure of a MSX BIN application
+;	Do NOT remove.
+MSX\ROM\msxromcrt0.s
+
+;----------------------------------------------------------
+;	MSX ROM application, in C and ASM formats
+;	This is where your main function is.
+;	THIS IS YOUR PROGRAM!
+;	Choose ONE and ONLY ONE of the lines below,
+;	and leave the other commented!
+;msxromapp.s
+msxromapp.c
+
+;----------------------------------------------------------
+;	Additional source files
+;	Add below additional source files for your application
+;	using relative paths from the project folder
+
+;yourSourceCodeHere.s
+;yourSourceCodeHere.c

@@ -1,0 +1,36 @@
+;----------------------------------------------------------
+;	ApplicationSettings.txt - by Danilo Angelo, 2020
+;
+;	MSX-DOS project general configuration.
+;----------------------------------------------------------
+
+;----------------------------------------------------------
+;	Project Type
+PROJECT_TYPE			DOS
+
+;----------------------------------------------------------
+;	crt0 features
+GLOBALS_INITIALIZER		_ON							; _ON: include routine to initialize global variables; _OFF: Don't include
+CMDLINE_PARAMETERS		_OFF						; _ON: include routine to parse cmdline parameters; _OFF: Don't include
+
+;----------------------------------------------------------
+;	Temporary MSX-DOS cmdline routine start
+;		0 -> routine starts at start of heap
+;		other value -> routine address (warning: may overlap data/code)
+;	If you don't know what you are doing,
+;	LEAVE IT AT 0.
+PARAM_HANDLING_ROUTINE	0
+
+;----------------------------------------------------------
+;	Code segment (.area _CODE) start address
+;	If you don't know what you are doing,
+;	LEAVE IT COMMENTED for automatic setting.
+;CODE_LOC				0x0180
+
+;----------------------------------------------------------
+;	Data segment (.area _DATA) start address
+;		0 -> data segment immediately after code (default)
+;		other value -> data segment address
+;	If you don't know what you are doing,
+;	LEAVE IT AT 0 OR COMMENTED for automatic setting.
+;DATA_LOC				0

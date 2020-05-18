@@ -34,8 +34,8 @@
     <Filter Include="ASM Source Files\MSX\BIOS">
       <UniqueIdentifier>{9a550870-19f7-4aa4-9d94-69e2ce1f9403}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ASM Source Files\MSX\MSX-DOS">
-      <UniqueIdentifier>{fb61106d-43ca-44a6-804d-3c9e63975b1a}</UniqueIdentifier>
+    <Filter Include="ASM Source Files\MSX\ROM">
+      <UniqueIdentifier>{152b7ecc-9ada-4429-af0d-616f3f076e6a}</UniqueIdentifier>
     </Filter>
     <Filter Include="ASM Source Files\Profiling">
       <UniqueIdentifier>{7615ad5b-1aef-4941-9bfd-f7606082964d}</UniqueIdentifier>
@@ -65,10 +65,10 @@
     <None Include="Make\symbol.p">
       <Filter>Make</Filter>
     </None>
-    <None Include="MSX\MSX-DOS\msxdoscrt0.s">
-      <Filter>ASM Source Files\MSX\MSX-DOS</Filter>
+    <None Include="MSX\ROM\msxromcrt0.s">
+      <Filter>ASM Source Files\MSX\ROM</Filter>
     </None>
-    <None Include="msxdosapp.s">
+    <None Include="msxromapp.s">
       <Filter>ASM Source Files</Filter>
     </None>
     <None Include="applicationsettings.s">
@@ -99,7 +99,7 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="msxdosapp.c">
+    <ClCompile Include="msxromapp.c">
       <Filter>C Source Files</Filter>
     </ClCompile>
   </ItemGroup>

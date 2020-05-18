@@ -8,9 +8,7 @@
 ;	Build settings
 .COMPILE
 DEBUG				1							; _OFF: not defined ; _ON: defined; 1-n defined with debug level
-OPENMSX_PROFILING	_ON							; _ON / _OFF
-GLOBALS_INITIALIZER	_ON							; _ON / _OFF
-PUBLISH_FILESTART	_ON							; _ON: register program start address at HIMEM-1; _OFF: Don't register
+OPENMSX_PROFILING	_ON							; _ON: enable OpenMSX Profiling routines; _OFF: Disable routines
 
 ;----------------------------------------------------------
 ;	Filesystem settings
