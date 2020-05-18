@@ -1,7 +1,7 @@
 
 echo -----------------------------------------------------------------------------------
 echo MSX SDCC MAKEFILE by Danilo Angelo, 2020
-echo version 00.03.03 - Codename ISA
+echo version 00.04.00 - Codename GZIP ^& BYTE
 
 set MSX_BUILD_TIME=%TIME% 
 set MSX_BUILD_DATE=%DATE% 
@@ -18,6 +18,8 @@ set MSX_LIB_PATH=%MSX_DEV_PATH%\libs
 set OBJLIST=
 set INCDIRS=
 
+set BIN_SIZE=
+set FILE_START=0x0100
 set CODE_LOC=
 set DATA_LOC=0
 set PARAM_HANDLING_ROUTINE=0
@@ -30,7 +32,7 @@ echo // targetconfig.h created automatically by makefile	>> TargetConfig.h
 echo // on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%				>> TargetConfig.h
 echo //														>> TargetConfig.h
 echo // DO NOT BOTHER EDITING THIS.							>> TargetConfig.h
-echo // ALL CHANGES YOUR BE LOST.							>> TargetConfig.h
+echo // ALL CHANGES WILL BE LOST.							>> TargetConfig.h
 echo //-------------------------------------------------	>> TargetConfig.h
 echo.														>> TargetConfig.h
 echo #ifndef  __TARGETCONFIG_H__							>> TargetConfig.h
@@ -42,7 +44,7 @@ echo ; targetconfig.s created automatically by makefile		>> TargetConfig.s
 echo ; on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%				>> TargetConfig.s
 echo ;														>> TargetConfig.s
 echo ; DO NOT BOTHER EDITING THIS.							>> TargetConfig.s
-echo ; ALL CHANGES YOUR BE LOST.							>> TargetConfig.s
+echo ; ALL CHANGES WILL BE LOST.							>> TargetConfig.s
 echo ;-------------------------------------------------		>> TargetConfig.s
 echo.														>> TargetConfig.s
 
@@ -144,7 +146,7 @@ if NOT EXIST "%MSX_BIN_PATH%" (
 	echo Done creating BIN path.
 )
 
-goto MEMORYMAPPING
+goto APPLICATIONSETTINGS
 
 :CREATE_DIR
 set ACC_PATH=.
@@ -165,60 +167,134 @@ FOR /F "tokens=1* delims=\" %%A IN ("%NEW_PATH%") DO (
 if defined NEW_PATH goto :CREATE_DIR_LOOP
 EXIT /B
 
-:MEMORYMAPPING
-IF EXIST MemoryMap.txt (
-	echo -----------------------------------------------------------------------------------
-	echo Building memory mapping file...
-	echo ;-------------------------------------------------	>  memorymap.s
-	echo ; memorymap.s created automatically by makefile	>> memorymap.s
-	echo ; on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%			>> memorymap.s
-	echo ;													>> memorymap.s
-	echo ; DO NOT BOTHER EDITING THIS.						>> memorymap.s
-	echo ; ALL CHANGES YOUR BE LOST.						>> memorymap.s
-	echo ;-------------------------------------------------	>> memorymap.s
-	echo.													>> memorymap.s
+:APPLICATIONSETTINGS
+IF EXIST %MSX_OBJ_PATH%\bin_usrcalls.tmp del %MSX_OBJ_PATH%\bin_usrcalls.tmp
+IF EXIST %MSX_OBJ_PATH%\rom_callexpansionindex.tmp del %MSX_OBJ_PATH%\rom_callexpansionindex.tmp
+IF EXIST %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp del %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp
+IF EXIST %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp del %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp
+IF EXIST %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp del %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
 
-	set USR_CALLS_FLAG=0
-	echo.													> usrcalls.tmp
-	for /F "tokens=1,2" %%A in  (MemoryMap.txt) do  (
-		set TAG=%%A
-		echo !TAG!
-		if NOT "!TAG:~0,1!"==";" (
-			if /I ".!TAG!"==".FILESTART" (
-				echo fileStart .equ %%B						>> memorymap.s
-				set CODE_LOC=%%B
-			) else if /I ".!TAG!"==".CODE_LOC" (
-				set CODE_LOC=%%B
-			) else if /I ".!TAG!"==".DATA_LOC" (
-				set DATA_LOC=%%B
-			) else if /I ".!TAG!"==".PARAM_HANDLING_ROUTINE" (
-				echo paramHandlingRoutine .equ %%B			>> memorymap.s
-				echo PARAM_HANDLING_ROUTINE = %%B			>> memorymap.s
-			) else if /I ".!TAG!"==".SYMBOL" (
-				echo .globl %%B								>> usrcalls.tmp
-				echo .dw %%B								>> usrcalls.tmp
-				set USR_CALLS_FLAG=1
-			) else if /I ".!TAG!"==".ADDRESS" (
-				echo .dw %%B								>> usrcalls.tmp
-				set USR_CALLS_FLAG=1
+echo -----------------------------------------------------------------------------------
+echo Building application settings file...
+echo ;-------------------------------------------------		>  applicationsettings.s
+echo ; applicationsettings.s created automatically			>> applicationsettings.s
+echo ; by makefile											>> applicationsettings.s
+echo ; on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%				>> applicationsettings.s
+echo ;														>> applicationsettings.s
+echo ; DO NOT BOTHER EDITING THIS.							>> applicationsettings.s
+echo ; ALL CHANGES WILL BE LOST.							>> applicationsettings.s
+echo ;-------------------------------------------------		>> applicationsettings.s
+echo.														>> applicationsettings.s
+
+for /F "tokens=1,2" %%A in  (ApplicationSettings.txt) do  (
+	set TAG=%%A
+	echo !TAG!
+	if NOT "!TAG:~0,1!"==";" (
+		if /I ".!TAG!"==".PROJECT_TYPE" (
+REM			echo PROJECT_TYPE = %%B							>> applicationsettings.s
+			set PROJECT_TYPE=%%B
+		) else if /I ".!TAG!"==".BIN_FILESTART" (
+			echo fileStart .equ %%B							>> applicationsettings.s
+			set CODE_LOC=%%B
+		) else if /I ".!TAG!"==".ROM_FILESTART" (
+			echo fileStart .equ %%B							>> applicationsettings.s
+			set FILE_START=%%B
+		) else if /I ".!TAG!"==".ROM_SIZE" (
+			if /I "%%B"=="16k" (
+				set BIN_SIZE=4000
+			) else (
+				set BIN_SIZE=8000
+			)
+		) else if /I ".!TAG!"==".CODE_LOC" (
+			set CODE_LOC=%%B
+		) else if /I ".!TAG!"==".DATA_LOC" (
+			set DATA_LOC=%%B
+		) else if /I ".!TAG!"==".PARAM_HANDLING_ROUTINE" (
+			echo paramHandlingRoutine .equ %%B				>> applicationsettings.s
+			echo PARAM_HANDLING_ROUTINE = %%B				>> applicationsettings.s
+		) else if /I ".!TAG!"==".SYMBOL" (
+			IF NOT EXIST %MSX_OBJ_PATH%\bin_usrcalls.tmp (
+				echo.										>> %MSX_OBJ_PATH%\bin_usrcalls.tmp
+			)
+			echo .globl %%B									>> %MSX_OBJ_PATH%\bin_usrcalls.tmp
+			echo .dw %%B									>> %MSX_OBJ_PATH%\bin_usrcalls.tmp
+		) else if /I ".!TAG!"==".ADDRESS" (
+			IF NOT EXIST %MSX_OBJ_PATH%\bin_usrcalls.tmp (
+				echo.										>> %MSX_OBJ_PATH%\bin_usrcalls.tmp
+			)
+			echo .dw %%B									>> %MSX_OBJ_PATH%\bin_usrcalls.tmp
+		) else if /I ".!TAG!"==".CALL_STATEMENT" (
+ 			IF NOT EXIST %MSX_OBJ_PATH%\rom_callexpansionindex.tmp (
+				echo callStatementIndex::					>> %MSX_OBJ_PATH%\rom_callexpansionindex.tmp
+			)
+			echo .dw		callStatement_%%B				>> %MSX_OBJ_PATH%\rom_callexpansionindex.tmp
+			echo .globl		_onCall%%B						>> %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp
+			echo callStatement_%%B::						>> %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp
+			echo .ascii		'%%B\0'							>> %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp
+			echo .dw		_onCall%%B						>> %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp
+		) else if /I ".!TAG!"==".DEVICE" (
+ 			IF NOT EXIST %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp (
+				echo deviceIndex::							>> %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp
+			)
+			echo .dw		device_%%B						>> %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp
+			echo .globl		_onDevice%%B_IO					>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+			echo .globl		_onDevice%%B_getId				>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+			echo device_%%B::								>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+			echo .ascii		'%%B\0'							>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+			echo .dw		_onDevice%%B_IO					>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+			echo .dw		_onDevice%%B_getId				>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+		) else (
+			if /I "%%B"=="_off" (
+				echo %%A = 0								>> applicationsettings.s
+			) else if /I "%%B"=="_on" (
+				echo %%A = 1								>> applicationsettings.s
+			) else if /I "%%B"=="" (
+				echo %%A = 1								>> applicationsettings.s
+			) else (
+				echo %%A = %%B								>> applicationsettings.s
 			)
 		)
 	)
-
-	echo.													>> usrcalls.tmp
-
-	if /I "!USR_CALLS_FLAG!"=="1" (
-		echo.												>> memorymap.s
-		echo .area _CODE									>> memorymap.s
-		echo.												>> memorymap.s
-		echo .macro USRCALLSINDEX							>> memorymap.s
-		type usrcalls.tmp									>> memorymap.s
-		echo .endm											>> memorymap.s
-	)
-	del usrcalls.tmp
-
-	echo Done building memory mapping file.
 )
+
+if /I ".!PROJECT_TYPE!"==".BIN" (
+	echo Adding specific BIN settings...
+	echo .macro MCR_USRCALLSINDEX							>> applicationsettings.s
+	IF EXIST %MSX_OBJ_PATH%\bin_usrcalls.tmp (
+		echo.												>> applicationsettings.s
+		echo _BASIC_USR_INDEX::								>> applicationsettings.s
+		type %MSX_OBJ_PATH%\bin_usrcalls.tmp				>> applicationsettings.s
+		del %MSX_OBJ_PATH%\bin_usrcalls.tmp
+	)
+	echo .endm												>> applicationsettings.s
+)
+
+if /I ".!PROJECT_TYPE!"==".ROM" (
+	echo Adding specific ROM settings...
+	echo.													>> applicationsettings.s
+	echo .macro MCR_CALLEXPANSIONINDEX						>> applicationsettings.s
+	IF EXIST %MSX_OBJ_PATH%\rom_callexpansionindex.tmp (
+		type %MSX_OBJ_PATH%\rom_callexpansionindex.tmp		>> applicationsettings.s
+		echo .dw	#0										>> applicationsettings.s
+ 		type %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp	>> applicationsettings.s
+		del %MSX_OBJ_PATH%\rom_callexpansionindex.tmp
+		del %MSX_OBJ_PATH%\rom_callexpansionhandler.tmp
+	)
+	echo .endm												>> applicationsettings.s
+
+	echo.													>> applicationsettings.s
+	echo .macro MCR_DEVICEEXPANSIONINDEX					>> applicationsettings.s
+	IF EXIST %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp (
+		type %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp	>> applicationsettings.s
+		echo .dw	#0										>> applicationsettings.s
+ 		type %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp	>> applicationsettings.s
+		del %MSX_OBJ_PATH%\rom_deviceexpansionindex.tmp
+		del %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
+	)
+	echo .endm												>> applicationsettings.s
+)
+
+echo Done building application settings file.
 
 if /I not "%2"=="clean" GOTO :BUILD
 echo -----------------------------------------------------------------------------------
@@ -324,13 +400,21 @@ echo Done building application modules.
 IF "%CODE_LOC%"=="" (
 	echo -----------------------------------------------------------------------------------
 	echo Determining CODE-LOC...
-	for /F "tokens=2,4" %%A in  (%MSX_OBJ_PATH%\msxdoscrt0.rel) do  (
-		if "x%%A"=="x_HEADER0" (
-			set /A DEC_CODE_LOC=0x0100+0x%%B
-			call cmd /c exit /b !DEC_CODE_LOC!
-			set CODE_LOC=0x!=exitcode!
+	for %%f IN (%MSX_OBJ_PATH%\msx*crt0.rel) DO (
+		echo Analyzing %%f...
+		for /F "tokens=2,4" %%A in  (%%f) do  (
+			if "x%%A"=="x_HEADER0" (
+				set /A DEC_HEADER_SIZE=0x%%B
+				set /A DEC_CODE_LOC=%FILE_START%+!DEC_HEADER_SIZE!
+				call cmd /c exit /b !DEC_HEADER_SIZE!
+				set HEADER_SIZE=0x!=exitcode!
+				call cmd /c exit /b !DEC_CODE_LOC!
+				set CODE_LOC=0x!=exitcode!
+			)
 		)
 	)
+	echo FILE_START is %FILE_START%.
+	echo _HEADER segment size is !HEADER_SIZE!.
 	echo CODE-LOC determined to be !CODE_LOC!.
 )
 
@@ -346,7 +430,11 @@ echo Done compiling.
 
 echo -----------------------------------------------------------------------------------
 echo Generating binary...
-hex2bin -e %MSX_FILE_EXTENSION% %MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX
+if ".%BIN_SIZE%"=="." (
+	hex2bin -e %MSX_FILE_EXTENSION% %MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX
+) else (
+	hex2bin -e %MSX_FILE_EXTENSION% -l %BIN_SIZE% %MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX
+)
 if %errorlevel% NEQ 0 (
 EXIT %errorlevel%
 )
@@ -355,6 +443,10 @@ echo Done generating library.
 echo -----------------------------------------------------------------------------------
 echo Moving binary...
 copy %MSX_OBJ_PATH%\*.%MSX_FILE_EXTENSION% %MSX_BIN_PATH%\
+if %errorlevel% NEQ 0 (
+echo FAIL!
+EXIT %errorlevel%
+)
 echo Done moving binary.
 echo -----------------------------------------------------------------------------------
 echo Building symbol file...
