@@ -19,7 +19,7 @@
     ;            (make sure that X>0x100+code size)
 
 	.include "targetconfig.s"
-	.include "memorymap.s"
+	.include "applicationsettings.s"
 
 	.globl	_main
 
@@ -64,8 +64,8 @@ init:
     ld      (hl), #0
         
     ;* Copy the command line processing code to other RAM area
-	;  (may be HEAP or somewhere else set in 
-	;   MemoryMap.Txt|PARAM_HANDLING_ROUTINE item) and
+	;  (may be 0 = HEAP or somewhere else set in 
+	;   ApplicationSettings.txt|PARAM_HANDLING_ROUTINE item) and
     ;  and execute it from there, this way the memory of the original
     ;  code can be recycled for the parameter pointers table.
     ;  (The space from 0x100 up to "cont" can be used,
@@ -91,7 +91,7 @@ init:
 parloop:
 	ld      a,(hl)
     or      a       ;Command line end found?
-    ret     z
+    ret z
 
     cp      #32
     jr      nz,parfnd
@@ -109,17 +109,17 @@ parfnd:
         
     ld      a,c     ;protection against too many parameters
     cp      #40
-    ret     nc
+    ret nc
         
     ;* ...and skip chars until finding a space or command line end
         
 parloop2:
 	ld      a,(hl)
     or      a       ;Command line end found?
-    ret     z
+    ret z
         
     cp      #32
-    jr      nz,nospc        ;If space found, set it to 0
+    jr nz,  nospc        ;If space found, set it to 0
                             ;(string terminator)...
     ld      (hl),#0
     inc     hl
@@ -158,30 +158,30 @@ cont:
 
 	;* Place data after program code, and data init code after data
 
-		.area	_CODE
-		.area	_INITIALIZER
+	.area	_CODE
+	.area	_INITIALIZER
 
-		.area	_DATA
+	.area	_DATA
 _heap_top::
 	.dw _HEAP_start
 
-		.area _INITIALIZED
+	.area _INITIALIZED
 
-        .area   _GSINIT
+    .area   _GSINIT
 gsinit::
 .if GLOBALS_INITIALIZER
-        ld	bc,#l__INITIALIZER
-        ld	a,b
-        or	a,c
-        jp	z,gsinext
-        ld	de,#s__INITIALIZED
-        ld	hl,#s__INITIALIZER
-        ldir
+    ld      bc,#l__INITIALIZER
+    ld      a,b
+    or      a,c
+    jp	z,  gsinext
+    ld	    de,#s__INITIALIZED
+    ld      hl,#s__INITIALIZER
+    ldir
 .endif
 
 gsinext:
-        .area   _GSFINAL
-        ret
+    .area   _GSFINAL
+    ret
 
-		.area	_HEAP
+    .area	_HEAP
 _HEAP_start::

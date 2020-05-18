@@ -1,0 +1,62 @@
+;----------------------------------------------------------
+;	ApplicationSettings.txt - by Danilo Angelo, 2020
+;
+;	MSX ROM project general configuration.
+;----------------------------------------------------------
+
+;----------------------------------------------------------
+;	Project Type
+PROJECT_TYPE			ROM
+
+;----------------------------------------------------------
+;	crt0 features
+GLOBALS_INITIALIZER		_ON							; _ON: Includes routine to initialize global variables; _OFF: Don't include
+RETURN_TO_BASIC			_ON							; _ON: Returns to basic; _OFF: Don't return
+STACK_HIMEM				_OFF						; _ON: Sets stack to HIMEM (RETURN_TO_BASIC *MUST* be _OFF); _OFF: Don't set
+SET_PAGE_2				_OFF						; _ON: Enables page 2 on the same slot/subslot as page 1 (useful for 32kb ROMs on pages 1 and 2); _OFF: Leaves page 2 as is
+
+;----------------------------------------------------------
+;	ROM settings
+ROM_SIZE				16k							; 16k/32k
+ROM_FILESTART			0x8000						; Typically, 0x4000 for 32kb ROM or 0x8000 for 16kb ROM
+CALL_EXPANSION			_ON							; _ON: expands BASIC's CALL instruction; _OFF: Don't expand
+DEVICE_EXPANSION		_ON							; _ON: creates BASIC's device; _OFF: Don't create
+BASIC_PROGRAM			0							; 0 -> no BASIC program; other values: BASIC program address
+
+;----------------------------------------------------------
+;	BASIC CALL expansion
+;
+; NOT MANDATORY!
+; Use this to extend the funcionality of
+; BASIC's CALL command
+;
+; BASIC usage example (for the standard app)
+; 10 CALL CMD1:PRINT "Oi."
+; 20 CALL CMD2:PRINT "Ola."
+; 30 CALL CMD1
+; 40 PRINT "Hi."
+; 50 CALL CMD2
+; 60 PRINT "Hello."
+;
+CALL_STATEMENT			CMD1
+CALL_STATEMENT			CMD2
+
+;----------------------------------------------------------
+;	BASIC device expansion
+;
+DEVICE					DEV
+
+;----------------------------------------------------------
+;	Code segment (.area _CODE) start address
+;	If you don't know what you are doing,
+;	LEAVE IT COMMENTED for automatic setting.
+;CODE_LOC				0x4100
+
+;----------------------------------------------------------
+;	Data segment (.area _DATA) start address
+;		0 -> data segment immediately after code
+;		other value -> data segment address
+;	If you don't know what you are doing,
+;	LEAVE IT AT 0xC000 (page 3)
+DATA_LOC				0xC000
+

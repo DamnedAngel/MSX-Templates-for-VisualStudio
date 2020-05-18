@@ -1,28 +1,21 @@
 ;----------------------------------------------------------
-;	MemoryMap.txt - by Danilo Angelo, 2020
+;	ApplicationSettings.txt - by Danilo Angelo, 2020
 ;
-;	Registers addresses of the application
-;	and the routines that will be available for
-;	BASIC USR routines.
+;	MSX BIN project general configuration.
 ;----------------------------------------------------------
 
 ;----------------------------------------------------------
-;	Binary file start address
-FILESTART				0xb000
+;	Project Type
+PROJECT_TYPE			BIN
 
 ;----------------------------------------------------------
-;	Code segment (.area _CODE) start address
-;	If you don't know what you are doing,
-;	LEAVE IT COMMENTED for automatic setting.
-;CODE_LOC				0xb000
+;	crt0 features
+GLOBALS_INITIALIZER		_ON							; _ON: include routine to initialize global variables; _OFF: Don't include
+PUBLISH_FILESTART		_ON							; _ON: register program start address at HIMEM-1; _OFF: Don't register
 
 ;----------------------------------------------------------
-;	Data segment (.area _DATA) start address
-;		0 -> data segment immediately after code
-;		other value -> data segment address
-;	If you don't know what you are doing,
-;	LEAVE IT AT 0 OR COMMENTED for automatic setting.
-;DATA_LOC				0
+;	BIN file settings
+BIN_FILESTART			0xb000
 
 ;----------------------------------------------------------
 ;	BASIC USR routines index
@@ -56,3 +49,17 @@ SYMBOL			_printFromBasic			; USR/USR0
 ;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR7
 ;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR8
 ;SYMBOL/ADDRESS	_xxxxxxxxxxxxxx			; USR9
+
+;----------------------------------------------------------
+;	Code segment (.area _CODE) start address
+;	If you don't know what you are doing,
+;	LEAVE IT COMMENTED for automatic setting.
+;CODE_LOC				0xb000
+
+;----------------------------------------------------------
+;	Data segment (.area _DATA) start address
+;		0 -> data segment immediately after code
+;		other value -> data segment address
+;	If you don't know what you are doing,
+;	LEAVE IT AT 0 OR COMMENTED for automatic setting.
+;DATA_LOC				0

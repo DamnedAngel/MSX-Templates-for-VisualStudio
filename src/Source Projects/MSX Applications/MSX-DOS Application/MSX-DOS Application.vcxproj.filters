@@ -9,9 +9,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ASM Source FIles">
-      <UniqueIdentifier>{52835113-377d-4d52-ba1a-d14fcb244687}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Make">
       <UniqueIdentifier>{3ef91682-59b4-4500-8b1e-472a09b82231}</UniqueIdentifier>
     </Filter>
@@ -22,23 +19,26 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="ASM Source FIles\MSX">
-      <UniqueIdentifier>{5e121c30-2210-4202-8196-2d8ca96c05f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ASM Source FIles\MSX\BIOS">
-      <UniqueIdentifier>{9a550870-19f7-4aa4-9d94-69e2ce1f9403}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ASM Source FIles\Profiling">
-      <UniqueIdentifier>{7615ad5b-1aef-4941-9bfd-f7606082964d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\MSX">
       <UniqueIdentifier>{74a0b57a-c1be-4402-85d0-168788c6be08}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\MSX\BIOS">
       <UniqueIdentifier>{a28f4563-9c19-4eb8-8b3a-b326d570df42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ASM Source FIles\MSX\MSX-DOS">
+    <Filter Include="ASM Source Files">
+      <UniqueIdentifier>{52835113-377d-4d52-ba1a-d14fcb244687}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Source Files\MSX">
+      <UniqueIdentifier>{5e121c30-2210-4202-8196-2d8ca96c05f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Source Files\MSX\BIOS">
+      <UniqueIdentifier>{9a550870-19f7-4aa4-9d94-69e2ce1f9403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Source Files\MSX\MSX-DOS">
       <UniqueIdentifier>{fb61106d-43ca-44a6-804d-3c9e63975b1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Source Files\Profiling">
+      <UniqueIdentifier>{7615ad5b-1aef-4941-9bfd-f7606082964d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -51,13 +51,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="MSX\BIOS\msxbios.s">
-      <Filter>ASM Source FIles\MSX\BIOS</Filter>
+      <Filter>ASM Source Files\MSX\BIOS</Filter>
     </None>
     <None Include="MSX\Profiling\openmsxprofiling.s">
-      <Filter>ASM Source FIles\Profiling</Filter>
+      <Filter>ASM Source Files\Profiling</Filter>
     </None>
     <None Include="targetconfig.s">
-      <Filter>ASM Source FIles</Filter>
+      <Filter>ASM Source Files</Filter>
     </None>
     <None Include="Make\make.bat">
       <Filter>Make</Filter>
@@ -66,13 +66,13 @@
       <Filter>Make</Filter>
     </None>
     <None Include="MSX\MSX-DOS\msxdoscrt0.s">
-      <Filter>ASM Source FIles\MSX\MSX-DOS</Filter>
+      <Filter>ASM Source Files\MSX\MSX-DOS</Filter>
     </None>
     <None Include="msxdosapp.s">
-      <Filter>ASM Source FIles</Filter>
+      <Filter>ASM Source Files</Filter>
     </None>
-    <None Include="memorymap.s">
-      <Filter>ASM Source FIles</Filter>
+    <None Include="applicationsettings.s">
+      <Filter>ASM Source Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -91,10 +91,10 @@
     <Text Include="ApplicationSources.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="MemoryMap.txt">
+    <Text Include="Libraries.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="Libraries.txt">
+    <Text Include="ApplicationSettings.txt">
       <Filter>Project Config</Filter>
     </Text>
   </ItemGroup>

@@ -50,7 +50,7 @@ void print(char* msg) {
 //	This is an example of a C routine accessible by
 //	BASIC USR calls.
 //	Please also check the reference to the routine in 
-//	MemoryMap.txt file.
+//	ApplicationSettings.txt file.
 //	This is only for the demo app.
 //	You can safely remove it for your application.
 void printFromBasic(void) {
