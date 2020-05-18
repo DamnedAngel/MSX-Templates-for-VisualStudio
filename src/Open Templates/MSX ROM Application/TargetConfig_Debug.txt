@@ -1,22 +1,23 @@
 ;----------------------------------------------------------
-;	TargetConfig_Release.txt - by Danilo Angelo, 2020
+;	TargetConfig_Debug.txt - by Danilo Angelo, 2020
 ;
-;	Configuration for the RELEASE profile
+;	Configuration for the DEBUG profile
 ;----------------------------------------------------------
 
 ;----------------------------------------------------------
 ;	Build settings
 .COMPILE
-DEBUG				_OFF						; _OFF: not defined ; _ON: defined; 1-n defined with debug level
-OPENMSX_PROFILING	_OFF						; _ON: enable OpenMSX Profiling routines; _OFF: Disable routines
+DEBUG				1							; _OFF: not defined ; _ON: defined; 1-n defined with debug level
+OPENMSX_PROFILING	_ON							; _ON / _OFF
 
 ;----------------------------------------------------------
 ;	Filesystem settings
 ;	The values below are also default, if ommited.
 .FILESYSTEM
 MSX_FILE_NAME		MSXAPP
-MSX_FILE_EXTENSION  BIN
+MSX_FILE_EXTENSION  ROM
 MSX_BIN_PATH		[PROFILE]\bin
 MSX_OBJ_PATH		[PROFILE]\objs
 MSX_DEV_PATH		..\..\..
 MSX_LIB_PATH		[MSX_DEV_PATH]\libs
+

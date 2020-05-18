@@ -99,25 +99,25 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="applicationsettings.s" />
-    <None Include="msxbinapp.s" />
     <None Include="Make\make.bat" />
     <None Include="Make\symbol.p" />
-    <None Include="MSX\BIN\msxbincrt0.s" />
+    <None Include="msxromapp.s" />
     <None Include="MSX\BIOS\msxbios.s" />
     <None Include="MSX\Profiling\openmsxprofiling.s" />
+    <None Include="MSX\ROM\msxromcrt0.s" />
     <None Include="targetconfig.s" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="ApplicationSettings.txt" />
     <Text Include="ApplicationSources.txt" />
     <Text Include="IncludeDirectories.txt" />
     <Text Include="LibrarySources.txt" />
-    <Text Include="ApplicationSettings.txt" />
     <Text Include="Libraries.txt" />
     <Text Include="TargetConfig_Debug.txt" />
     <Text Include="TargetConfig_Release.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="msxbinapp.c" />
+    <ClCompile Include="msxromapp.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
