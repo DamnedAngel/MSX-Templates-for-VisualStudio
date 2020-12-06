@@ -350,25 +350,6 @@ echo Done building libraries.
 
 :COMPILE
 
-for /F "tokens=*" %%A in (LibrarySources.txt) do (
-	set LIBFILE=%%A
-	if NOT "%LIBFILE:~0,1%"==";" (
-		set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
-		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
-		set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
-		set OBJLIST=!OBJLIST! !RELFILE!
-	)
-)
-
-for /F "tokens=*" %%A in (Libraries.txt) do (
-	set LIBFILE=%%A
-	if NOT "%LIBFILE:~0,1%"==";" (
-		set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
-		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
-		set OBJLIST=!OBJLIST! !LIBFILE!
-	)
-)
-
 echo -----------------------------------------------------------------------------------
 echo Building application modules...
 for /F "tokens=1" %%A in  (ApplicationSources.txt) do  (
@@ -396,6 +377,25 @@ for /F "tokens=1" %%A in  (ApplicationSources.txt) do  (
 	)
 )
 echo Done building application modules.
+
+for /F "tokens=*" %%A in (LibrarySources.txt) do (
+	set LIBFILE=%%A
+	if NOT "%LIBFILE:~0,1%"==";" (
+		set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
+		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
+		set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
+		set OBJLIST=!OBJLIST! !RELFILE!
+	)
+)
+
+for /F "tokens=*" %%A in (Libraries.txt) do (
+	set LIBFILE=%%A
+	if NOT "%LIBFILE:~0,1%"==";" (
+		set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
+		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
+		set OBJLIST=!OBJLIST! !LIBFILE!
+	)
+)
 
 IF "%CODE_LOC%"=="" (
 	echo -----------------------------------------------------------------------------------
