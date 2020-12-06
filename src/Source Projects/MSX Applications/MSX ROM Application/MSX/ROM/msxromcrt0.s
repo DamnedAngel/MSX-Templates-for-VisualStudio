@@ -47,6 +47,8 @@ STR_COMPARE = 0
 ;----------------------------------------------------------
 ;	crt0
 init::
+	call	gsinit
+
 .ifne RETURN_TO_BASIC
 .if STACK_HIMEM
 	di
