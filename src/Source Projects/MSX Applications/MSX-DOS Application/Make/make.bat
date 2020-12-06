@@ -1,7 +1,7 @@
 
 echo -----------------------------------------------------------------------------------
 echo MSX SDCC MAKEFILE by Danilo Angelo, 2020
-echo version 00.04.00 - Codename GZIP ^& BYTE
+echo version 00.04.01 - Codename JUNIOR
 
 set MSX_BUILD_TIME=%TIME% 
 set MSX_BUILD_DATE=%DATE% 
