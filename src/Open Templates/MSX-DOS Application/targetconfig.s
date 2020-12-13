@@ -1,10 +1,10 @@
 ;-------------------------------------------------		
 ; targetconfig.s created automatically by makefile		
-; on 20:29:29.39 , 17-May-20 				
+; on  7:39:43.47 , 13-Dec-20 				
 ;														
 ; DO NOT BOTHER EDITING THIS.							
 ; ALL CHANGES WILL BE LOST.							
 ;-------------------------------------------------		
 														
-DEBUG = 1									
-OPENMSX_PROFILING = 1									
+DEBUG = 0									
+OPENMSX_PROFILING = 0									
