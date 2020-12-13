@@ -193,10 +193,7 @@ for /F "tokens=1,2" %%A in  (ApplicationSettings.txt) do  (
 		if /I ".!TAG!"==".PROJECT_TYPE" (
 REM			echo PROJECT_TYPE = %%B							>> applicationsettings.s
 			set PROJECT_TYPE=%%B
-		) else if /I ".!TAG!"==".BIN_FILESTART" (
-			echo fileStart .equ %%B							>> applicationsettings.s
-			set CODE_LOC=%%B
-		) else if /I ".!TAG!"==".ROM_FILESTART" (
+		) else if /I ".!TAG!"==".FILESTART" (
 			echo fileStart .equ %%B							>> applicationsettings.s
 			set FILE_START=%%B
 		) else if /I ".!TAG!"==".ROM_SIZE" (
