@@ -1,22 +1,11 @@
 ;----------------------------------------------------------
 ;		msxdoscrt0.s - by Danilo Angelo 2020
-;		derived from 
+;
+;		Template for COM (executable) programs for MSX-DOS
+;		Derived from the work of Konamiman/Avelino
 ;			https://github.com/Konamiman/MSX/blob/master/SRC/SDCC/crt0-msxdos/crt0msx_msxdos.asm
 ;			https://github.com/Konamiman/MSX/blob/master/SRC/SDCC/crt0-msxdos/crt0msx_msxdos_advanced.asm
-;		
-;
-;		Template for COM programs for MSX-DOS
 ;----------------------------------------------------------
-
-;--- crt0.asm for MSX-DOS - by Konamiman, 11/2004
-	;    Advanced version: allows "int main(char** argv, int argc)",
-	;    the returned value will be passed to _TERM on DOS 2,
-	;    argv is always 0x100 (the startup code memory is recycled).
-	;
-    ;    Compile programs with --code-loc 0x180 --data-loc X
-    ;    X=0  -> global vars will be placed immediately after code
-    ;    X!=0 -> global vars will be placed at address X
-    ;            (make sure that X>0x100+code size)
 
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
@@ -35,19 +24,19 @@ phrAddr	.equ paramHandlingRoutine
 phrAddr	.equ _HEAP_start
 .endif
 
-	.area _HEADER (ABS)
-	.org    0x0100  ;MSX-DOS .COM programs start address
+
+;   ====================================
+;   ========== HEADER SEGMENT ==========
+;   ====================================
+    .area   _HEADER (ABS,CON)
+	.org    0x0100      ; MSX-DOS .COM programs start address
 
 ;----------------------------------------------------------
-;	Step 1: Initialize globals
-init:
-	call    gsinit
-
-;----------------------------------------------------------
-;	Step 2: Build the parameter pointers table on 0x100,
+;	Step 1: Build the parameter pointers table on 0x100,
 ;    and terminate each parameter with 0.
 ;    MSX-DOS places the command line length at 0x80 (one byte),
 ;    and the command line itself at 0x81 (up to 127 characters).
+params::
 .if CMDLINE_PARAMETERS
     ;* Check if there are any parameters at all
     ld      a,(#0x80)
@@ -134,54 +123,74 @@ parloopend:
     ;* Command line processing done. Here, C=number of parameters.
 
 cont:
-	ld      hl,#0x100
     ld      b,#0
-    push    bc      ;Pass info as parameters to "main"
-    push    hl
+.else
+    ld      bc,#0
 .endif
 
+	ld      hl,#0x100
+    push    bc          ;Pass info as parameters to "main"
+    push    hl
+
 ;----------------------------------------------------------
-;	Step 4: Call the "main" function
+;	Step 2: Initialize globals
+    call    gsinit
+
+;----------------------------------------------------------
+;	Step 3: Run application
 	call    _main
 
 ;----------------------------------------------------------
-;	Step 5: Program termination.
+;	Step 4: Program termination.
 ;	Termination code for DOS 2 was returned on L.         
-    ld      c,#0x62		; DOS 2 function for program termination (_TERM)
+    ld      c,#0x62	    ; DOS 2 function for program termination (_TERM)
     ld      b,l
     call    5			; On DOS 2 this terminates; on DOS 1 this returns...
     ld      c,#0x0
     jp      5			;...and then this one terminates
 						;(DOS 1 function for program termination).
 
-    ;--- Program code and data (global vars) start here
 
-	;* Place data after program code, and data init code after data
+;----------------------------------------------------------
+;	Segments order
+;----------------------------------------------------------
+    .area _CODE
+    .area _HOME
+    .area _GSINIT
+    .area _GSFINAL
+    .area _INITIALIZER
+    .area _DATA
+    .area _INITIALIZED
+    .area _HEAP
 
-	.area	_CODE
-	.area	_INITIALIZER
-
-	.area	_DATA
-_heap_top::
-	.dw _HEAP_start
-
-	.area _INITIALIZED
-
-    .area   _GSINIT
+;   =====================================
+;   ========== GSINIT SEGMENTS ==========
+;   =====================================
+	.area	_GSINIT
 gsinit::
 .if GLOBALS_INITIALIZER
     ld      bc,#l__INITIALIZER
     ld      a,b
     or      a,c
-    jp	z,  gsinext
+    jp	z,  gsinit_next
     ld	    de,#s__INITIALIZED
     ld      hl,#s__INITIALIZER
     ldir
 .endif
 
-gsinext:
-    .area   _GSFINAL
+	.area	_GSFINAL
+gsinit_next:
     ret
 
+;   ==================================
+;   ========== DATA SEGMENT ==========
+;   ==================================
+    .area	_DATA
+_heap_top::
+	.dw     _HEAP_start
+
+;   ==================================
+;   ========== HEAP SEGMENT ==========
+;   ==================================
     .area	_HEAP
 _HEAP_start::
