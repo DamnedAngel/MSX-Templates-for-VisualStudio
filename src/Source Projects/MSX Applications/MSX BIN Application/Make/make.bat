@@ -1,7 +1,7 @@
 
 echo -----------------------------------------------------------------------------------
 echo MSX SDCC MAKEFILE by Danilo Angelo, 2020
-echo version 00.04.00 - Codename GZIP ^& BYTE
+echo version 00.04.01 - Codename JUNIOR
 
 set MSX_BUILD_TIME=%TIME% 
 set MSX_BUILD_DATE=%DATE% 
@@ -193,10 +193,7 @@ for /F "tokens=1,2" %%A in  (ApplicationSettings.txt) do  (
 		if /I ".!TAG!"==".PROJECT_TYPE" (
 REM			echo PROJECT_TYPE = %%B							>> applicationsettings.s
 			set PROJECT_TYPE=%%B
-		) else if /I ".!TAG!"==".BIN_FILESTART" (
-			echo fileStart .equ %%B							>> applicationsettings.s
-			set CODE_LOC=%%B
-		) else if /I ".!TAG!"==".ROM_FILESTART" (
+		) else if /I ".!TAG!"==".FILESTART" (
 			echo fileStart .equ %%B							>> applicationsettings.s
 			set FILE_START=%%B
 		) else if /I ".!TAG!"==".ROM_SIZE" (
@@ -350,25 +347,6 @@ echo Done building libraries.
 
 :COMPILE
 
-for /F "tokens=*" %%A in (LibrarySources.txt) do (
-	set LIBFILE=%%A
-	if NOT "%LIBFILE:~0,1%"==";" (
-		set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
-		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
-		set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
-		set OBJLIST=!OBJLIST! !RELFILE!
-	)
-)
-
-for /F "tokens=*" %%A in (Libraries.txt) do (
-	set LIBFILE=%%A
-	if NOT "%LIBFILE:~0,1%"==";" (
-		set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
-		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
-		set OBJLIST=!OBJLIST! !LIBFILE!
-	)
-)
-
 echo -----------------------------------------------------------------------------------
 echo Building application modules...
 for /F "tokens=1" %%A in  (ApplicationSources.txt) do  (
@@ -396,6 +374,25 @@ for /F "tokens=1" %%A in  (ApplicationSources.txt) do  (
 	)
 )
 echo Done building application modules.
+
+for /F "tokens=*" %%A in (LibrarySources.txt) do (
+	set LIBFILE=%%A
+	if NOT "%LIBFILE:~0,1%"==";" (
+		set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
+		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
+		set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
+		set OBJLIST=!OBJLIST! !RELFILE!
+	)
+)
+
+for /F "tokens=*" %%A in (Libraries.txt) do (
+	set LIBFILE=%%A
+	if NOT "%LIBFILE:~0,1%"==";" (
+		set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
+		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
+		set OBJLIST=!OBJLIST! !LIBFILE!
+	)
+)
 
 IF "%CODE_LOC%"=="" (
 	echo -----------------------------------------------------------------------------------
