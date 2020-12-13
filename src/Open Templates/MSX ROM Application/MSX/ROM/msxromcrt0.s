@@ -10,6 +10,7 @@
 	.include "applicationsettings.s"
 
 	.globl	_main
+
 .if GLOBALS_INITIALIZER
 	.globl  l__INITIALIZER
     .globl  s__INITIALIZED
@@ -21,13 +22,17 @@
 .endif
 
 STR_COMPARE = 0
-	
-	.area _HEADER (ABS)
+
+;   ====================================
+;   ========== HEADER SEGMENT ==========
+;   ====================================
+	.area	_HEADER (ABS)
   	.org	#fileStart
+
 ;----------------------------------------------------------
-;	ROM header
-	.db		#0x41				; ID
-	.db		#0x42				; ID
+;	ROM Header
+	.db		#0x41				; ROM ID
+	.db		#0x42				; ROM ID
 	.dw		#init				; Program start
 .if CALL_EXPANSION
 	.dw		#_call_expansion	; BASIC's CALL instruction expansion routine
@@ -45,8 +50,17 @@ STR_COMPARE = 0
 	.dw		#0x0000				; Reserved
 
 ;----------------------------------------------------------
-;	crt0
+;	Step 1: Initialize heap pointer
 init::
+	ld		hl, #_HEAP_start
+	ld		(#_heap_top), hl
+
+;----------------------------------------------------------
+;	Step 2: Initialize globals
+    call    gsinit
+
+;----------------------------------------------------------
+;	Step 3: Sets stack to HIMEM
 .ifne RETURN_TO_BASIC
 .if STACK_HIMEM
 	di
@@ -55,6 +69,9 @@ init::
 .endif
 .endif
 
+;----------------------------------------------------------
+;	Step 4: Enables page 2 on the same slot/subslot as page 1
+;           (useful for 32kb ROMs on pages 1 and 2)
 .if SET_PAGE_2
 	di
 	call	#BIOS_RSLREG
@@ -81,6 +98,8 @@ init::
 	ei
 .endif
 
+;----------------------------------------------------------
+;	Step 5: Run application
 .if RETURN_TO_BASIC
 	jp		_main
 .else
@@ -88,6 +107,23 @@ init::
 	RST		0 ;CHKRAM
 .endif 
 
+;----------------------------------------------------------
+;	Segments order
+;----------------------------------------------------------
+	.area _CODE
+	.area _HOME
+	.area _GSINIT
+	.area _GSFINAL
+	.area _INITIALIZER
+	.area _ROMDATA
+	.area _DATA
+	.area _INITIALIZED
+	.area _HEAP
+
+;   ==================================
+;   ========== HOME SEGMENT ==========
+;   ==================================
+	.area _HOME
 .if CALL_EXPANSION
 STR_COMPARE = 1
 _call_expansion::
@@ -232,37 +268,28 @@ compareString::
 	jr		compareString
 .endif
 
-;----------------------------------------------------------
-;	Order of other segments
-	.area	_CODE
-		.area   _GSINIT
-		.area   _GSFINAL
-		.area	_INITIALIZER
-		.area	_ROMDATA
-	.area	_DATA
-		.area	_INITIALIZED
-		.area	_HEAP	
-
-;----------------------------------------------------------
-;	Variable initializer
-	.area   _GSINIT
+;   =====================================
+;   ========== GSINIT SEGMENTS ==========
+;   =====================================
+	.area	_GSINIT
 gsinit::
-	ld		hl, #_HEAP_start
-	ld		(#_heap_top), hl
 .if GLOBALS_INITIALIZER
-	ld		bc, #l__INITIALIZER
-	ld		a, b
-	or		a, c
-	jp		z,_main
-	ld		de, #s__INITIALIZED
-	ld		hl, #s__INITIALIZER
-	ldir
+    ld      bc,#l__INITIALIZER
+    ld      a,b
+    or      a,c
+    jp	z,  gsinit_next
+    ld	    de,#s__INITIALIZED
+    ld      hl,#s__INITIALIZER
+    ldir
 .endif
 
-gsinext:
-	.area   _GSFINAL
-	jp		_main
-
+	.area	_GSFINAL
+gsinit_next:
+    ret
+	
+;   ======================================
+;   ========== ROM_DATA SEGMENT ==========
+;   ======================================
 	.area	_ROMDATA
 .if CALL_EXPANSION
 	MCR_CALLEXPANSIONINDEX
@@ -272,11 +299,15 @@ gsinext:
 	MCR_DEVICEEXPANSIONINDEX
 .endif
 
+;   ==================================
+;   ========== DATA SEGMENT ==========
+;   ==================================
 	.area	_DATA
 _heap_top::
 	.blkw	1
 
-	.area	_INITIALIZED
-
+;   ==================================
+;   ========== HEAP SEGMENT ==========
+;   ==================================
 	.area	_HEAP
 _HEAP_start::
