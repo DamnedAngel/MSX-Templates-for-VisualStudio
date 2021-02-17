@@ -19,7 +19,6 @@ with open(path.join(sys.argv[1], sys.argv[2]) + '.map', 'r') as f2:
 			if is_hex(words[0]):
 				f1.write(words[1] + ': equ ' + words[0] + "H\n")
 
-f2.close()
 f1.close()
 
 exit()
