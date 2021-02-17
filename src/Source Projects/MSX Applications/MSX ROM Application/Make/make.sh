@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo -----------------------------------------------------------------------------------
-echo MSX SDCC MAKEFILE by Danilo Angelo, 2020
+echo MSX SDCC MAKEFILE Copyright © 2020-2021 Danilo Angelo, 2021 Pedro Medeiros
 echo version 00.04.01 - Codename JUNIOR
 
 # retrieve current environment directory
