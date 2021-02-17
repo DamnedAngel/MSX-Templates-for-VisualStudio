@@ -187,7 +187,7 @@ build_bin () {
     echo -----------------------------------------------------------------------------------
     
     echo Building symbol file...
-    python Make/symbol.p "$MSX_OBJ_PATH/" "$MSX_FILE_NAME"
+    python Make/symbol.py "$MSX_OBJ_PATH/" "$MSX_FILE_NAME"
     if [[ $? -ne 0 ]]; then
         echo FAIL!
         exit $?
