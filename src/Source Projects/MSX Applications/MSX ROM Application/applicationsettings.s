@@ -1,7 +1,7 @@
 ;-------------------------------------------------		
 ; applicationsettings.s created automatically			
 ; by makefile											
-; on 20:48:31.45 , 12-Dec-20 				
+; on 10:42:53.44 , 21-Feb-21 				
 ;														
 ; DO NOT BOTHER EDITING THIS.							
 ; ALL CHANGES WILL BE LOST.							

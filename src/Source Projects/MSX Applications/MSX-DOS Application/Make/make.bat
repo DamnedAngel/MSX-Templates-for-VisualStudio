@@ -447,7 +447,7 @@ EXIT %errorlevel%
 echo Done moving binary.
 echo -----------------------------------------------------------------------------------
 echo Building symbol file...
-python Make\symbol.p %MSX_OBJ_PATH%\ %MSX_FILE_NAME%
+python Make\symbol.py %MSX_OBJ_PATH%\ %MSX_FILE_NAME%
 if %errorlevel% NEQ 0 (
 echo FAIL!
 EXIT %errorlevel%
