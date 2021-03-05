@@ -9,4 +9,3 @@
 ;[MSX_LIB_PATH]\msxdos
 ;[MSX_LIB_PATH]\util
 ;[MSX_LIB_PATH]\fusion-c\header
-

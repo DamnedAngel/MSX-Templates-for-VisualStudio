@@ -59,4 +59,3 @@ DEVICE					DEV
 ;	If you don't know what you are doing,
 ;	LEAVE IT AT 0xC000 (page 3)
 DATA_LOC				0xC000
-

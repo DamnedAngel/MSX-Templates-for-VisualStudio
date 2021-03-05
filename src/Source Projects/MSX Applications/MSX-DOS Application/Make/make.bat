@@ -1,7 +1,7 @@
 
 echo -----------------------------------------------------------------------------------
-echo MSX SDCC MAKEFILE by Danilo Angelo, 2020
-echo version 00.04.01 - Codename JUNIOR
+echo  MSX SDCC MAKEFILE Copyright (C) 2020-2021 Danilo Angelo
+echo version 00.05.00 - Codename Mac'n'Tux
 
 set MSX_BUILD_TIME=%TIME% 
 set MSX_BUILD_DATE=%DATE% 
@@ -188,7 +188,6 @@ echo.														>> applicationsettings.s
 
 for /F "tokens=1,2" %%A in  (ApplicationSettings.txt) do  (
 	set TAG=%%A
-	echo !TAG!
 	if NOT "!TAG:~0,1!"==";" (
 		if /I ".!TAG!"==".PROJECT_TYPE" (
 REM			echo PROJECT_TYPE = %%B							>> applicationsettings.s
@@ -305,15 +304,18 @@ if /I not "%3"=="all" GOTO END
 
 :BUILD
 echo -----------------------------------------------------------------------------------
-echo Collecting Include Directories...
+echo Collecting include cirectories...
 for /F "tokens=*" %%A in (IncludeDirectories.txt) do (
 	set INCDIR=%%A
 	if NOT "%INCDIR:~0,1%"==";" (
 		set INCDIR=!INCDIR:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
 		set INCDIR=!INCDIR:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
 		set INCDIRS=!INCDIRS! -I!INCDIR!
+		echo Collected !INCDIR!
 	)
 )
+
+echo Done collecting include directories.
 
 if "%2"=="" GOTO COMPILE
 if /I "%2"=="all" GOTO ALL
@@ -357,11 +359,9 @@ for /F "tokens=1" %%A in  (ApplicationSources.txt) do  (
 		set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 		if /I "%%~xA"==".c" (
 			<NUL set /p=Processing C file !APPFILE!... 
-			echo sdcc -mz80 -c %INCDIRS% -o !RELFILE! !APPFILE!
 			sdcc -mz80 -c %INCDIRS% -o !RELFILE! !APPFILE!
 		) else (
 			<NUL set /p=Processing ASM file !APPFILE!... 
-			echo sdasz80 -o !RELFILE! !APPFILE!
 			sdasz80 -o !RELFILE! !APPFILE!
 		)
 		if !errorlevel! NEQ 0 (
@@ -375,6 +375,9 @@ for /F "tokens=1" %%A in  (ApplicationSources.txt) do  (
 )
 echo Done building application modules.
 
+echo -----------------------------------------------------------------------------------
+echo Collecting libraries...
+
 for /F "tokens=*" %%A in (LibrarySources.txt) do (
 	set LIBFILE=%%A
 	if NOT "%LIBFILE:~0,1%"==";" (
@@ -382,6 +385,7 @@ for /F "tokens=*" %%A in (LibrarySources.txt) do (
 		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
 		set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 		set OBJLIST=!OBJLIST! !RELFILE!
+		echo Collected !RELFILE!
 	)
 )
 
@@ -391,8 +395,11 @@ for /F "tokens=*" %%A in (Libraries.txt) do (
 		set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
 		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
 		set OBJLIST=!OBJLIST! !LIBFILE!
+		echo Collected !LIBFILE!
 	)
 )
+
+echo Done collecting libraries.
 
 IF "%CODE_LOC%"=="" (
 	echo -----------------------------------------------------------------------------------
