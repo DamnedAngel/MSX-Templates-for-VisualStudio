@@ -97,7 +97,7 @@ compile () {
             if [[ ".$FILEEXT" == '.c' ]]; then
                 echo -n "Processing C file $(basename "$APPFILE")... "
                 TMPFILE=$(mktemp $(basename "$RELFILE.XXXXX"))
-                sdcc -mz80 -c $INCDIRS -o "$RELFILE" "$APPFILE" 2> "$TMPFILE"
+                eval "sdcc -mz80 -c $INCDIRS -o $RELFILE $APPFILE 2> $TMPFILE"
             else
                 echo -n "Processing ASM file $(basename "$APPFILE")... "
                 TMPFILE=$(mktemp $(basename "$RELFILE.XXXXX"))
@@ -438,7 +438,7 @@ while read -r INCDIR; do
     if [[ -n $INCDIR && ${INCDIR:0:1} != ';' ]]; then
         INCDIR=$(path_replace "$INCDIR" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
         INCDIR=$(path_replace "$INCDIR" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
-        INCDIRS="$INCDIRS -I'$INCDIR'"
+        INCDIRS="$INCDIRS -I'"$INCDIR"'"
         echo Collected $INCDIR
     fi
 done < IncludeDirectories.txt

@@ -50,7 +50,7 @@ DEVICE					DEV
 ;	Code segment (.area _CODE) start address
 ;	If you don't know what you are doing,
 ;	LEAVE IT COMMENTED for automatic setting.
-;CODE_LOC				0x4100
+;CODE_LOC				0x8100
 
 ;----------------------------------------------------------
 ;	Data segment (.area _DATA) start address
