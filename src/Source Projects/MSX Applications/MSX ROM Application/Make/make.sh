@@ -16,6 +16,7 @@ MSX_OBJ_PATH=$PROFILE/objs
 MSX_BIN_PATH=$PROFILE/bin
 MSX_DEV_PATH=../../..
 MSX_LIB_PATH=$MSX_DEV_PATH/libs
+DEBUG=0
 
 OBJLIST=
 INCDIRS=
@@ -34,6 +35,11 @@ path_replace () {
     P1=${1//\\//} # replace windows directory sep
     P1=${P1/"$2"/$3}
     echo "$P1"
+}
+
+_exec () {
+    cmmd=$1 && shift
+    eval DEBUG=$DEBUG $cmmd "$@"
 }
 
 create_dir_struct() {
@@ -61,22 +67,20 @@ build_lib () {
             RELFILE="$MSX_OBJ_PATH"/$(basename "${LIBFILE%.*}").rel
             FILEEXT=$(basename "${LIBFILE/*./}")
             if [[ ".$FILEEXT" == '.c' ]]; then
-                echo -n "Processing C file $(basename "$LIBFILE")... "
-                TMPFILE=$(mktemp $(basename "$RELFILE.XXXXX"))
-                sdcc -mz80 -c $INCDIRS -o "$RELFILE" "$LIBFILE" 2> "$TMPFILE"
+                echo "Processing C file $(basename "$LIBFILE")... "
+                OUTPUT=$(_exec Make/sdcc -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'")
             else
-                echo -n "Processing ASM file $(basename "$LIBFILE")... "
-                TMPFILE=$(mktemp $(basename "$RELFILE.XXXXX"))
-                sdasz80 -o "$RELFILE" "$LIBFILE" 2> "$TMPFILE"
+                echo "Processing ASM file $(basename "$LIBFILE")... "
+                OUTPUT=$(_exec Make/sdasz80 -o "'$RELFILE'" "'$LIBFILE'")
             fi
             if [[ $? -ne 0 ]]; then
                 echo FAIL!
                 echo Failed building $(basename "$LIBFILE"):
-                cat "$TMPFILE"
-                rm "$TMPFILE"
+                echo "$OUTPUT"
                 exit $?
             fi
-            rm "$TMPFILE"
+
+            [[ $DEBUG -eq 1 ]] && echo "$OUTPUT"
             echo Done.
     fi
     done < LibrarySources.txt
@@ -87,7 +91,7 @@ compile () {
     echo -----------------------------------------------------------------------------------
     echo Building application modules...
     
-    OBJLIST=
+    let I=0
     while read -r APPFILE; do
         if [[ -n $APPFILE && ${APPFILE:0:1} != ';' ]]; then
             APPFILE=$(path_replace "$APPFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
@@ -95,24 +99,23 @@ compile () {
             RELFILE="$MSX_OBJ_PATH"/$(basename "${APPFILE/.*/}").rel
             FILEEXT=$(basename "${APPFILE/*./}")
             if [[ ".$FILEEXT" == '.c' ]]; then
-                echo -n "Processing C file $(basename "$APPFILE")... "
-                TMPFILE=$(mktemp $(basename "$RELFILE.XXXXX"))
-                eval "sdcc -mz80 -c $INCDIRS -o $RELFILE $APPFILE 2> $TMPFILE"
+                echo "Processing C file $(basename "$APPFILE")... "
+                OUTPUT=$(_exec Make/sdcc -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'")
             else
-                echo -n "Processing ASM file $(basename "$APPFILE")... "
-                TMPFILE=$(mktemp $(basename "$RELFILE.XXXXX"))
-                sdasz80 -o "$RELFILE" "$APPFILE" 2> "$TMPFILE"
+                echo "Processing ASM file $(basename "$APPFILE")... "
+                OUTPUT=$(_exec Make/sdasz80 -o "'$RELFILE'" "'$APPFILE'")
             fi
             if [[ $? -ne 0 ]]; then
                 echo FAIL!
                 echo Failed building $(basename "$APPFILE"):
-                cat "$TMPFILE"
-                rm "$TMPFILE"
+                echo "$OUTPUT"
                 exit $?
             fi
-            rm "$TMPFILE"
+
+            [[ $DEBUG -eq 1 ]] && echo "$OUTPUT"
             echo Done.
-            OBJLIST="$OBJLIST '$RELFILE'"
+            OBJLIST[$I]="'$RELFILE'"
+            I+=1
         fi
     done < ApplicationSources.txt
     echo Done building application modules.
@@ -120,12 +123,13 @@ compile () {
     echo -----------------------------------------------------------------------------------
     echo Collecting libraries...
 
+    let I=0
     while read -r LIBFILE; do
         if [[ -n $LIBFILE && ${LIBFILE:0:1} != ';' ]]; then
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
             RELFILE="$MSX_OBJ_PATH"/$(basename "${LIBFILE%.*}").rel
-            OBJLIST="$OBJLIST '$RELFILE'"
+            OBJLIST[$I]="'$RELFILE'"
             echo Collected $(basename "$RELFILE")
         fi
     done < LibrarySources.txt
@@ -134,7 +138,7 @@ compile () {
         if [[ -n $LIBFILE && ${LIBFILE:0:1} != ';' ]]; then
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
-            OBJLIST="$OBJLIST '$LIBFILE'"
+            OBJLIST[$I]="'$LIBFILE'"
             echo Collected $(basename "$LIBFILE")
         fi
     done < Libraries.txt
@@ -145,13 +149,13 @@ compile () {
         echo -----------------------------------------------------------------------------------
         echo Determining CODE-LOC...
         for FILE in "$MSX_OBJ_PATH"/msx*crt0.rel; do
-            echo Analysing $FILE...
+            echo Analysing \"$FILE\"...
             while read -r F1 F2 F3 F4 F5; do
                 if [[ $F2 == '_HEADER0' ]]; then
                     HEADER_SIZE_DEC=$((0x${F4}))
                     CODE_LOC_DEC=$(($FILE_START + $HEADER_SIZE_DEC))
                 fi
-            done < $FILE
+            done < "$FILE"
         done
 
 		HEADER_SIZE=$(printf '0x%04x' "$HEADER_SIZE_DEC")
@@ -163,11 +167,13 @@ compile () {
     
     echo -----------------------------------------------------------------------------------
     echo Compiling...
-    echo sdcc --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 $OBJLIST $INCDIRS -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
-    eval sdcc --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 $OBJLIST $INCDIRS -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
+    echo sdcc --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 ${OBJLIST[*]} ${INCDIRS[*]} -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
+    OUTPUT=$(_exec Make/sdcc --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 ${OBJLIST[*]} ${INCDIRS[*]} -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'")
     if [[ $? -ne 0 ]]; then
         exit $?
     fi
+
+    [[ $DEBUG -eq 1 ]] && echo "$OUTPUT"
     echo Done compiling.
 }
 
@@ -176,15 +182,17 @@ build_bin () {
     if [[ -z $BIN_SIZE ]]; then
         echo Generating $MSX_FILE_EXTENSION binary...
         echo hex2bin -e $MSX_FILE_EXTENSION "$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx"
-        hex2bin -e $MSX_FILE_EXTENSION "$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx"
+        OUTPUT=$(_exec Make/hex2bin -e $MSX_FILE_EXTENSION "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'")
     else
         echo Generating $MSX_FILE_EXTENSION binary of $((16#$BIN_SIZE)) bytes in length...
         echo hex2bin -e $MSX_FILE_EXTENSION -l $BIN_SIZE "$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx"
-        hex2bin -e $MSX_FILE_EXTENSION -l $BIN_SIZE "$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx"
+        OUTPUT=$(_exec Make/hex2bin -e $MSX_FILE_EXTENSION -l $BIN_SIZE "'$MSX_OBJ_PATH'/'$MSX_FILE_NAME.ihx'")
     fi
     if [[ $? -ne 0 ]]; then
         exit $?
     fi
+
+    [[ $DEBUG -eq 1 ]] && echo "$OUTPUT"
     echo Done generating library.
     
     echo -----------------------------------------------------------------------------------
@@ -259,6 +267,9 @@ while read -r HEAD REST; do
             else
                 echo "#define $HEAD $REST"                  >> targetconfig.h
                 echo $HEAD = $REST                          >> targetconfig.s
+            fi
+            if [[ $HEAD == 'DEBUG' ]]; then
+                DEBUG=$REST # activate debug when compiling too.
             fi
         elif [[ $TARGET_SECTION == '.FILESYSTEM' ]]; then
             # replaces PROFILE
@@ -339,35 +350,35 @@ do
             echo PARAM_HANDLING_ROUTINE = $REST             >> applicationsettings.s
         elif [[ $HEAD == 'SYMBOL' ]]; then
             if [[ ! -f $MSX_OBJ_PATH/bin_usrcalls.tmp ]]; then
-                echo                                        >> $MSX_OBJ_PATH/bin_usrcalls.tmp
+                echo                                        >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
             fi
-            echo .globl $REST                               >> $MSX_OBJ_PATH/bin_usrcalls.tmp
-            echo .dw $REST                                  >> $MSX_OBJ_PATH/bin_usrcalls.tmp
+            echo .globl $REST                               >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
+            echo .dw $REST                                  >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
         elif [[ $HEAD == 'ADDRESS' ]]; then
             if [[ ! -f $MSX_OBJ_PATH/bin_usrcalls.tmp ]]; then
-                echo                                        >> $MSX_OBJ_PATH/bin_usrcalls.tmp
+                echo                                        >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
             fi
-            echo .dw $REST                                  >> $MSX_OBJ_PATH/bin_usrcalls.tmp
+            echo .dw $REST                                  >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
         elif [[ $HEAD == 'CALL_STATEMENT' ]]; then
             if [[ ! -f $MSX_OBJ_PATH/rom_callexpansionindex.tmp ]]; then
-                echo callStatementIndex::                   >> $MSX_OBJ_PATH/rom_callexpansionindex.tmp
+                echo callStatementIndex::                   >> "$MSX_OBJ_PATH"/rom_callexpansionindex.tmp
             fi
-            echo .dw        callStatement_$REST             >> $MSX_OBJ_PATH/rom_callexpansionindex.tmp
-            echo .globl     _onCall$REST                    >> $MSX_OBJ_PATH/rom_callexpansionhandler.tmp
-            echo callStatement_$REST::                      >> $MSX_OBJ_PATH/rom_callexpansionhandler.tmp
-            echo ".ascii    '$REST\\0'"                     >> $MSX_OBJ_PATH/rom_callexpansionhandler.tmp
-            echo .dw        _onCall$REST                    >> $MSX_OBJ_PATH/rom_callexpansionhandler.tmp
+            echo .dw        callStatement_$REST             >> "$MSX_OBJ_PATH"/rom_callexpansionindex.tmp
+            echo .globl     _onCall$REST                    >> "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
+            echo callStatement_$REST::                      >> "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
+            echo ".ascii    '$REST\\0'"                     >> "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
+            echo .dw        _onCall$REST                    >> "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
         elif [[ $HEAD == 'DEVICE' ]]; then
             if [[ ! -f $MSX_OBJ_PATH/rom_deviceexpansionindex.tmp ]]; then
-                echo deviceIndex::                          >> $MSX_OBJ_PATH/rom_deviceexpansionindex.tmp
+                echo deviceIndex::                          >> "$MSX_OBJ_PATH"/rom_deviceexpansionindex.tmp
             fi
-            echo .dw        device_$REST                    >> $MSX_OBJ_PATH/rom_deviceexpansionindex.tmp
-            echo .globl     _onDevice${REST}_IO             >> $MSX_OBJ_PATH/rom_deviceexpansionhandler.tmp
-            echo .globl     _onDevice${REST}_getId          >> $MSX_OBJ_PATH/rom_deviceexpansionhandler.tmp
-            echo device_$REST::                             >> $MSX_OBJ_PATH/rom_deviceexpansionhandler.tmp
-            echo ".ascii     '$REST\\0'"                    >> $MSX_OBJ_PATH/rom_deviceexpansionhandler.tmp
-            echo .dw        _onDevice${REST}_IO             >> $MSX_OBJ_PATH/rom_deviceexpansionhandler.tmp
-            echo .dw        _onDevice${REST}_getId          >> $MSX_OBJ_PATH/rom_deviceexpansionhandler.tmp
+            echo .dw        device_$REST                    >> "$MSX_OBJ_PATH"/rom_deviceexpansionindex.tmp
+            echo .globl     _onDevice${REST}_IO             >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+            echo .globl     _onDevice${REST}_getId          >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+            echo device_$REST::                             >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+            echo ".ascii     '$REST\\0'"                    >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+            echo .dw        _onDevice${REST}_IO             >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+            echo .dw        _onDevice${REST}_getId          >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
         else
             if [[ $REST == '_off' ]]; then
                 echo $HEAD = 0                              >> applicationsettings.s
@@ -433,13 +444,13 @@ fi
 echo -----------------------------------------------------------------------------------
 echo Collecting include directories...
 
-INCDIRS=
+let I=0
 while read -r INCDIR; do
     if [[ -n $INCDIR && ${INCDIR:0:1} != ';' ]]; then
         INCDIR=$(path_replace "$INCDIR" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
         INCDIR=$(path_replace "$INCDIR" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
-        INCDIRS="$INCDIRS -I'"$INCDIR"'"
-        echo Collected $INCDIR
+        INCDIRS[$I]="-I'$INCDIR'"
+        I+=1
     fi
 done < IncludeDirectories.txt
 
