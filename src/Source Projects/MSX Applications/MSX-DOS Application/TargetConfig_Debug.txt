@@ -8,7 +8,9 @@
 ;	Build settings
 .COMPILE
 DEBUG				1							; _OFF: not defined ; _ON: defined; 1-n defined with debug level
+BUILD_DEBUG			10							; _ON: show parameters as received by sdcc, sdasz80 and hex2bin; _OFF: hide parameters
 OPENMSX_PROFILING	_ON							; _ON: enable OpenMSX Profiling routines; _OFF: Disable routines
+
 
 ;----------------------------------------------------------
 ;	Filesystem settings

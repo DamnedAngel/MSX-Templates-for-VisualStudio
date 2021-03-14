@@ -349,3 +349,8 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# MacOS folder attributes
+.[Dd][Ss]_[Ss]tore
+csx/
+*.build.csdef

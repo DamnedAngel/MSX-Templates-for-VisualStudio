@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-echo -----------------------------------------------------------------------------------
-echo MSX SDCC MAKEFILE Copyright © 2020-2021 Danilo Angelo, 2021 Pedro Medeiros
-echo version 00.05.00 - Codename Mac\'n\'Tux
-
 IFS=$' \t\r\n'
 
 # retrieve current environment directory
@@ -16,7 +12,6 @@ MSX_OBJ_PATH=$PROFILE/objs
 MSX_BIN_PATH=$PROFILE/bin
 MSX_DEV_PATH=../../..
 MSX_LIB_PATH=$MSX_DEV_PATH/libs
-DEBUG=0
 
 OBJLIST=
 INCDIRS=
@@ -26,6 +21,21 @@ FILE_START=0x0100
 CODE_LOC=
 DATA_LOC=0
 PARAM_HANDLING_ROUTINE=0
+
+DBG_MUTE=0
+DBG_ERROR=10
+DBG_OPENING=40
+DBG_STEPS=50
+DBG_SETTING=70
+DBG_OUTPUT=100
+DBG_DETAIL=120
+DBG_CALL1=150
+DBG_CALL2=160
+DBG_CALL3=170
+DBG_EXTROVERT=200
+DBG_PARAMS=230
+DBG_VERBOSE=255
+BUILD_DEBUG=$DBG_CALL2
 
 #
 # Functions
@@ -37,29 +47,51 @@ path_replace () {
     echo "$P1"
 }
 
+debug () {
+    dbg=$1 && shift
+    [[ "$dbg" -le "$BUILD_DEBUG" ]] && echo $@
+}
+
 _exec () {
-    cmmd=$1 && shift
-    eval DEBUG=$DEBUG $cmmd "$@"
+    dbg=$1 && shift
+    debug $dbg ">> $@"
+    if [[ "$DBG_PARAMS" -le "$BUILD_DEBUG" ]]; then
+        for ((I=1; I<=${#@}; ++I)); do
+            echo "ARG[$I]=${!I}"
+        done
+    fi
+    OUTPUT=$(eval BUILD_DEBUG=$BUILD_DEBUG "$@")
+    err=$?
+    if [[ $err -ne 0 ]]; then
+        [[ "$DBG_ERROR" -le "$BUILD_DEBUG" ]] && echo "$OUTPUT"
+        debug $DBG_ERROR "### Error $err executing"
+        debug $DBG_ERROR "### $@"
+        exit $err
+    fi
+    if [[ "$DBG_OUTPUT" -le "$BUILD_DEBUG" ]]; then
+        [[ ! -z $OUTPUT ]] && echo "$OUTPUT"
+    fi
+    return 0
 }
 
 create_dir_struct() {
     if [[ ! -d $MSX_OBJ_PATH ]]; then
-        echo -----------------------------------------------------------------------------------
-        echo Creating OBJ path...
-        mkdir -p "$MSX_OBJ_PATH"
-        echo Done creating OBJ path.
+        debug $DBG_STEPS -------------------------------------------------------------------------------
+        debug $DBG_STEPS Creating OBJ path...
+        _exec $DBG_EXTROVERT mkdir -p "$MSX_OBJ_PATH"
+        debug $DBG_STEPS Done creating OBJ path.
     fi
     if [[ ! -d $MSX_BIN_PATH ]]; then
-        echo -----------------------------------------------------------------------------------
-        echo Creating BIN path...
-        mkdir -p "$MSX_BIN_PATH"
-        echo Done creating BIN path.
+        debug $DBG_STEPS -------------------------------------------------------------------------------
+        debug $DBG_STEPS Creating BIN path...
+        _exec $DBG_EXTROVERT mkdir -p "$MSX_BIN_PATH"
+        debug $DBG_STEPS Done creating BIN path.
     fi
 }
 
 build_lib () {
-    echo -----------------------------------------------------------------------------------
-    echo Building libraries...
+    debug $DBG_STEPS -------------------------------------------------------------------------------
+    debug $DBG_STEPS Building libraries...
     while read -r LIBFILE; do
         if [[ -n $LIBFILE && ${LIBFILE:0:1} != ';' ]]; then
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
@@ -67,29 +99,20 @@ build_lib () {
             RELFILE="$MSX_OBJ_PATH"/$(basename "${LIBFILE%.*}").rel
             FILEEXT=$(basename "${LIBFILE/*./}")
             if [[ ".$FILEEXT" == '.c' ]]; then
-                echo "Processing C file $(basename "$LIBFILE")... "
-                OUTPUT=$(_exec Make/sdcc -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'")
+                debug $DBG_DETAIL "Processing C file $(basename "$LIBFILE")... "
+                _exec $DBG_CALL3 sdcc -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'"
             else
-                echo "Processing ASM file $(basename "$LIBFILE")... "
-                OUTPUT=$(_exec Make/sdasz80 -o "'$RELFILE'" "'$LIBFILE'")
+                debug $DBG_DETAIL "Processing ASM file $(basename "$LIBFILE")... "
+                _exec $DBG_CALL3 sdasz80 -o "'$RELFILE'" "'$LIBFILE'"
             fi
-            if [[ $? -ne 0 ]]; then
-                echo FAIL!
-                echo Failed building $(basename "$LIBFILE"):
-                echo "$OUTPUT"
-                exit $?
-            fi
-
-            [[ $DEBUG -eq 1 ]] && echo "$OUTPUT"
-            echo Done.
-    fi
+        fi
     done < LibrarySources.txt
-    echo Done building libraries.
+    debug $DBG_STEPS Done building libraries.
 }
 
 compile () {
-    echo -----------------------------------------------------------------------------------
-    echo Building application modules...
+    debug $DBG_STEPS -------------------------------------------------------------------------------
+    debug $DBG_STEPS Building application modules...
     
     let I=0
     while read -r APPFILE; do
@@ -99,29 +122,20 @@ compile () {
             RELFILE="$MSX_OBJ_PATH"/$(basename "${APPFILE/.*/}").rel
             FILEEXT=$(basename "${APPFILE/*./}")
             if [[ ".$FILEEXT" == '.c' ]]; then
-                echo "Processing C file $(basename "$APPFILE")... "
-                OUTPUT=$(_exec Make/sdcc -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'")
+                debug $DBG_DETAIL "Processing C file $(basename "$APPFILE")... "
+                _exec $DBG_CALL3 sdcc -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
             else
-                echo "Processing ASM file $(basename "$APPFILE")... "
-                OUTPUT=$(_exec Make/sdasz80 -o "'$RELFILE'" "'$APPFILE'")
+                debug $DBG_DETAIL "Processing ASM file $(basename "$APPFILE")... "
+                _exec $DBG_CALL3 sdasz80 -o "'$RELFILE'" "'$APPFILE'"
             fi
-            if [[ $? -ne 0 ]]; then
-                echo FAIL!
-                echo Failed building $(basename "$APPFILE"):
-                echo "$OUTPUT"
-                exit $?
-            fi
-
-            [[ $DEBUG -eq 1 ]] && echo "$OUTPUT"
-            echo Done.
             OBJLIST[$I]="'$RELFILE'"
             I+=1
         fi
     done < ApplicationSources.txt
-    echo Done building application modules.
+    debug $DBG_STEPS Done building application modules.
     
-    echo -----------------------------------------------------------------------------------
-    echo Collecting libraries...
+    debug $DBG_STEPS -------------------------------------------------------------------------------
+    debug $DBG_STEPS Collecting libraries...
 
     let I=0
     while read -r LIBFILE; do
@@ -130,7 +144,7 @@ compile () {
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
             RELFILE="$MSX_OBJ_PATH"/$(basename "${LIBFILE%.*}").rel
             OBJLIST[$I]="'$RELFILE'"
-            echo Collected $(basename "$RELFILE")
+            debug $DBG_DETAIL Collected $(basename "$RELFILE")
         fi
     done < LibrarySources.txt
     
@@ -139,17 +153,16 @@ compile () {
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
             OBJLIST[$I]="'$LIBFILE'"
-            echo Collected $(basename "$LIBFILE")
+            debug $DBG_DETAIL Collected $(basename "$LIBFILE")
         fi
     done < Libraries.txt
-
-    echo Done collecting libraries.
+    debug $DBG_STEPS Done collecting libraries.
     
     if [[ -z $CODE_LOC ]]; then
-        echo -----------------------------------------------------------------------------------
-        echo Determining CODE-LOC...
+        debug $DBG_STEPS -------------------------------------------------------------------------------
+        debug $DBG_STEPS Determining CODE-LOC...
         for FILE in "$MSX_OBJ_PATH"/msx*crt0.rel; do
-            echo Analysing \"$FILE\"...
+            debug $DBG_OUTPUT Analysing \"$FILE\"...
             while read -r F1 F2 F3 F4 F5; do
                 if [[ $F2 == '_HEADER0' ]]; then
                     HEADER_SIZE_DEC=$((0x${F4}))
@@ -160,68 +173,47 @@ compile () {
 
 		HEADER_SIZE=$(printf '0x%04x' "$HEADER_SIZE_DEC")
 		CODE_LOC=$(printf '0x%04x' "$CODE_LOC_DEC")
-        echo FILE_START is $FILE_START.
-        echo _HEADER segment size is $HEADER_SIZE.
-        echo CODE-LOC determined to be $CODE_LOC.
+        debug $DBG_OUTPUT FILE_START is $FILE_START.
+        debug $DBG_OUTPUT _HEADER segment size is $HEADER_SIZE.
+        debug $DBG_OUTPUT CODE-LOC determined to be $CODE_LOC.
     fi
+    debug $DBG_STEPS Done determining CODE-LOC.
     
-    echo -----------------------------------------------------------------------------------
-    echo Compiling...
-    echo sdcc --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 ${OBJLIST[*]} ${INCDIRS[*]} -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
-    OUTPUT=$(_exec Make/sdcc --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 ${OBJLIST[*]} ${INCDIRS[*]} -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'")
-    if [[ $? -ne 0 ]]; then
-        exit $?
-    fi
-
-    [[ $DEBUG -eq 1 ]] && echo "$OUTPUT"
-    echo Done compiling.
+    debug $DBG_STEPS -------------------------------------------------------------------------------
+    debug $DBG_STEPS Compiling...
+    _exec $DBG_CALL1 sdcc --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 ${OBJLIST[*]} ${INCDIRS[*]} -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
+    debug $DBG_STEPS Done compiling.
 }
 
 build_bin () {
-    echo -----------------------------------------------------------------------------------
+    debug $DBG_STEPS -------------------------------------------------------------------------------
     if [[ -z $BIN_SIZE ]]; then
-        echo Generating $MSX_FILE_EXTENSION binary...
-        echo hex2bin -e $MSX_FILE_EXTENSION "$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx"
-        OUTPUT=$(_exec Make/hex2bin -e $MSX_FILE_EXTENSION "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'")
+        debug $DBG_STEPS Generating $MSX_FILE_EXTENSION binary...
+        _exec $DBG_CALL2 hex2bin -e $MSX_FILE_EXTENSION "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
     else
-        echo Generating $MSX_FILE_EXTENSION binary of $((16#$BIN_SIZE)) bytes in length...
-        echo hex2bin -e $MSX_FILE_EXTENSION -l $BIN_SIZE "$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx"
-        OUTPUT=$(_exec Make/hex2bin -e $MSX_FILE_EXTENSION -l $BIN_SIZE "'$MSX_OBJ_PATH'/'$MSX_FILE_NAME.ihx'")
+        debug $DBG_STEPS Generating $MSX_FILE_EXTENSION binary of $((16#$BIN_SIZE)) bytes in length...
+        _exec $DBG_CALL2 hex2bin -e $MSX_FILE_EXTENSION -l $BIN_SIZE "'$MSX_OBJ_PATH'/'$MSX_FILE_NAME.ihx'"
     fi
-    if [[ $? -ne 0 ]]; then
-        exit $?
-    fi
+    debug $DBG_STEPS Done generating library.
+    
+    debug $DBG_STEPS -------------------------------------------------------------------------------
+    debug $DBG_STEPS Moving binary...
+    _exec $DBG_EXTROVERT mv "$MSX_OBJ_PATH/$MSX_FILE_NAME.$MSX_FILE_EXTENSION" "$MSX_BIN_PATH/"
+    debug $DBG_STEPS Done moving binary.
 
-    [[ $DEBUG -eq 1 ]] && echo "$OUTPUT"
-    echo Done generating library.
-    
-    echo -----------------------------------------------------------------------------------
-    echo Moving binary...
-    mv "$MSX_OBJ_PATH/$MSX_FILE_NAME.$MSX_FILE_EXTENSION" "$MSX_BIN_PATH/"
-    if [[ $? -ne 0 ]]; then
-        echo FAIL!
-        exit $?
-    fi
-    echo Done moving binary.
-    echo -----------------------------------------------------------------------------------
-    
-    echo Building symbol file...
-    python Make/symbol.py "$MSX_OBJ_PATH/" "$MSX_FILE_NAME"
-    if [[ $? -ne 0 ]]; then
-        echo FAIL!
-        exit $?
-    fi
-    echo Done building symbol file.
+    debug $DBG_STEPS -------------------------------------------------------------------------------
+    debug $DBG_STEPS Building symbol file...
+    _exec $DBG_EXTROVERT python Make/symbol.py "$MSX_OBJ_PATH/" "$MSX_FILE_NAME"
+    debug $DBG_STEPS Done building symbol file.
 }
 
 finish () {
-    echo -----------------------------------------------------------------------------------
+    debug $DBG_STEPS -------------------------------------------------------------------------------
+    debug $DBG_STEPS All set, Sir/Madam!    
     exit 0
 }
 
 #:TARGETCONFIGURATION
-echo -----------------------------------------------------------------------------------
-echo Building target configuration files...
 echo //------------------------------------------------     >  targetconfig.h
 echo // targetconfig.h created automatically by make.sh     >> targetconfig.h
 echo // on $MSX_BUILD_DATETIME                              >> targetconfig.h
@@ -246,7 +238,7 @@ echo                                                        >> targetconfig.s
 shopt -s nocasematch # caseless matching
 
 if [[ ! -f "TargetConfig_$PROFILE.txt" ]]; then
-    echo File TargetConfig_$PROFILE.txt not found.
+    debug $DBG_STEPS File TargetConfig_$PROFILE.txt not found.
     exit 1
 fi
 
@@ -256,20 +248,20 @@ while read -r HEAD REST; do
     if [[ -n $HEAD && ${HEAD:0:1} != ';' ]]; then
         if [[ ${HEAD:0:1} == '.' ]]; then
             TARGET_SECTION=$HEAD
-            echo Entering section $TARGET_SECTION
         elif [[ $TARGET_SECTION == '.COMPILE' ]]; then
-            if [[ $REST == '_off' ]]; then
-                echo "//#define $HEAD"                      >> targetconfig.h
-                echo $HEAD = 0                              >> targetconfig.s
-            elif [[ $REST == '_on' || -z $REST ]]; then
-                echo "#define $HEAD"                        >> targetconfig.h
-                echo $HEAD = 1                              >> targetconfig.s
+            if [[ $HEAD == 'BUILD_DEBUG' ]]; then
+                BUILD_DEBUG=$REST # configure compile level debug
             else
-                echo "#define $HEAD $REST"                  >> targetconfig.h
-                echo $HEAD = $REST                          >> targetconfig.s
-            fi
-            if [[ $HEAD == 'DEBUG' ]]; then
-                DEBUG=$REST # activate debug when compiling too.
+                if [[ $REST == '_off' ]]; then
+                    echo "//#define $HEAD"                  >> targetconfig.h
+                    echo $HEAD = 0                          >> targetconfig.s
+                elif [[ $REST == '_on' || -z $REST ]]; then
+                    echo "#define $HEAD"                    >> targetconfig.h
+                    echo $HEAD = 1                          >> targetconfig.s
+                else
+                    echo "#define $HEAD $REST"              >> targetconfig.h
+                    echo $HEAD = $REST                      >> targetconfig.s
+                fi
             fi
         elif [[ $TARGET_SECTION == '.FILESYSTEM' ]]; then
             # replaces PROFILE
@@ -292,28 +284,36 @@ done < "TargetConfig_$PROFILE.txt"
 
 echo                                                        >> targetconfig.h
 echo '#endif //  __TARGETCONFIG_H__'                        >> targetconfig.h
-echo Done target configuration files.
+
+#:FS_OPENING
+debug $DBG_OPENING -------------------------------------------------------------------------------
+debug $DBG_OPENING MSX SDCC MAKEFILE Copyright © 2020-2021 Danilo Angelo, 2021 Pedro Medeiros
+debug $DBG_OPENING version 00.05.00 - Codename Mac\'n\'Tux
 
 #:FS_SETTINGS
-echo -----------------------------------------------------------------------------------
-echo Filesystem settings:
-echo MSX_FILE_NAME=$DIR/$MSX_FILE_NAME
-echo MSX_OBJ_PATH=$DIR/$MSX_OBJ_PATH
-echo MSX_BIN_PATH=$DIR/$MSX_BIN_PATH
-echo MSX_DEV_PATH=$DIR/$MSX_DEV_PATH
-echo MSX_LIB_PATH=$DIR/$MSX_LIB_PATH
+debug $DBG_STEPS -------------------------------------------------------------------------------
+debug $DBG_STEPS Configuring filesystem variables...
+debug $DBG_SETTING MSX_FILE_NAME=$DIR/$MSX_FILE_NAME
+debug $DBG_SETTING MSX_OBJ_PATH=$DIR/$MSX_OBJ_PATH
+debug $DBG_SETTING MSX_BIN_PATH=$DIR/$MSX_BIN_PATH
+debug $DBG_SETTING MSX_DEV_PATH=$DIR/$MSX_DEV_PATH
+debug $DBG_SETTING MSX_LIB_PATH=$DIR/$MSX_LIB_PATH
+debug $DBG_STEPS Done configuring filesystem variables.
 
 create_dir_struct
 
 #:APPLICATIONSETTINGS
-[[ -f $MSX_OBJ_PATH/bin_usrcalls.tmp ]] && rm "$MSX_OBJ_PATH"/bin_usrcalls.tmp
-[[ -f $MSX_OBJ_PATH/rom_callexpansionindex.tmp ]] && rm "$MSX_OBJ_PATH"/rom_callexpansionindex.tmp
-[[ -f $MSX_OBJ_PATH/rom_callexpansionhandler.tmp ]] && rm "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
-[[ -f $MSX_OBJ_PATH/rom_deviceexpansionindex.tmp ]] && rm "$MSX_OBJ_PATH"/rom_deviceexpansionindex.tmp
-[[ -f $MSX_OBJ_PATH/rom_deviceexpansionhandler.tmp ]] && rm "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+debug $DBG_STEPS -------------------------------------------------------------------------------
+debug $DBG_STEPS Making a small housecleaning.
+[[ -f $MSX_OBJ_PATH/bin_usrcalls.tmp ]] && _exec $DBG_EXTROVERT rm "$MSX_OBJ_PATH"/bin_usrcalls.tmp
+[[ -f $MSX_OBJ_PATH/rom_callexpansionindex.tmp ]] && _exec $DBG_EXTROVERT rm "$MSX_OBJ_PATH"/rom_callexpansionindex.tmp
+[[ -f $MSX_OBJ_PATH/rom_callexpansionhandler.tmp ]] && _exec $DBG_EXTROVERT rm "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
+[[ -f $MSX_OBJ_PATH/rom_deviceexpansionindex.tmp ]] && _exec $DBG_EXTROVERT rm "$MSX_OBJ_PATH"/rom_deviceexpansionindex.tmp
+[[ -f $MSX_OBJ_PATH/rom_deviceexpansionhandler.tmp ]] && _exec $DBG_EXTROVERT rm "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+debug $DBG_STEPS Done housecleaning.
 
-echo -----------------------------------------------------------------------------------
-echo Building application settings file...
+debug $DBG_STEPS -------------------------------------------------------------------------------
+debug $DBG_STEPS Building application settings file...
 echo ';-------------------------------------------------'   >  applicationsettings.s
 echo '; applicationsettings.s created automatically'        >> applicationsettings.s
 echo '; by make.sh'                                         >> applicationsettings.s
@@ -392,7 +392,7 @@ do
 done < ApplicationSettings.txt
 
 if [[ $PROJECT_TYPE == 'BIN' ]]; then
-    echo Adding specific BIN settings...
+    debug $DBG_STEPS Adding specific BIN settings...
     echo .macro MCR_USRCALLSINDEX                           >> applicationsettings.s
     if [[ -f $MSX_OBJ_PATH/bin_usrcalls.tmp ]]; then
         echo                                                >> applicationsettings.s
@@ -404,7 +404,7 @@ if [[ $PROJECT_TYPE == 'BIN' ]]; then
 fi
 
 if [[ $PROJECT_TYPE == 'ROM' ]]; then
-    echo Adding specific ROM settings...
+    debug $DBG_STEPS Adding specific ROM settings...
     echo                                                    >> applicationsettings.s
     echo .macro MCR_CALLEXPANSIONINDEX                      >> applicationsettings.s
     if [[ -f $MSX_OBJ_PATH/rom_callexpansionindex.tmp ]]; then
@@ -428,21 +428,21 @@ if [[ $PROJECT_TYPE == 'ROM' ]]; then
     echo .endm                                              >> applicationsettings.s
 fi
 
-echo Done building application settings file.
+debug $DBG_STEPS Done building application settings file.
 
 if [[ $2 == 'clean' ]]; then
-    echo -----------------------------------------------------------------------------------
-    echo Cleaning...
-    rm -fv "$MSX_OBJ_PATH"/*
-    rm -fv "$MSX_BIN_PATH/$MSX_FILE_NAME.$MSX_FILE_EXTENSION"
-    echo Done cleaning.
+    debug $DBG_STEPS -------------------------------------------------------------------------------
+    debug $DBG_STEPS Cleaning...
+    _exec $DBG_EXTROVERT rm -fv "$MSX_OBJ_PATH"/*
+    _exec $DBG_EXTROVERT rm -fv "$MSX_BIN_PATH/$MSX_FILE_NAME.$MSX_FILE_EXTENSION"
+    debug $DBG_STEPS Done cleaning.
     [[ $3 != 'all' ]] && finish
     create_dir_struct
 fi
 
 #:BUILD
-echo -----------------------------------------------------------------------------------
-echo Collecting include directories...
+debug $DBG_STEPS -------------------------------------------------------------------------------
+debug $DBG_STEPS Collecting include directories...
 
 let I=0
 while read -r INCDIR; do
@@ -451,10 +451,10 @@ while read -r INCDIR; do
         INCDIR=$(path_replace "$INCDIR" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
         INCDIRS[$I]="-I'$INCDIR'"
         I+=1
+        debug $DBG_DETAIL "Collected $INCDIR"
     fi
 done < IncludeDirectories.txt
-
-echo Done collecting include directories.
+debug $DBG_STEPS Done collecting include directories.
 
 # no parameters specified
 if [[ -z $2 ]]; then

@@ -395,7 +395,7 @@ for /F "tokens=*" %%A in (Libraries.txt) do (
 	if NOT "%LIBFILE:~0,1%"==";" (
 		set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
 		set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
-		set OBJLIST=!OBJLIST! !LIBFILE!
+		set OBJLIST=!OBJLIST! "!LIBFILE!"
 		echo Collected !LIBFILE!
 	)
 )
