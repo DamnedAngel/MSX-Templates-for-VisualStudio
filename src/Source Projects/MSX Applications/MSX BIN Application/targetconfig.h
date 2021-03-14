@@ -1,15 +1,16 @@
-//------------------------------------------------
-// targetconfig.h created automatically by make.sh
-// on Sun Mar 14 12:46:16 -03 2021
-//
-// DO NOT BOTHER EDITING THIS.
-// ALL CHANGES WILL BE LOST.
-//------------------------------------------------
-
-#ifndef  __TARGETCONFIG_H__
-#define  __TARGETCONFIG_H__
-
-#define DEBUG
-#define OPENMSX_PROFILING
-
-#endif //  __TARGETCONFIG_H__
+//-------------------------------------------------	
+// targetconfig.h created automatically by makefile	
+// on 16:49:03.04 , 14-Mar-21 				
+//														
+// DO NOT BOTHER EDITING THIS.							
+// ALL CHANGES WILL BE LOST.							
+//-------------------------------------------------	
+														
+#ifndef  __TARGETCONFIG_H__							
+#define  __TARGETCONFIG_H__							
+														
+//#define DEBUG								
+#define BUILD_DEBUG 150							
+//#define OPENMSX_PROFILING								
+														
+#endif	//  __TARGETCONFIG_H__							
