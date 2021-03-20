@@ -24,11 +24,26 @@ set CODE_LOC=
 set DATA_LOC=0
 set PARAM_HANDLING_ROUTINE=0
 
+set DBG_MUTE=0
+set DBG_ERROR=10
+set DBG_OPENING=40
+set DBG_STEPS=50
+set DBG_SETTING=70
+set DBG_OUTPUT=100
+set DBG_DETAIL=120
+set DBG_CALL1=150
+set DBG_CALL2=160
+set DBG_CALL3=170
+set DBG_EXTROVERT=200
+set DBG_PARAMS=230
+set DBG_VERBOSE=255
+set BUILD_DEBUG=$DBG_CALL2
+
 :TARGETCONFIGURATION
 echo -----------------------------------------------------------------------------------
 echo Building target configuration files...
 echo //-------------------------------------------------	>  TargetConfig.h
-echo // targetconfig.h created automatically by makefile	>> TargetConfig.h
+echo // targetconfig.h created automatically by make.bat	>> TargetConfig.h
 echo // on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%				>> TargetConfig.h
 echo //														>> TargetConfig.h
 echo // DO NOT BOTHER EDITING THIS.							>> TargetConfig.h
@@ -40,7 +55,7 @@ echo #define  __TARGETCONFIG_H__							>> TargetConfig.h
 echo.														>> TargetConfig.h
 
 echo ;-------------------------------------------------		>  TargetConfig.s
-echo ; targetconfig.s created automatically by makefile		>> TargetConfig.s
+echo ; targetconfig.s created automatically by make.bat		>> TargetConfig.s
 echo ; on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%				>> TargetConfig.s
 echo ;														>> TargetConfig.s
 echo ; DO NOT BOTHER EDITING THIS.							>> TargetConfig.s
@@ -178,7 +193,7 @@ echo ---------------------------------------------------------------------------
 echo Building application settings file...
 echo ;-------------------------------------------------		>  applicationsettings.s
 echo ; applicationsettings.s created automatically			>> applicationsettings.s
-echo ; by makefile											>> applicationsettings.s
+echo ; by make.bat											>> applicationsettings.s
 echo ; on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%				>> applicationsettings.s
 echo ;														>> applicationsettings.s
 echo ; DO NOT BOTHER EDITING THIS.							>> applicationsettings.s
