@@ -7,7 +7,6 @@
 ;----------------------------------------------------------
 ;	Build settings
 .COMPILE
-DEBUG				1							; _OFF: not defined ; _ON: defined; 1-n defined with debug level
 BUILD_DEBUG			150							; DBG_MUTE=0
                                                 ; DBG_ERROR=10
                                                 ; DBG_OPENING=40
@@ -22,6 +21,7 @@ BUILD_DEBUG			150							; DBG_MUTE=0
                                                 ; DBG_PARAMS=230
                                                 ; DBG_VERBOSE=255
 
+DEBUG				_ON							; _OFF: not defined ; _ON: defined; 1-n defined with debug level
 OPENMSX_PROFILING	_ON							; _ON: enable OpenMSX Profiling routines; _OFF: Disable routines
 
 

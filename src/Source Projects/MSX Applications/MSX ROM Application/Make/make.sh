@@ -3,7 +3,7 @@
 IFS=$' \t\r\n'
 
 # retrieve current environment directory
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." >/dev/null 2>&1 && pwd)"
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." >/dev/null 2>&1 && pwd)"
 MSX_BUILD_DATETIME=$(date)
 
 MSX_FILE_NAME=MSXAPP
@@ -54,7 +54,7 @@ debug () {
 
 _exec () {
     dbg=$1 && shift
-    debug $dbg ">> $@"
+    debug $dbg "## $@"
     if [[ "$DBG_PARAMS" -le "$BUILD_DEBUG" ]]; then
         for ((I=1; I<=${#@}; ++I)); do
             echo "ARG[$I]=${!I}"
@@ -161,7 +161,7 @@ opening() {
 filesystem_settings() {
     debug $DBG_SETTING -------------------------------------------------------------------------------
     debug $DBG_SETTING Filesystem config...
-    debug $DBG_SETTING Current dir=$DIR
+    debug $DBG_SETTING Current dir=$CURRENT_DIR
     debug $DBG_SETTING Target file=./$MSX_FILE_NAME.$MSX_FILE_EXTENSION
     debug $DBG_SETTING Object path=./$MSX_OBJ_PATH
     debug $DBG_SETTING Binary path=./$MSX_BIN_PATH
@@ -214,7 +214,6 @@ application_settings() {
         REST="${REST%"${REST##*[![:space:]]}"}" # remove trailing spaces
         if [[ -n $HEAD && ${HEAD:0:1} != ';' ]]; then
             if [[ $HEAD == 'PROJECT_TYPE' ]]; then
-                # echo PROJECT_TYPE = $REST
                 PROJECT_TYPE=$REST
             elif [[ $HEAD == 'FILESTART' ]]; then
                 echo fileStart .equ $REST                       >> applicationsettings.s
@@ -436,16 +435,15 @@ compile () {
     debug $DBG_STEPS Done compiling.
 }
 
-build_bin () {
+build_msx_bin () {
     debug $DBG_STEPS -------------------------------------------------------------------------------
+    debug $DBG_STEPS Build MSX binary...
     if [[ -z $BIN_SIZE ]]; then
-        debug $DBG_STEPS Generating $MSX_FILE_EXTENSION binary...
         _exec $DBG_CALL2 hex2bin -e $MSX_FILE_EXTENSION "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
     else
-        debug $DBG_STEPS Generating $MSX_FILE_EXTENSION binary of $((16#$BIN_SIZE)) bytes in length...
         _exec $DBG_CALL2 hex2bin -e $MSX_FILE_EXTENSION -l $BIN_SIZE "'$MSX_OBJ_PATH'/'$MSX_FILE_NAME.ihx'"
     fi
-    debug $DBG_STEPS Done generating library.
+    debug $DBG_STEPS Done building MSX binary.
     
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Moving binary...
@@ -460,7 +458,7 @@ build_bin () {
 
 finish () {
     debug $DBG_STEPS -------------------------------------------------------------------------------
-    debug $DBG_STEPS All set, Sir/Madam!    
+    debug $DBG_STEPS All set. Happy MSX\'ing!    
     exit 0
 }
 
@@ -484,13 +482,13 @@ collect_include_dirs
 
 if [[ -z $2 ]]; then    # no parameters specified
     compile
-    build_bin
+    build_msx_bin
     finish
 fi
 
 if [[ $2 == 'all' || $3 == 'all' ]]; then
     build_lib
     compile
-    build_bin
+    build_msx_bin
     finish
 fi
