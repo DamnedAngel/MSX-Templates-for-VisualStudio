@@ -6,7 +6,7 @@
 // ----------------------------------------------------------
 
 #include "targetconfig.h"
-#include "MSX\BIOS\msxbios.h"
+#include "MSX/BIOS/msxbios.h"
 
 #define Peek( address )			( *( (volatile unsigned char*)(address) ) )
 #define Peekw( address )		( *( (volatile unsigned int*)(address) ) )
