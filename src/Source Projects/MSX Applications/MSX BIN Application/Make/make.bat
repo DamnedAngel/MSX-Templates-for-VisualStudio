@@ -81,20 +81,20 @@ goto :orchestration
 		  set /a i=!i!+1
 		)
 	)
- 	cmd /c %CMD_LINE% > %MSX_OBJ_PATH%\OUTPUT.TMP
+ 	cmd /c %CMD_LINE% > OUTPUT.TMP
 	set ERR=%ERRORLEVEL%
 	if "%ERR%"=="0" goto :exec_cont2
-	type %MSX_OBJ_PATH%\OUTPUT.TMP
+	type OUTPUT.TMP
     call :debug %DBG_ERROR% ### Error %ERR% executing
     call :debug %DBG_ERROR% ### %CMD_LINE%
-	del %MSX_OBJ_PATH%\OUTPUT.TMP
+	del OUTPUT.TMP
 	exit %ERR%
 
 	:exec_cont2
 	if %DBG_OUTPUT% LEQ %BUILD_DEBUG% (
-		type %MSX_OBJ_PATH%\OUTPUT.TMP
+		type OUTPUT.TMP
 	)
-	del %MSX_OBJ_PATH%\OUTPUT.TMP
+	del OUTPUT.TMP
 	exit /B
 
 :create_dir

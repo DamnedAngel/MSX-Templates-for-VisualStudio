@@ -8,7 +8,7 @@
 ;----------------------------------------------------------
 ;	General structure of a MSX BIN application
 ;	Do NOT remove.
-MSX/MSX-DOS/msxdoscrt0.s
+MSX\MSX-DOS\msxdoscrt0.s
 
 ;----------------------------------------------------------
 ;	MSX BIN application, in C and ASM formats

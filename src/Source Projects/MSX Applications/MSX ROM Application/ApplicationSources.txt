@@ -8,7 +8,7 @@
 ;----------------------------------------------------------
 ;	General structure of a MSX BIN application
 ;	Do NOT remove.
-MSX/ROM/msxromcrt0.s
+MSX\ROM\msxromcrt0.s
 
 ;----------------------------------------------------------
 ;	MSX ROM application, in C and ASM formats

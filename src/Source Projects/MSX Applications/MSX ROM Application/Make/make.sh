@@ -346,8 +346,8 @@ build_lib() {
         if [[ -n $LIBFILE && ${LIBFILE:0:1} != ';' ]]; then
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
-            RELFILE="$MSX_OBJ_PATH"/$(basename "${LIBFILE%.*}").rel
             FILEEXT=$(basename "${LIBFILE/*./}")
+            RELFILE="$MSX_OBJ_PATH"/$(basename "$LIBFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
                 debug $DBG_DETAIL "Processing C file $(basename "$LIBFILE")... "
                 _exec $DBG_CALL3 sdcc -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'"
@@ -369,8 +369,8 @@ compile () {
         if [[ -n $APPFILE && ${APPFILE:0:1} != ';' ]]; then
             APPFILE=$(path_replace "$APPFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
             APPFILE=$(path_replace "$APPFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
-            RELFILE="$MSX_OBJ_PATH"/$(basename "${APPFILE/.*/}").rel
             FILEEXT=$(basename "${APPFILE/*./}")
+            RELFILE="$MSX_OBJ_PATH"/$(basename "$APPFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
                 debug $DBG_DETAIL "Processing C file $(basename "$APPFILE")... "
                 _exec $DBG_CALL3 sdcc -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
@@ -387,13 +387,13 @@ compile () {
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Collecting libraries...
 
-    let I=0
     while read -r LIBFILE; do
         if [[ -n $LIBFILE && ${LIBFILE:0:1} != ';' ]]; then
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
             RELFILE="$MSX_OBJ_PATH"/$(basename "${LIBFILE%.*}").rel
             OBJLIST[$I]="'$RELFILE'"
+            I+=1
             debug $DBG_DETAIL Collected $(basename "$RELFILE")
         fi
     done < LibrarySources.txt
@@ -403,6 +403,7 @@ compile () {
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
             OBJLIST[$I]="'$LIBFILE'"
+            I+=1
             debug $DBG_DETAIL Collected $(basename "$LIBFILE")
         fi
     done < Libraries.txt
