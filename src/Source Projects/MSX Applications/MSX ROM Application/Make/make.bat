@@ -1,3 +1,7 @@
+REM -----------------------------------------------------------------------------------
+set OPEN1=MSX SDCC Make Script Copyright © 2020-2021 Danilo Angelo, 2021 Pedro Medeiros
+set OPEN2=version 00.05.00 - Codename Mac\'n\'Tux
+REM -----------------------------------------------------------------------------------
 
 set CURRENT_DIR=%CD%
 set MSX_BUILD_TIME=%TIME% 
@@ -236,8 +240,8 @@ goto :orchestration
 
 :opening
 	call :debug %DBG_OPENING% -------------------------------------------------------------------------------
-	call :debug %DBG_OPENING% MSX SDCC MAKEFILE Copyright (C) 2020-2021 Danilo Angelo
-	call :debug %DBG_OPENING% version 00.05.00 - Codename Mac'n'Tux
+	call :debug %DBG_OPENING% %OPEN1%
+	call :debug %DBG_OPENING% %OPEN2%
 	call :debug %DBG_SETTING% Build Debug Level %BUILD_DEBUG%
 	exit /B
 

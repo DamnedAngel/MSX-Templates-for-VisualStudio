@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# -----------------------------------------------------------------------------------
+OPEN1="MSX SDCC Make Script Copyright © 2020-2021 Danilo Angelo, 2021 Pedro Medeiros"
+OPEN2="version 00.05.00 - Codename Mac\'n\'Tux"
+# -----------------------------------------------------------------------------------
+
 IFS=$' \t\r\n'
 
 # retrieve current environment directory
@@ -153,8 +158,8 @@ configure_target() {
 
 opening() {
     debug $DBG_OPENING -------------------------------------------------------------------------------
-    debug $DBG_OPENING MSX SDCC MAKEFILE Copyright © 2020-2021 Danilo Angelo, 2021 Pedro Medeiros
-    debug $DBG_OPENING version 00.05.00 - Codename Mac\'n\'Tux
+    debug $DBG_OPENING $OPEN1
+    debug $DBG_OPENING $OPEN2
     debug $DBG_SETTING "Build Debug Level $BUILD_DEBUG"
 }
 
