@@ -6,7 +6,7 @@
 ;----------------------------------------------------------
 
 	.include "targetconfig.s"
-	.include "MSX\BIOS\msxbios.s"
+	.include "MSX/BIOS/msxbios.s"
 	.include "applicationsettings.s"
 
 	.area	_CODE
