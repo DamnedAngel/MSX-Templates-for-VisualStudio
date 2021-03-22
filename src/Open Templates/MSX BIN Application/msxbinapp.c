@@ -6,7 +6,7 @@
 // ----------------------------------------------------------
 
 #include "targetconfig.h"
-#include "MSX\BIOS\msxbios.h"
+#include "MSX/BIOS/msxbios.h"
 
 // ----------------------------------------------------------
 //	This is an example of embedding asm code into C.
