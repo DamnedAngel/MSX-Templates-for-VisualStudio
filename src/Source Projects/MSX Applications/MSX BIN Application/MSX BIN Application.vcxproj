@@ -99,9 +99,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="applicationsettings.s" />
+    <None Include="Make\make.sh" />
+    <None Include="Make\symbol.py" />
     <None Include="msxbinapp.s" />
     <None Include="Make\make.bat" />
-    <None Include="Make\symbol.p" />
     <None Include="MSX\BIN\msxbincrt0.s" />
     <None Include="MSX\BIOS\msxbios.s" />
     <None Include="MSX\Profiling\openmsxprofiling.s" />

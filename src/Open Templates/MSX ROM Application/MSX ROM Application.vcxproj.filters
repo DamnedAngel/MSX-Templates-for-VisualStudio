@@ -5,10 +5,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Make">
       <UniqueIdentifier>{3ef91682-59b4-4500-8b1e-472a09b82231}</UniqueIdentifier>
     </Filter>
@@ -40,6 +36,10 @@
     <Filter Include="ASM Source Files\Profiling">
       <UniqueIdentifier>{7615ad5b-1aef-4941-9bfd-f7606082964d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetconfig.h">
@@ -62,9 +62,6 @@
     <None Include="Make\make.bat">
       <Filter>Make</Filter>
     </None>
-    <None Include="Make\symbol.p">
-      <Filter>Make</Filter>
-    </None>
     <None Include="MSX\ROM\msxromcrt0.s">
       <Filter>ASM Source Files\MSX\ROM</Filter>
     </None>
@@ -73,6 +70,12 @@
     </None>
     <None Include="applicationsettings.s">
       <Filter>ASM Source Files</Filter>
+    </None>
+    <None Include="Make\make.sh">
+      <Filter>Make</Filter>
+    </None>
+    <None Include="Make\symbol.py">
+      <Filter>Make</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

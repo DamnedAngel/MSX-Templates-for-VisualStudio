@@ -6,10 +6,7 @@
 // ----------------------------------------------------------
 
 #include "targetconfig.h"
-#include "MSX\BIOS\msxbios.h"
-
-#define Peek( address )			( *( (volatile unsigned char*)(address) ) )
-#define Peekw( address )		( *( (volatile unsigned int*)(address) ) )
+#include "MSX/BIOS/msxbios.h"
 
 // ----------------------------------------------------------
 //	This is an example of embedding asm code into C.

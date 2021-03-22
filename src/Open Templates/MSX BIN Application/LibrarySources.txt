@@ -10,8 +10,3 @@
 ;[MSX_LIB_PATH]\util\getchar.s
 ;[MSX_LIB_PATH]\util\printf.c
 ;[MSX_LIB_PATH]\util\types.c
-
-
-
-
-
