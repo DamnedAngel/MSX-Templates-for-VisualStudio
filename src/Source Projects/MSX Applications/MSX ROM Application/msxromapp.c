@@ -66,8 +66,9 @@ void main(void) {
 }
 
 // ----------------------------------------------------------
-//	This is a CALL handler example.
-//	CALL CMD1
+//	This is a parameterized CALL handler with example.
+//	CALL CMD1 (<STRING>)
+//	return	0: Success; anything else: syntax error
 //
 //	This is only for the demo app.
 //	To disable the support for BASIC's CALL statement:
@@ -76,19 +77,49 @@ void main(void) {
 //	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
 //	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 //	3) Remove all onCallXXXXX functions from this file
-char* onCallCMD1(char* param) {
-	print("The C handler for CMD1 says hi!\r\n\0");
-	// seek end of command (0x00/EoL ou 0x3a/":")
-	while ((*param != 0) && (*param != 0x3a)) {
-		param++;
+unsigned char onCallCMD1(char** param) {
+	char buffer[255];
+	int i = 0;
+
+	if (**param != '(') {
+		return -1;
 	}
-	return param;
+	(*param)++;
+	if (**param != '"') {
+		return -1;
+	}
+	(*param)++;
+	while (**param != '"') {
+		buffer[i++] = **param;
+		(*param)++;
+	}
+	buffer[i] = 0;
+	(*param)++;
+
+	if (**param != ')') {
+		return -1;
+	}
+	(*param)++;
+
+	// seek end of command (0x00/EoL ou 0x3a/":")
+	while (**param == ' ') {
+		(*param)++;
+	}
+	if ((**param != 0) && (**param != 0x3a)) {
+		return -1;
+	}
+
+	print("The C handler for CMD1 says: \0");
+	print(buffer);
+	print("\r\n\0");
+	return 0;
 }
 
 // ----------------------------------------------------------
-//	This is a CALL handler example.
+//	This is a parameterless CALL handler example.
 //	CALL CMD2
-//
+//	return	0: Success; anything else: syntax error
+// 
 //	This is only for the demo app.
 //	To disable the support for BASIC's CALL statement:
 //	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
@@ -96,13 +127,14 @@ char* onCallCMD1(char* param) {
 //	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
 //	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 //	3) Remove all onCallXXXXX functions from this file
-char* onCallCMD2(char* param) {
-	print("The C handler for CMD2 says hi!\r\n\0");
-	// seek end of command (0x00/EoL ou 0x3a/":")
-	while ((*param != 0) && (*param != 0x3a)) {
-		param++;
+unsigned char onCallCMD2(char** param) {
+	// check no parameters (next char must be 0x00/EoL ou 0x3a/":")
+	if ((**param != 0) && (**param != 0x3a)) {
+		return -1;
 	}
-	return param;
+
+	print("The C handler for CMD2 says hi!\r\n\0");
+	return 0;
 }
 
 // ----------------------------------------------------------
