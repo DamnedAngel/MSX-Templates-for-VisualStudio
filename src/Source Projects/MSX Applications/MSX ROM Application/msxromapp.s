@@ -40,23 +40,87 @@ _main::
 ;	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 ;	3) Remove all onCallXXXXX functions from this file
 _onCallCMD1::
-    ld      hl, #_msgCMD1
-    call    _printMSG
-
-	ld      hl, #2			; retrieve param address from stack
-	add     hl, sp
-	ld		b, (hl)
-	inc		hl
-	ld		h, (hl)
-	ld		l, b
+	ld      ix, #0			; retrieve param address from stack
+	add     ix, sp
+	ld		l, 2(ix)
+	ld		h, 3(ix)
+    ld      e, (hl)
+    inc     hl
+    ld      h, (hl)
+    ld      l, e
 _onCallCMD1_findEndOfCommand:
     ld      a, (hl)
-    cp      #0
-    ret z
-    cp      #0x3a
-    ret z
+    cp      #'('
+    jr nz,  _onCallCMD1_fail
     inc     hl
-    jr      _onCallCMD1_findEndOfCommand
+    call    _onCallCMD1_ignoreSpaces
+    cp      #'"'
+    jr nz,  _onCallCMD1_fail
+    inc     hl
+    ld      d, h
+    ld      e, l
+    ld      b, #0xff
+_onCallCMD1_mapString:
+    ld      a, (hl)
+    inc     hl
+    inc     b
+    cp      #'"'
+    jr nz,  _onCallCMD1_mapString
+    call    _onCallCMD1_ignoreSpaces
+    cp      #')'
+    jr nz,  _onCallCMD1_fail
+    inc     hl
+    call    _onCallCMD1_ignoreSpaces
+    cp      #0
+    jr z,   _onCallCMD1_printMsg
+    cp      #0x3a
+    jr nz,  _onCallCMD1_fail
+
+
+_onCallCMD1_printMsg:
+    push    de
+    push    bc
+    push    hl
+	ld		l, 2(ix)
+	ld		h, 3(ix)
+    pop     de
+    ld      (hl), e
+    inc     hl
+    ld      (hl), d
+
+    ld      hl, #_msgCMD1_1
+    call    _printMSG
+    xor     a
+    cp      b
+    jr z,   _onCallCMD1_ending
+    pop     bc
+    pop     hl
+
+_onCallCMD1_printString:
+    ld      a, (hl)
+    push    hl
+	ld		iy, (#0xfcc0); BIOS_ROMSLT
+	ld		ix, #0x00a2; BIOS_CHPUT
+	call	#0x001c; BIOS_CALSLT
+    pop     hl
+    inc     hl
+    djnz    _onCallCMD1_printString
+
+_onCallCMD1_ending:    
+    ld      hl, #_msgCMD1_2
+    call    _printMSG    
+    ld      l, #0
+    ret
+_onCallCMD1_fail:
+    ld      l, #0xff
+    ret
+_onCallCMD1_ignoreSpaces:
+    ld      a, (hl)
+    cp      #' '
+    ret nz
+    inc     hl
+    jr _onCallCMD1_ignoreSpaces
+
 
 ; ----------------------------------------------------------
 ;	This is a CALL handler example.
@@ -161,8 +225,10 @@ _msg::
 .ascii      "the RET instruction.\r\n\0"
 
 .if CALL_EXPANSION
-_msgCMD1::
-.ascii		"The ASM handler for CMD1 says hi!\r\n\0"
+_msgCMD1_1::
+.ascii		"The ASM handler for CMD1 says \0"
+_msgCMD1_2::
+.ascii		"!\r\n\0"
 _msgCMD2::
 .ascii		"The ASM handler for CMD2 says hi!\r\n\0"
 .endif

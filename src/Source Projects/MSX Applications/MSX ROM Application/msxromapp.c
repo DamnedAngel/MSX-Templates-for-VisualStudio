@@ -85,6 +85,9 @@ unsigned char onCallCMD1(char** param) {
 		return -1;
 	}
 	(*param)++;
+	while (**param == ' ') {
+		(*param)++;
+	}
 	if (**param != '"') {
 		return -1;
 	}
@@ -95,7 +98,9 @@ unsigned char onCallCMD1(char** param) {
 	}
 	buffer[i] = 0;
 	(*param)++;
-
+	while (**param == ' ') {
+		(*param)++;
+	}
 	if (**param != ')') {
 		return -1;
 	}
@@ -111,7 +116,7 @@ unsigned char onCallCMD1(char** param) {
 
 	print("The C handler for CMD1 says: \0");
 	print(buffer);
-	print("\r\n\0");
+	print("!\r\n\0");
 	return 0;
 }
 
