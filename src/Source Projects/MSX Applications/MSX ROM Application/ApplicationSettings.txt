@@ -32,9 +32,9 @@ BASIC_PROGRAM			0							; 0 -> no BASIC program; other values: BASIC program add
 ; BASIC's CALL command
 ;
 ; BASIC usage example (for the standard app)
-; 10 CALL CMD1:PRINT "Oi."
+; 10 CALL CMD1("PARAMETER 1 RECEIVED!"):PRINT "Oi."
 ; 20 CALL CMD2:PRINT "Ola."
-; 30 CALL CMD1
+; 30 CALL CMD1("PARAMETER 2 RECEIVED!")
 ; 40 PRINT "Hi."
 ; 50 CALL CMD2
 ; 60 PRINT "Hello."

@@ -66,7 +66,7 @@ void main(void) {
 }
 
 // ----------------------------------------------------------
-//	This is a parameterized CALL handler with example.
+//	This is a parameterized CALL handler example.
 //	CALL CMD1 (<STRING>)
 //	return	0: Success; anything else: syntax error
 //
@@ -79,7 +79,7 @@ void main(void) {
 //	3) Remove all onCallXXXXX functions from this file
 unsigned char onCallCMD1(char** param) {
 	char buffer[255];
-	int i = 0;
+	int i = 1;
 
 	if (**param != '(') {
 		return -1;
@@ -92,10 +92,11 @@ unsigned char onCallCMD1(char** param) {
 		return -1;
 	}
 	(*param)++;
+	buffer[0] = '"';
 	while (**param != '"') {
-		buffer[i++] = **param;
-		(*param)++;
+		buffer[i++] = *((*param)++);
 	}
+	buffer[i++] = '"';
 	buffer[i] = 0;
 	(*param)++;
 	while (**param == ' ') {
