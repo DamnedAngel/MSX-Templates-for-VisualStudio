@@ -14,28 +14,29 @@
 //	You can safely remove it for your application.
 #pragma disable_warning 85	// because the var msg is not used in C context
 void _print(char* msg) {
-	__asm
-		ld      hl, #2; retrieve address from stack
-		add     hl, sp
-		ld		b, (hl)
-		inc		hl
-		ld		h, (hl)
-		ld		l, b
+__asm
+	ld      hl, #2; retrieve address from stack
+	add     hl, sp
+	ld		b, (hl)
+	inc		hl
+	ld		h, (hl)
+	ld		l, b
 
-		_printMSG_loop :
-		ld		a, (hl); print
-		or		a
-		ret z
-		push	hl
-		push	ix
-		ld		iy, (#0xfcc0); BIOS_ROMSLT
-		ld		ix, #0x00a2; BIOS_CHPUT
-		call	#0x001c; BIOS_CALSLT
-		pop		ix
-		pop		hl
-		inc		hl
-		jr		_printMSG_loop
-	__endasm;
+_printMSG_loop :
+	ld		a, (hl)	; print
+	or a
+	ret z
+	push	hl
+	push	ix
+	ld		iy, (BIOS_ROMSLT)
+	ld		ix, #BIOS_CHPUT
+	call	BIOS_CALSLT
+	ei				; in some MSXs (i.e. F1XV) CALSLT returns with di.
+	pop		ix
+	pop		hl
+	inc		hl
+	jr		_printMSG_loop
+__endasm;
 
 	return;
 }
