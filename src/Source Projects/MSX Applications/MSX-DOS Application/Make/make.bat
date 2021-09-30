@@ -2,7 +2,7 @@
 
 REM -----------------------------------------------------------------------------------
 set OPEN1=MSX SDCC Make Script Copyright © 2020-2021 Danilo Angelo, 2021 Pedro Medeiros
-set OPEN2=version 00.05.00 - Codename Mac\'n\'Tux
+set OPEN2=version 00.05.01 - Codename Mac\'n\'Tux
 REM -----------------------------------------------------------------------------------
 
 set CURRENT_DIR=%CD%

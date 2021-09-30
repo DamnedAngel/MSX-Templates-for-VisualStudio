@@ -156,13 +156,24 @@ callExpansionNotEndOfList:
 ;	get pointer to statement in CALL
 	ld		hl, #BIOS_PROCNM
 	call	compareString
+	jr z,	callExpansionStmtFound		
+	cp		#0
 	jr nz,	callExpansionStmtNotFound
+	ld		a, b
+	cp		#0x20
+	jr z,	callExpansionStmtFound
+	jr		callExpansionStmtNotFound
+
+callExpansionStmtFound:
 ;	statement found; execute and exit
 	pop		hl
 	inc		de
 	push	de
 	exx
 	pop		de				; *handler
+	push	hl
+	ld		(#_pBuffer), hl
+	ld		hl, #_pBuffer
 	push	hl				; parameters
 	ld		hl, #callExpansionFinalize
 	push	hl				; finalize
@@ -176,8 +187,16 @@ callExpansionNotEndOfList:
 	
 callExpansionFinalize:
 ; at this point, hl must be pointing to end of command (end of line or ":")
+	ld		a, l
 	pop		hl
-	or		a				; resets CY flag
+	pop		hl
+	or		a
+	jr z,	callExpansionFinalizeNoError
+callExpansionFinalizeError:
+	scf
+	ret
+callExpansionFinalizeNoError:
+	ld		hl, (#_pBuffer)
 	ret
 .endif
 
@@ -305,6 +324,11 @@ gsinit_next:
 	.area	_DATA
 _heap_top::
 	.blkw	1
+
+.if CALL_EXPANSION
+_pBuffer::
+	.blkw	1
+.endif
 
 ;   ==================================
 ;   ========== HEAP SEGMENT ==========

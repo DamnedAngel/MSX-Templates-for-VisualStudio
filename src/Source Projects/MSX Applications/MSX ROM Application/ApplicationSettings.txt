@@ -18,7 +18,8 @@ SET_PAGE_2				_OFF						; _ON: Enables page 2 on the same slot/subslot as page 1
 ;----------------------------------------------------------
 ;	ROM settings
 ROM_SIZE				16k							; 16k/32k
-FILESTART				0x8000						; Typically, 0x4000 for 32kb ROM or 0x8000 for 16kb ROM
+FILESTART				0x4000						; Typically,    0x4000 for 32kb ROM or 16kb ROM with CALL/DEVICE expasions; or
+                                                    ;               0x8000 for 16kb ROM
 CALL_EXPANSION			_ON							; _ON: expands BASIC's CALL instruction; _OFF: Don't expand
 DEVICE_EXPANSION		_ON							; _ON: creates BASIC's device; _OFF: Don't create
 BASIC_PROGRAM			0							; 0 -> no BASIC program; other values: BASIC program address
@@ -31,9 +32,9 @@ BASIC_PROGRAM			0							; 0 -> no BASIC program; other values: BASIC program add
 ; BASIC's CALL command
 ;
 ; BASIC usage example (for the standard app)
-; 10 CALL CMD1:PRINT "Oi."
+; 10 CALL CMD1("PARAMETER 1 RECEIVED!"):PRINT "Oi."
 ; 20 CALL CMD2:PRINT "Ola."
-; 30 CALL CMD1
+; 30 CALL CMD1("PARAMETER 2 RECEIVED!")
 ; 40 PRINT "Hi."
 ; 50 CALL CMD2
 ; 60 PRINT "Hello."
