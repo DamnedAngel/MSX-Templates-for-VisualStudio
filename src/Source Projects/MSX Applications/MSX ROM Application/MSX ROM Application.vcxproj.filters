@@ -100,6 +100,9 @@
     <Text Include="ApplicationSettings.txt">
       <Filter>Project Config</Filter>
     </Text>
+    <Text Include="Symbols.txt">
+      <Filter>Project Config</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msxromapp.c">

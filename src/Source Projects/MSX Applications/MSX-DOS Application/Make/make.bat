@@ -242,7 +242,8 @@ goto :orchestration
 	exit /B
 
 :configure_verbose_parameters
-    if %$DBG_TOOLSDETAIL% LEQ %BUILD_DEBUG% (
+	echo bla
+    if %DBG_TOOLSDETAIL% LEQ %BUILD_DEBUG% (
         set SDCC_DETAIL=-V --verbose
         set SYMBOL_DETAIL=-v
         set HEX2BIN_DETAIL=-v
