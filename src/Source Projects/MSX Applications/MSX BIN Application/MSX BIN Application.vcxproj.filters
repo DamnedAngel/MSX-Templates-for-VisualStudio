@@ -79,28 +79,28 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="IncludeDirectories.txt">
+    <Text Include="Config\ApplicationSettings.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="LibrarySources.txt">
+    <Text Include="Config\ApplicationSources.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="TargetConfig_Debug.txt">
+    <Text Include="Config\IncludeDirectories.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="TargetConfig_Release.txt">
+    <Text Include="Config\Libraries.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="ApplicationSources.txt">
+    <Text Include="Config\LibrarySources.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="Libraries.txt">
+    <Text Include="Config\Symbols.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="ApplicationSettings.txt">
+    <Text Include="Config\TargetConfig_Debug.txt">
       <Filter>Project Config</Filter>
     </Text>
-    <Text Include="Symbols.txt">
+    <Text Include="Config\TargetConfig_Release.txt">
       <Filter>Project Config</Filter>
     </Text>
   </ItemGroup>

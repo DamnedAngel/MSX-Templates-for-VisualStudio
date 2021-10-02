@@ -71,17 +71,17 @@
     <None Include="targetconfig.s" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ApplicationSettings.txt" />
-    <Text Include="ApplicationSources.txt" />
-    <Text Include="IncludeDirectories.txt" />
-    <Text Include="LibrarySources.txt" />
-    <Text Include="Libraries.txt" />
-    <Text Include="Symbols.txt" />
-    <Text Include="TargetConfig_Debug.txt" />
-    <Text Include="TargetConfig_Release.txt" />
+    <ClCompile Include="msxromapp.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="msxromapp.c" />
+    <Text Include="Config\ApplicationSettings.txt" />
+    <Text Include="Config\ApplicationSources.txt" />
+    <Text Include="Config\IncludeDirectories.txt" />
+    <Text Include="Config\Libraries.txt" />
+    <Text Include="Config\LibrarySources.txt" />
+    <Text Include="Config\Symbols.txt" />
+    <Text Include="Config\TargetConfig_Debug.txt" />
+    <Text Include="Config\TargetConfig_Release.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

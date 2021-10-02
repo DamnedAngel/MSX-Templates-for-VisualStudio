@@ -79,34 +79,34 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="IncludeDirectories.txt">
-      <Filter>Project Config</Filter>
-    </Text>
-    <Text Include="LibrarySources.txt">
-      <Filter>Project Config</Filter>
-    </Text>
-    <Text Include="TargetConfig_Debug.txt">
-      <Filter>Project Config</Filter>
-    </Text>
-    <Text Include="TargetConfig_Release.txt">
-      <Filter>Project Config</Filter>
-    </Text>
-    <Text Include="ApplicationSources.txt">
-      <Filter>Project Config</Filter>
-    </Text>
-    <Text Include="Libraries.txt">
-      <Filter>Project Config</Filter>
-    </Text>
-    <Text Include="ApplicationSettings.txt">
-      <Filter>Project Config</Filter>
-    </Text>
-    <Text Include="Symbols.txt">
-      <Filter>Project Config</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="msxromapp.c">
       <Filter>C Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Config\ApplicationSettings.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\ApplicationSources.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\IncludeDirectories.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\Libraries.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\LibrarySources.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\Symbols.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\TargetConfig_Debug.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\TargetConfig_Release.txt">
+      <Filter>Project Config</Filter>
+    </Text>
   </ItemGroup>
 </Project>
