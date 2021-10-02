@@ -1,0 +1,13 @@
+{
+    "folders": [
+		{
+			"path": "MSX ROM Application"
+		},
+		{
+			"path": "MSX BIN Application"
+		},
+		{
+			"path": "MSX-DOS Application"
+		}
+	]
+}

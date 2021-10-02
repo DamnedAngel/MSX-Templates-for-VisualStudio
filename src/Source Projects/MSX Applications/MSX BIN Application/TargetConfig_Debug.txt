@@ -17,6 +17,7 @@ BUILD_DEBUG			150							; DBG_MUTE=0
                                                 ; DBG_CALL1=150
                                                 ; DBG_CALL2=160
                                                 ; DBG_CALL3=170
+                                                ; DBG_TOOLSDETAIL=190
                                                 ; DBG_EXTROVERT=200
                                                 ; DBG_PARAMS=230
                                                 ; DBG_VERBOSE=255

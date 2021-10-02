@@ -27,11 +27,15 @@ with open('Symbols.txt', 'r') as f1:
 	for line in f1:
 		line1 = line.strip()
 		words = line1.split()
-		if len(words) == 1:
+		l = len (words)
+		if l > 0:
 			if line1[0] != ';':
-				patterns.append(line1)
+				if l > 2:
+					patterns.append ([words[0], words[1], words[2]])
+				else:
+					patterns.append ([words[0],'',''])
 				if verbose:
-					print ('Loaded pattern ' + line1 + '.')
+					print ('Loaded pattern ' + words[0] + '.')
 
 f1.close()
 
@@ -52,14 +56,15 @@ with open(path.join(sys.argv[1], sys.argv[2]) + '.map', 'r') as f1:
 				# OpenMSX Symbol file
 				f2.write(words[1] + ': equ ' + words[0] + 'H\n')
 				for pattern in patterns:
-					if re.match(pattern, words[1]):
+					if re.match(pattern[0], words[1]):
+						symbol = re.sub(pattern[1], pattern[2], words[1])
 						value = words[0][3:]
 						# ASM Symbol file
-						f3.write(words[1] + ': 			equ 0x' + value + '\n')
+						f3.write(symbol + ': 			equ 0x' + value + '\n')
 						# Header Symbol file
-						f4.write("#define " + words[1] + '			0x' + value + '\n')
+						f4.write("#define " + symbol + '			0x' + value + '\n')
 						if verbose:
-							print ('Exported symbol ' + words[1] + ' (0x' + value + ').')
+							print ('Exported symbol ' + symbol + '(' + words[1] + ') = 0x' + value + '.')
 f1.close()
 f2.close()
 f3.close()
