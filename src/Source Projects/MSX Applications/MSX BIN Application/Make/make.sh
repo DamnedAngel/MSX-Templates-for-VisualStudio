@@ -2,7 +2,7 @@
 
 # -----------------------------------------------------------------------------------
 OPEN1="MSX SDCC Make Script Copyright © 2020-2021 Danilo Angelo, 2021 Pedro Medeiros"
-OPEN2="version 00.05.01 - Codename Mac\'n\'Tux"
+OPEN2="version 00.05.01 - Codename Baltazar"
 # -----------------------------------------------------------------------------------
 
 IFS=$' \t\r\n'
@@ -37,10 +37,11 @@ DBG_DETAIL=120
 DBG_CALL1=150
 DBG_CALL2=160
 DBG_CALL3=170
+DBG_TOOLSDETAIL=190
 DBG_EXTROVERT=200
 DBG_PARAMS=230
 DBG_VERBOSE=255
-BUILD_DEBUG=255 # $DBG_CALL2
+BUILD_DEBUG=$DBG_CALL2
 
 #
 # Helper Functions
@@ -154,6 +155,18 @@ configure_target() {
 
     echo                                                        >> targetconfig.h
     echo '#endif //  __TARGETCONFIG_H__'                        >> targetconfig.h
+}
+
+configure_verbose_parameters() {
+    if [[ "$DBG_TOOLSDETAIL" -le "$BUILD_DEBUG" ]]; then
+        SDCC_DETAIL="-V --verbose" 
+        SYMBOL_DETAIL="-v"
+        HEX2BIN_DETAIL="-v"
+    else
+        SDCC_DETAIL=""
+        SYMBOL_DETAIL=""
+        HEX2BIN_DETAIL=""
+    fi
 }
 
 opening() {
@@ -355,10 +368,10 @@ build_lib() {
             RELFILE="$MSX_OBJ_PATH"/$(basename "$LIBFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
                 debug $DBG_DETAIL "Processing C file $(basename "$LIBFILE")... "
-                _exec $DBG_CALL3 sdcc -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'"
+                _exec $DBG_CALL2 sdcc $SDCC_DETAIL -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'"
             else
                 debug $DBG_DETAIL "Processing ASM file $(basename "$LIBFILE")... "
-                _exec $DBG_CALL3 sdasz80 -o "'$RELFILE'" "'$LIBFILE'"
+                _exec $DBG_CALL2 sdasz80 -o "'$RELFILE'" "'$LIBFILE'"
             fi
         fi
     done < LibrarySources.txt
@@ -378,10 +391,10 @@ compile () {
             RELFILE="$MSX_OBJ_PATH"/$(basename "$APPFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
                 debug $DBG_DETAIL "Processing C file $(basename "$APPFILE")... "
-                _exec $DBG_CALL3 sdcc -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
+                _exec $DBG_CALL2 sdcc $SDCC_DETAIL -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
             else
                 debug $DBG_DETAIL "Processing ASM file $(basename "$APPFILE")... "
-                _exec $DBG_CALL3 sdasz80 -o "'$RELFILE'" "'$APPFILE'"
+                _exec $DBG_CALL2 sdasz80 -o "'$RELFILE'" "'$APPFILE'"
             fi
             OBJLIST[$I]="'$RELFILE'"
             I+=1
@@ -437,7 +450,7 @@ compile () {
     
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Compiling...
-    _exec $DBG_CALL1 sdcc --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 ${OBJLIST[*]} ${INCDIRS[*]} -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
+    _exec $DBG_CALL1 sdcc $SDCC_DETAIL --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 ${OBJLIST[*]} ${INCDIRS[*]} -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
     debug $DBG_STEPS Done compiling.
 }
 
@@ -445,9 +458,9 @@ build_msx_bin () {
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Build MSX binary...
     if [[ -z $BIN_SIZE ]]; then
-        _exec $DBG_CALL2 hex2bin -e $MSX_FILE_EXTENSION "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
+        _exec $DBG_CALL3 hex2bin $HEX2BIN_DETAIL -e $MSX_FILE_EXTENSION "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
     else
-        _exec $DBG_CALL2 hex2bin -e $MSX_FILE_EXTENSION -l $BIN_SIZE "'$MSX_OBJ_PATH'/'$MSX_FILE_NAME.ihx'"
+        _exec $DBG_CALL3 hex2bin $HEX2BIN_DETAIL -e $MSX_FILE_EXTENSION -l $BIN_SIZE "'$MSX_OBJ_PATH'/'$MSX_FILE_NAME.ihx'"
     fi
     debug $DBG_STEPS Done building MSX binary.
     
@@ -458,7 +471,7 @@ build_msx_bin () {
 
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Building symbol file...
-    _exec $DBG_EXTROVERT python Make/symbol.py "$MSX_OBJ_PATH/" "$MSX_FILE_NAME"
+    _exec $DBG_CALL3 python Make/symbol.py "$MSX_OBJ_PATH/" "$MSX_FILE_NAME" $SYMBOL_DETAIL
     debug $DBG_STEPS Done building symbol file.
 }
 
@@ -473,6 +486,7 @@ finish () {
 #
 
 configure_target
+configure_verbose_parameters
 opening
 filesystem_settings
 create_dir_struct

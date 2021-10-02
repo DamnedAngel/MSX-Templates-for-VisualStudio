@@ -76,6 +76,7 @@
     <Text Include="LibrarySources.txt" />
     <Text Include="ApplicationSettings.txt" />
     <Text Include="Libraries.txt" />
+    <Text Include="Symbols.txt" />
     <Text Include="TargetConfig_Debug.txt" />
     <Text Include="TargetConfig_Release.txt" />
   </ItemGroup>

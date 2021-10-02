@@ -1,8 +1,8 @@
 @echo off
 
 REM -----------------------------------------------------------------------------------
-set OPEN1=MSX SDCC Make Script Copyright © 2020-2021 Danilo Angelo, 2021 Pedro Medeiros
-set OPEN2=version 00.05.01 - Codename Mac\'n\'Tux
+set OPEN1=MSX SDCC Make Script Copyright ï¿½ 2020-2021 Danilo Angelo, 2021 Pedro Medeiros
+set OPEN2=version 00.05.01 - Codename Baltazar
 REM -----------------------------------------------------------------------------------
 
 set CURRENT_DIR=%CD%
@@ -37,6 +37,7 @@ set DBG_DETAIL=120
 set DBG_CALL1=150
 set DBG_CALL2=160
 set DBG_CALL3=170
+set DBG_TOOLSDETAIL=190
 set DBG_EXTROVERT=200
 set DBG_PARAMS=230
 set DBG_VERBOSE=255
@@ -240,6 +241,19 @@ goto :orchestration
 	echo #endif	//  __TARGETCONFIG_H__							>> TargetConfig.h
 	exit /B
 
+:configure_verbose_parameters
+	echo bla
+    if %DBG_TOOLSDETAIL% LEQ %BUILD_DEBUG% (
+        set SDCC_DETAIL=-V --verbose
+        set SYMBOL_DETAIL=-v
+        set HEX2BIN_DETAIL=-v
+	) else (
+        set SDCC_DETAIL=
+        set SYMBOL_DETAIL=
+        set HEX2BIN_DETAIL=
+    )
+	exit /B
+
 :opening
 	call :debug %DBG_OPENING% -------------------------------------------------------------------------------
 	call :debug %DBG_OPENING% %OPEN1%
@@ -422,10 +436,10 @@ goto :orchestration
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			if /I "%%~xA"==".c" (
 				call :debug %DBG_DETAIL% Processing C file !LIBFILE!... 
-				call :exec %DBG_CALL3% sdcc -mz80 -c %INCDIRS% -o "!RELFILE!" "!LIBFILE!"
+				call :exec %DBG_CALL2% sdcc %SDCC_DETAIL% -mz80 -c %INCDIRS% -o "!RELFILE!" "!LIBFILE!"
 			) else (
 				call :debug %DBG_DETAIL% Processing ASM file !LIBFILE!... 
-				call :exec %DBG_CALL3% sdasz80 -o "!RELFILE!" "!LIBFILE!"
+				call :exec %DBG_CALL2% sdasz80 -o "!RELFILE!" "!LIBFILE!"
 			)
 		)
 	)
@@ -443,10 +457,10 @@ goto :orchestration
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			if /I "%%~xA"==".c" (
 				call :debug %DBG_DETAIL% Processing C file !APPFILE!... 
-				call :exec %DBG_CALL3% sdcc -mz80 -c %INCDIRS% -o "!RELFILE!" "!APPFILE!"
+				call :exec %DBG_CALL2% sdcc %SDCC_DETAIL% -mz80 -c %INCDIRS% -o "!RELFILE!" "!APPFILE!"
 			) else (
 				call :debug %DBG_DETAIL% Processing ASM file !APPFILE!... 
-				call :exec %DBG_CALL3% sdasz80 -o "!RELFILE!" "!APPFILE!"
+				call :exec %DBG_CALL2% sdasz80 -o "!RELFILE!" "!APPFILE!"
 			)
 			set OBJLIST=!OBJLIST! "!RELFILE!"
 		)
@@ -499,7 +513,7 @@ goto :orchestration
 
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Compiling...
-	call :exec %DBG_CALL1% sdcc --code-loc %CODE_LOC% --data-loc %DATA_LOC% -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 %OBJLIST% %INCDIRS% -o "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
+	call :exec %DBG_CALL1% sdcc %SDCC_DETAIL% --code-loc %CODE_LOC% --data-loc %DATA_LOC% -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 %OBJLIST% %INCDIRS% -o "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
 	call :debug %DBG_STEPS% Done compiling.
 	exit /B
 
@@ -507,9 +521,9 @@ goto :orchestration
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Build MSX binary...
 	if ".%BIN_SIZE%"=="." (
-		call :exec %DBG_CALL2% hex2bin -e %MSX_FILE_EXTENSION% "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
+		call :exec %DBG_CALL3% hex2bin %HEX2BIN_DETAIL% -e %MSX_FILE_EXTENSION% "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
 	) else (
-		call :exec %DBG_CALL2% hex2bin -e %MSX_FILE_EXTENSION% -l %BIN_SIZE% "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
+		call :exec %DBG_CALL3% hex2bin %HEX2BIN_DETAIL% -e %MSX_FILE_EXTENSION% -l %BIN_SIZE% "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
 	)
 	call :debug %DBG_STEPS% Done building MSX binary.
 
@@ -520,7 +534,7 @@ goto :orchestration
 
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Building symbol file...
-	call :exec %DBG_EXTROVERT% python Make\symbol.py %MSX_OBJ_PATH%\ %MSX_FILE_NAME%
+	call :exec %DBG_CALL3% python Make\symbol.py %MSX_OBJ_PATH%\ %MSX_FILE_NAME% %SYMBOL_DETAIL%
 	call :debug %DBG_STEPS% Done building symbol file.
 
 	exit /B
@@ -536,6 +550,7 @@ goto :orchestration
 
 :orchestration
 call :configure_target
+call :configure_verbose_parameters
 call :opening
 call :filesystem_settings
 call :create_dir_struct
