@@ -1,0 +1,9 @@
+;----------------------------------------------------------
+;	Symbols.txt - by Danilo Angelo, 2020
+;
+;	Symbol export configuration.
+;   Add python-like matching regex below
+;----------------------------------------------------------
+
+[a-zA-Z0-9]*init
+_main
