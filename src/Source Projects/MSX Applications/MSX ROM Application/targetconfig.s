@@ -1,10 +1,10 @@
-;-------------------------------------------------		
-; targetconfig.s created automatically by make.bat		
-; on 19:43:46.51 , 02-Oct-21 				
-;														
-; DO NOT BOTHER EDITING THIS.							
-; ALL CHANGES WILL BE LOST.							
-;-------------------------------------------------		
-														
-DEBUG = 1							
-OPENMSX_PROFILING = 0							
+;-------------------------------------------------
+; targetconfig.s created automatically by make.sh
+; on Sat Oct  2 20:30:27 -03 2021
+;
+; DO NOT BOTHER EDITING THIS.
+; ALL CHANGES WILL BE LOST.
+;-------------------------------------------------
+
+DEBUG = 1
+OPENMSX_PROFILING = 0

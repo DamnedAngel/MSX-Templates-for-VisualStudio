@@ -23,7 +23,7 @@ def is_hex(s):
 # Load symbol patterns
 ###################################
 patterns = []
-with open('Symbols.txt', 'r') as f1:
+with open('Config/Symbols.txt', 'r') as f1:
 	for line in f1:
 		line1 = line.strip()
 		words = line1.split()

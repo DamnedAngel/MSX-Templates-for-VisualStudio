@@ -17,6 +17,7 @@ set MSX_OBJ_PATH=%PROFILE%\objs
 set MSX_BIN_PATH=%PROFILE%\bin
 set MSX_DEV_PATH=..\..\..
 set MSX_LIB_PATH=%MSX_DEV_PATH%\libs
+set MSX_CFG_PATH=Config
 
 set OBJLIST=
 set INCDIRS=
@@ -168,7 +169,7 @@ goto :orchestration
 	echo ;-------------------------------------------------		>> TargetConfig.s
 	echo.														>> TargetConfig.s
 
-	for /F "tokens=1,2" %%A in  (TargetConfig_%PROFILE%.txt) do  (
+	for /F "tokens=1,2" %%A in  (%MSX_CFG_PATH%\TargetConfig_%PROFILE%.txt) do  (
 		set TAG=%%A
 		set TAG1=!TAG:~0,1!
 		if NOT "!TAG1!" == ";" (
@@ -296,7 +297,7 @@ goto :orchestration
 	echo ;-------------------------------------------------		>> applicationsettings.s
 	echo.														>> applicationsettings.s
 
-	for /F "tokens=1,2" %%A in  (ApplicationSettings.txt) do  (
+	for /F "tokens=1,2" %%A in  (%MSX_CFG_PATH%\ApplicationSettings.txt) do  (
 		set TAG=%%A
 		if NOT "!TAG:~0,1!"==";" (
 			if /I ".!TAG!"==".PROJECT_TYPE" (
@@ -413,7 +414,7 @@ goto :orchestration
 :collect_include_dirs
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Collecting include cirectories...
-	for /F "tokens=*" %%A in (IncludeDirectories.txt) do (
+	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\IncludeDirectories.txt) do (
 		set INCDIR=%%A
 		if NOT "%INCDIR:~0,1%"==";" (
 			set INCDIR=!INCDIR:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
@@ -428,7 +429,7 @@ goto :orchestration
 :build_lib
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Building libraries...
-	for /F "tokens=*" %%A in (LibrarySources.txt) do (
+	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\LibrarySources.txt) do (
 		set LIBFILE=%%A
 		if NOT "%LIBFILE:~0,1%"==";" (
 			set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
@@ -449,7 +450,7 @@ goto :orchestration
 :compile
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Building application modules...
-	for /F "tokens=1" %%A in  (ApplicationSources.txt) do  (
+	for /F "tokens=1" %%A in  (%MSX_CFG_PATH%\ApplicationSources.txt) do  (
 		set APPFILE=%%A
 		if NOT "%APPFILE:~0,1%"==";" (
 			set APPFILE=!APPFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
@@ -469,7 +470,7 @@ goto :orchestration
 
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Collecting libraries...
-	for /F "tokens=*" %%A in (LibrarySources.txt) do (
+	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\LibrarySources.txt) do (
 		set LIBFILE=%%A
 		if NOT "%LIBFILE:~0,1%"==";" (
 			set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
@@ -479,7 +480,7 @@ goto :orchestration
 			call :debug %DBG_DETAIL% Collected !RELFILE!
 		)
 	)
-	for /F "tokens=*" %%A in (Libraries.txt) do (
+	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\Libraries.txt) do (
 		set LIBFILE=%%A
 		if NOT "%LIBFILE:~0,1%"==";" (
 			set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
