@@ -1,12 +1,15 @@
 {
     "folders": [
 		{
-			"path": "MSX ROM Application"
-		},
-		{
+			"name": "MSX BIN Application",
 			"path": "MSX BIN Application"
 		},
 		{
+			"name": "MSX ROM Application",
+			"path": "MSX ROM Application"
+		},
+		{
+			"name": "MSX-DOS Application",
 			"path": "MSX-DOS Application"
 		}
 	]

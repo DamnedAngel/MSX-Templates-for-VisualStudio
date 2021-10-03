@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	Symbols.txt - by Danilo Angelo, 2020
+;	Symbols.txt - by Danilo Angelo, 2021
 ;
 ;	Symbol export configuration.
 ;   Add python-like matching regex expressions

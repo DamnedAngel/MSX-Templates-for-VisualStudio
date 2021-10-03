@@ -1,13 +1,14 @@
 ;----------------------------------------------------------
-;	TargetConfig_Release.txt - by Danilo Angelo, 2020
+;	TargetConfig_Debug.txt - by Danilo Angelo, 2020-2021
 ;
 ;	Configuration for the RELEASE profile
 ;----------------------------------------------------------
 
 ;----------------------------------------------------------
 ;	Build settings
-.COMPILE
-BUILD_DEBUG			150							; DBG_MUTE=0
+;   Determine operation of the build tools
+.BUILD
+BUILD_DEBUG			        150 				; DBG_MUTE=0
                                                 ; DBG_ERROR=10
                                                 ; DBG_OPENING=40
                                                 ; DBG_STEPS=50
@@ -22,16 +23,27 @@ BUILD_DEBUG			150							; DBG_MUTE=0
                                                 ; DBG_PARAMS=230
                                                 ; DBG_VERBOSE=255
 
-DEBUG				_OFF						; _OFF: not defined ; _ON: defined; 1-n defined with debug level
-OPENMSX_PROFILING	_OFF						; _ON: enable OpenMSX Profiling routines; _OFF: Disable routines
+ASSEMBLER_EXTRA_DIRECTIVES
+COMPILER_EXTRA_DIRECTIVES
+LINKER_EXTRA_DIRECTIVES     --opt-code-size --disable-warning 196
+EXECGEN_EXTRA_DIRECTIVES
+
+
+;----------------------------------------------------------
+;	Application settings
+;   Macros & constants
+.APPLICATION
+DEBUG				        _OFF				; _OFF: not defined ; _ON: defined; 1-n defined with debug level
+OPENMSX_PROFILING	        _OFF				; _ON: enable OpenMSX Profiling routines; _OFF: Disable routines
+ 
 
 ;----------------------------------------------------------
 ;	Filesystem settings
 ;	The values below are also default, if ommited.
 .FILESYSTEM
-MSX_FILE_NAME		MSXAPP
-MSX_FILE_EXTENSION  BIN
-MSX_BIN_PATH		[PROFILE]\bin
-MSX_OBJ_PATH		[PROFILE]\objs
-MSX_DEV_PATH		..\..\..
-MSX_LIB_PATH		[MSX_DEV_PATH]\libs
+MSX_FILE_NAME		        MSXAPP
+MSX_FILE_EXTENSION          BIN
+MSX_BIN_PATH		        [PROFILE]\bin
+MSX_OBJ_PATH		        [PROFILE]\objs
+MSX_DEV_PATH		        ..\..\..
+MSX_LIB_PATH		        [MSX_DEV_PATH]\libs

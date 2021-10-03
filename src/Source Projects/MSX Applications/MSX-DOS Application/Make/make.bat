@@ -175,26 +175,23 @@ goto :orchestration
 		if NOT "!TAG1!" == ";" (
 			if "!TAG1!" == "." (
 				set TARGET_SECTION=!TAG!
-			) else if /I "!TARGET_SECTION!"==".COMPILE" (
-				if /I "%%A"=="BUILD_DEBUG" (
-					REM configure compile level debug
-					set BUILD_DEBUG=%%B
+			) else if /I "!TARGET_SECTION!"==".APPLICATION" (
+				rem .APPLICATION
+				if /I "%%B"=="_off" (
+					echo //#define %%A						>> targetconfig.h
+					echo %%A = 0							>> targetconfig.s
+				) else if /I "%%B"=="_on" (
+					echo #define %%A						>> targetconfig.h
+					echo %%A = 1							>> targetconfig.s
+				) else if /I "%%B"=="" (
+					echo #define %%A 						>> targetconfig.h
+					echo %%A = 1							>> targetconfig.s
 				) else (
-					if /I "%%B"=="_off" (
-						echo //#define %%A						>> targetconfig.h
-						echo %%A = 0							>> targetconfig.s
-					) else if /I "%%B"=="_on" (
-						echo #define %%A						>> targetconfig.h
-						echo %%A = 1							>> targetconfig.s
-					) else if /I "%%B"=="" (
-						echo #define %%A 						>> targetconfig.h
-						echo %%A = 1							>> targetconfig.s
-					) else (
-						echo #define %%A %%B					>> targetconfig.h
-						echo %%A = %%B							>> targetconfig.s
-					)
+					echo #define %%A %%B					>> targetconfig.h
+					echo %%A = %%B							>> targetconfig.s
 				)
-			) else if /I "!TARGET_SECTION!"==".FILESYSTEM" (
+			) else ( 
+				rem .BUILD & .FILESYSTEM
 				set VALUE=%%B
 
 				rem replaces PROFILE
@@ -437,10 +434,10 @@ goto :orchestration
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			if /I "%%~xA"==".c" (
 				call :debug %DBG_DETAIL% Processing C file !LIBFILE!... 
-				call :exec %DBG_CALL2% sdcc %SDCC_DETAIL% -mz80 -c %INCDIRS% -o "!RELFILE!" "!LIBFILE!"
+				call :exec %DBG_CALL2% sdcc %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!LIBFILE!"
 			) else (
 				call :debug %DBG_DETAIL% Processing ASM file !LIBFILE!... 
-				call :exec %DBG_CALL2% sdasz80 -o "!RELFILE!" "!LIBFILE!"
+				call :exec %DBG_CALL2% sdasz80 %ASSEMBLER_EXTRA_DIRECTIVES% -o "!RELFILE!" "!LIBFILE!"
 			)
 		)
 	)
@@ -458,10 +455,10 @@ goto :orchestration
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			if /I "%%~xA"==".c" (
 				call :debug %DBG_DETAIL% Processing C file !APPFILE!... 
-				call :exec %DBG_CALL2% sdcc %SDCC_DETAIL% -mz80 -c %INCDIRS% -o "!RELFILE!" "!APPFILE!"
+				call :exec %DBG_CALL2% sdcc %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!APPFILE!"
 			) else (
 				call :debug %DBG_DETAIL% Processing ASM file !APPFILE!... 
-				call :exec %DBG_CALL2% sdasz80 -o "!RELFILE!" "!APPFILE!"
+				call :exec %DBG_CALL2% sdasz80 %ASSEMBLER_EXTRA_DIRECTIVES% -o "!RELFILE!" "!APPFILE!"
 			)
 			set OBJLIST=!OBJLIST! "!RELFILE!"
 		)
@@ -514,7 +511,7 @@ goto :orchestration
 
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Compiling...
-	call :exec %DBG_CALL1% sdcc %SDCC_DETAIL% --code-loc %CODE_LOC% --data-loc %DATA_LOC% -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 %OBJLIST% %INCDIRS% -o "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
+	call :exec %DBG_CALL1% sdcc %SDCC_DETAIL% %LINKER_EXTRA_DIRECTIVES% --code-loc %CODE_LOC% --data-loc %DATA_LOC% -mz80 --no-std-crt0 %OBJLIST% %INCDIRS% -o "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
 	call :debug %DBG_STEPS% Done compiling.
 	exit /B
 
@@ -522,9 +519,9 @@ goto :orchestration
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Build MSX binary...
 	if ".%BIN_SIZE%"=="." (
-		call :exec %DBG_CALL3% hex2bin %HEX2BIN_DETAIL% -e %MSX_FILE_EXTENSION% "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
+		call :exec %DBG_CALL3% hex2bin %HEX2BIN_DETAIL% %EXECGEN_EXTRA_DIRECTIVES% -e %MSX_FILE_EXTENSION% "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
 	) else (
-		call :exec %DBG_CALL3% hex2bin %HEX2BIN_DETAIL% -e %MSX_FILE_EXTENSION% -l %BIN_SIZE% "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
+		call :exec %DBG_CALL3% hex2bin %HEX2BIN_DETAIL% %EXECGEN_EXTRA_DIRECTIVES% -e %MSX_FILE_EXTENSION% -l %BIN_SIZE% "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
 	)
 	call :debug %DBG_STEPS% Done building MSX binary.
 
