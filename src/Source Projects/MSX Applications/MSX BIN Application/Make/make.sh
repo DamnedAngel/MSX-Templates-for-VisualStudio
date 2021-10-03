@@ -120,23 +120,18 @@ configure_target() {
         if [[ -n $HEAD && ${HEAD:0:1} != ';' ]]; then
             if [[ ${HEAD:0:1} == '.' ]]; then
                 TARGET_SECTION=$HEAD
-            elif [[ $TARGET_SECTION == '.COMPILE' ]]; then
-                if [[ $HEAD == 'BUILD_DEBUG' ]]; then
-                    BUILD_DEBUG=$REST # configure compile level debug
+            elif [[ $TARGET_SECTION == '.APPLICATION' ]]; then
+                if [[ $REST == '_off' ]]; then
+                    echo "//#define $HEAD"                  >> targetconfig.h
+                    echo $HEAD = 0                          >> targetconfig.s
+                elif [[ $REST == '_on' || -z $REST ]]; then
+                    echo "#define $HEAD"                    >> targetconfig.h
+                    echo $HEAD = 1                          >> targetconfig.s
                 else
-                    if [[ $REST == '_off' ]]; then
-                        echo "//#define $HEAD"                  >> targetconfig.h
-                        echo $HEAD = 0                          >> targetconfig.s
-                    elif [[ $REST == '_on' || -z $REST ]]; then
-                        echo "#define $HEAD"                    >> targetconfig.h
-                        echo $HEAD = 1                          >> targetconfig.s
-                    else
-                        echo "#define $HEAD $REST"              >> targetconfig.h
-                        echo $HEAD = $REST                      >> targetconfig.s
-                    fi
+                    echo "#define $HEAD $REST"              >> targetconfig.h
+                    echo $HEAD = $REST                      >> targetconfig.s
                 fi
-            elif [[ $TARGET_SECTION == '.FILESYSTEM' ]]; then
-                # replaces PROFILE
+            else # .BUILD & .FILESYSTEM
                 if [[ -n $REST ]]; then
                     REST=$(path_replace "$REST" '[PROFILE]' "$PROFILE")
                     REST=$(path_replace "$REST" '[MSX_FILE_NAME]' "$MSX_FILE_NAME")
@@ -146,9 +141,6 @@ configure_target() {
                     REST=$(path_replace "$REST" '[MSX_BIN_PATH]' "$MSX_BIN_PATH")
                     REST=$(path_replace "$REST" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
                     eval $HEAD=\$REST   # indirect variable assignment
-                    if [[ -z $REST ]]; then
-                        echo Warning: variable $HEAD erased.
-                    fi
                 fi
             fi
         fi
@@ -369,10 +361,10 @@ build_lib() {
             RELFILE="$MSX_OBJ_PATH"/$(basename "$LIBFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
                 debug $DBG_DETAIL "Processing C file $(basename "$LIBFILE")... "
-                _exec $DBG_CALL2 sdcc $SDCC_DETAIL -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'"
+                _exec $DBG_CALL2 sdcc $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'"
             else
                 debug $DBG_DETAIL "Processing ASM file $(basename "$LIBFILE")... "
-                _exec $DBG_CALL2 sdasz80 -o "'$RELFILE'" "'$LIBFILE'"
+                _exec $DBG_CALL2 sdasz80 $ASSEMBLER_EXTRA_DIRECTIVES -o "'$RELFILE'" "'$LIBFILE'"
             fi
         fi
     done < "$MSX_CFG_PATH/LibrarySources.txt"
@@ -392,10 +384,10 @@ compile () {
             RELFILE="$MSX_OBJ_PATH"/$(basename "$APPFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
                 debug $DBG_DETAIL "Processing C file $(basename "$APPFILE")... "
-                _exec $DBG_CALL2 sdcc $SDCC_DETAIL -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
+                _exec $DBG_CALL2 sdcc $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
             else
                 debug $DBG_DETAIL "Processing ASM file $(basename "$APPFILE")... "
-                _exec $DBG_CALL2 sdasz80 -o "'$RELFILE'" "'$APPFILE'"
+                _exec $DBG_CALL2 sdasz80 $ASSEMBLER_EXTRA_DIRECTIVES -o "'$RELFILE'" "'$APPFILE'"
             fi
             OBJLIST[$I]="'$RELFILE'"
             I+=1
@@ -451,7 +443,7 @@ compile () {
     
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Compiling...
-    _exec $DBG_CALL1 sdcc $SDCC_DETAIL --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 ${OBJLIST[*]} ${INCDIRS[*]} -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
+    _exec $DBG_CALL1 sdcc $SDCC_DETAIL $LINKER_EXTRA_DIRECTIVES --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 ${OBJLIST[*]} ${INCDIRS[*]} -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
     debug $DBG_STEPS Done compiling.
 }
 
@@ -459,9 +451,9 @@ build_msx_bin () {
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Build MSX binary...
     if [[ -z $BIN_SIZE ]]; then
-        _exec $DBG_CALL3 hex2bin $HEX2BIN_DETAIL -e $MSX_FILE_EXTENSION "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
+        _exec $DBG_CALL3 hex2bin $HEX2BIN_DETAIL $EXECGEN_EXTRA_DIRECTIVES -e $MSX_FILE_EXTENSION "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
     else
-        _exec $DBG_CALL3 hex2bin $HEX2BIN_DETAIL -e $MSX_FILE_EXTENSION -l $BIN_SIZE "'$MSX_OBJ_PATH'/'$MSX_FILE_NAME.ihx'"
+        _exec $DBG_CALL3 hex2bin $HEX2BIN_DETAIL $EXECGEN_EXTRA_DIRECTIVES -e $MSX_FILE_EXTENSION -l $BIN_SIZE "'$MSX_OBJ_PATH'/'$MSX_FILE_NAME.ihx'"
     fi
     debug $DBG_STEPS Done building MSX binary.
     

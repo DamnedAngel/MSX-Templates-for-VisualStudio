@@ -1,10 +1,10 @@
 ;-------------------------------------------------
 ; targetconfig.s created automatically by make.sh
-; on Sat Oct  2 20:30:38 -03 2021
+; on Sun Oct  3 19:52:57 -03 2021
 ;
 ; DO NOT BOTHER EDITING THIS.
 ; ALL CHANGES WILL BE LOST.
 ;-------------------------------------------------
 
-DEBUG = 0
+DEBUG = 1
 OPENMSX_PROFILING = 0

@@ -1,6 +1,6 @@
 ;-------------------------------------------------
 ; targetconfig.s created automatically by make.sh
-; on Sat Oct  2 20:30:27 -03 2021
+; on Sun Oct  3 19:52:39 -03 2021
 ;
 ; DO NOT BOTHER EDITING THIS.
 ; ALL CHANGES WILL BE LOST.
