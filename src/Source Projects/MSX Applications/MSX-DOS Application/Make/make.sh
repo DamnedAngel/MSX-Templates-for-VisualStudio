@@ -17,6 +17,7 @@ MSX_OBJ_PATH=$PROFILE/objs
 MSX_BIN_PATH=$PROFILE/bin
 MSX_DEV_PATH=../../..
 MSX_LIB_PATH=$MSX_DEV_PATH/libs
+MSX_CFG_PATH=Config
 
 OBJLIST=
 INCDIRS=
@@ -108,7 +109,7 @@ configure_target() {
 
     shopt -s nocasematch # caseless matching
 
-    if [[ ! -f "TargetConfig_$PROFILE.txt" ]]; then
+    if [[ ! -f "$MSX_CFG_PATH/TargetConfig_$PROFILE.txt" ]]; then
         debug $DBG_STEPS File TargetConfig_$PROFILE.txt not found.
         exit 1
     fi
@@ -151,7 +152,7 @@ configure_target() {
                 fi
             fi
         fi
-    done < "TargetConfig_$PROFILE.txt"
+    done < "$MSX_CFG_PATH/TargetConfig_$PROFILE.txt"
 
     echo                                                        >> targetconfig.h
     echo '#endif //  __TARGETCONFIG_H__'                        >> targetconfig.h
@@ -290,7 +291,7 @@ application_settings() {
                 fi
             fi
         fi
-    done < ApplicationSettings.txt
+    done < "$MSX_CFG_PATH/ApplicationSettings.txt"
 
     if [[ $PROJECT_TYPE == 'BIN' ]]; then
         debug $DBG_STEPS Adding specific BIN settings...
@@ -353,7 +354,7 @@ collect_include_dirs() {
             I+=1
             debug $DBG_DETAIL "Collected $INCDIR"
         fi
-    done < IncludeDirectories.txt
+    done < "$MSX_CFG_PATH/IncludeDirectories.txt"
     debug $DBG_STEPS Done collecting include directories.
 }
 
@@ -374,7 +375,7 @@ build_lib() {
                 _exec $DBG_CALL2 sdasz80 -o "'$RELFILE'" "'$LIBFILE'"
             fi
         fi
-    done < LibrarySources.txt
+    done < "$MSX_CFG_PATH/LibrarySources.txt"
     debug $DBG_STEPS Done building libraries.
 }
 
@@ -399,7 +400,7 @@ compile () {
             OBJLIST[$I]="'$RELFILE'"
             I+=1
         fi
-    done < ApplicationSources.txt
+    done < "$MSX_CFG_PATH/ApplicationSources.txt"
     debug $DBG_STEPS Done building application modules.
     
     debug $DBG_STEPS -------------------------------------------------------------------------------
@@ -414,7 +415,7 @@ compile () {
             I+=1
             debug $DBG_DETAIL Collected $(basename "$RELFILE")
         fi
-    done < LibrarySources.txt
+    done < "$MSX_CFG_PATH/LibrarySources.txt"
     
     while read -r LIBFILE; do
         if [[ -n $LIBFILE && ${LIBFILE:0:1} != ';' ]]; then
@@ -424,7 +425,7 @@ compile () {
             I+=1
             debug $DBG_DETAIL Collected $(basename "$LIBFILE")
         fi
-    done < Libraries.txt
+    done < "$MSX_CFG_PATH/Libraries.txt"
     debug $DBG_STEPS Done collecting libraries.
     
     if [[ -z $CODE_LOC ]]; then
