@@ -146,8 +146,6 @@ goto :orchestration
 #
 
 :configure_target
-	echo -------------------------------------------------------------------------------
-	echo Building target configuration files...
 	echo //-------------------------------------------------	>  TargetConfig.h
 	echo // targetconfig.h created automatically by make.bat	>> TargetConfig.h
 	echo // on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%				>> TargetConfig.h
@@ -230,8 +228,6 @@ goto :orchestration
 					call :replace_string
 				)
 				set %%A=!VALUE!
-				call :debug %DBG_DETAIL% %%A=!VALUE!
-
 			)
 		)
 	)

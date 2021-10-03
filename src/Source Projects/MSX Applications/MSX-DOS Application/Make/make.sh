@@ -141,9 +141,6 @@ configure_target() {
                     REST=$(path_replace "$REST" '[MSX_BIN_PATH]' "$MSX_BIN_PATH")
                     REST=$(path_replace "$REST" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
                     eval $HEAD=\$REST   # indirect variable assignment
-                    if [[ -z $REST ]]; then
-                        echo Warning: variable $HEAD erased.
-                    fi
                 fi
             fi
         fi
