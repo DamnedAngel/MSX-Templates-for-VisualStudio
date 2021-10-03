@@ -193,44 +193,45 @@ goto :orchestration
 			) else ( 
 				rem .BUILD & .FILESYSTEM
 				set VALUE=%%B
-
-				rem replaces PROFILE
-				set SEARCH_STR=[PROFILE]
-				set REPLACE_STR=!PROFILE!
-				call :replace_string
+				if "!VALUE!" neq "" (
+					rem replaces PROFILE
+					set SEARCH_STR=[PROFILE]
+					set REPLACE_STR=!PROFILE!
+					call :replace_string
 			
-				rem replaces MSX_FILE_NAME 
-				set SEARCH_STR=[MSX_FILE_NAME]
-				set REPLACE_STR=!MSX_FILE_NAME!
-				call :replace_string
+					rem replaces MSX_FILE_NAME 
+					set SEARCH_STR=[MSX_FILE_NAME]
+					set REPLACE_STR=!MSX_FILE_NAME!
+					call :replace_string
 
-				rem replaces MSX_FILE_EXTENSION
-				set SEARCH_STR=[MSX_FILE_EXTENSION]
-				set REPLACE_STR=!MSX_FILE_EXTENSION!
-				call :replace_string
+					rem replaces MSX_FILE_EXTENSION
+					set SEARCH_STR=[MSX_FILE_EXTENSION]
+					set REPLACE_STR=!MSX_FILE_EXTENSION!
+					call :replace_string
 
-				rem replaces MSX_DEV_PATH
-				set SEARCH_STR=[MSX_DEV_PATH]
-				set REPLACE_STR=!MSX_DEV_PATH!
-				call :replace_string
+					rem replaces MSX_DEV_PATH
+					set SEARCH_STR=[MSX_DEV_PATH]
+					set REPLACE_STR=!MSX_DEV_PATH!
+					call :replace_string
 
-				rem replaces MSX_OBJ_PATH
-				set SEARCH_STR=[MSX_OBJ_PATH]
-				set REPLACE_STR=!MSX_OBJ_PATH!
-				call :replace_string
+					rem replaces MSX_OBJ_PATH
+					set SEARCH_STR=[MSX_OBJ_PATH]
+					set REPLACE_STR=!MSX_OBJ_PATH!
+					call :replace_string
 			
-				rem replaces MSX_BIN_PATH
-				set SEARCH_STR=[MSX_BIN_PATH]
-				set REPLACE_STR=!MSX_BIN_PATH!
-				call :replace_string
+					rem replaces MSX_BIN_PATH
+					set SEARCH_STR=[MSX_BIN_PATH]
+					set REPLACE_STR=!MSX_BIN_PATH!
+					call :replace_string
 			
-				rem replaces MSX_LIB_PATH
-				set SEARCH_STR=[MSX_LIB_PATH]
-				set REPLACE_STR=!MSX_LIB_PATH!
-				call :replace_string
-			
+					rem replaces MSX_LIB_PATH
+					set SEARCH_STR=[MSX_LIB_PATH]
+					set REPLACE_STR=!MSX_LIB_PATH!
+					call :replace_string
+				)
 				set %%A=!VALUE!
-				if "!VALUE!"=="" echo ### Warning: variable %%A erased.
+				call :debug %DBG_DETAIL% %%A=!VALUE!
+
 			)
 		)
 	)
@@ -240,7 +241,6 @@ goto :orchestration
 	exit /B
 
 :configure_verbose_parameters
-	echo bla
     if %DBG_TOOLSDETAIL% LEQ %BUILD_DEBUG% (
         set SDCC_DETAIL=-V --verbose
         set SYMBOL_DETAIL=-v
