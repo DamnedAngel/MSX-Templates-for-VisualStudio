@@ -8,6 +8,7 @@ REM ----------------------------------------------------------------------------
 set CURRENT_DIR=%CD%
 set MSX_BUILD_TIME=%TIME% 
 set MSX_BUILD_DATE=%DATE% 
+set SHELL_SCRIPT_EXTENSION=BAT
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
@@ -89,6 +90,11 @@ goto :orchestration
 		rem replaces MSX_LIB_PATH
 		set SEARCH_STR=[MSX_LIB_PATH]
 		set REPLACE_STR=!MSX_LIB_PATH!
+		call :replace_string
+				
+		rem replaces SHELL_SCRIPT_EXTENSION
+		set SEARCH_STR=[SHELL_SCRIPT_EXTENSION]
+		set REPLACE_STR=!SHELL_SCRIPT_EXTENSION!
 		call :replace_string
 	)
 	exit /B
@@ -303,15 +309,15 @@ goto :orchestration
 	) else (
 		call :debug %DBG_EXTROVERT% Before compile action: %BEFORE_COMPILE_ACTION%
 	)
-	if /I "%BUILD_START_ACTION%"=="" (
+	if /I "%AFTER_COMPILE_ACTION%"=="" (
 		call :debug %DBG_EXTROVERT% After compile action: [NONE]
 	) else (
 		call :debug %DBG_EXTROVERT% After compile action: %AFTER_COMPILE_ACTION%
 	)
-	if /I "%BUILD_START_ACTION%"=="" (
+	if /I "%AFTER_BINARY_ACTION%"=="" (
 		call :debug %DBG_EXTROVERT% After binary generation action: [NONE]
 	) else (
-		call :debug %DBG_EXTROVERT% After binary generation: %AFTER_BINARY_ACTION%
+		call :debug %DBG_EXTROVERT% After binary generation action: %AFTER_BINARY_ACTION%
 	)
 	if /I "%BUILD_END_ACTION%"=="" (
 		call :debug %DBG_EXTROVERT% Build end action: [NONE]

@@ -2,19 +2,20 @@
 ;	BuildEvents.txt - by Danilo Angelo, 2021
 ;
 ;	Actions to be taken during the Build Process
-;	Example: BUILD_START_ACTION	MyStartScript [PROFILE]
+;	Example: 
+;   BUILD_START_ACTION	MyStartScript.[SHELL_SCRIPT_EXTENSION] [PROFILE]
 ;----------------------------------------------------------
 
 ;----------------------------------------------------------
 ;	Always executed in build start
-BUILD_START_ACTION [MSX_DEV_PATH]\..\..\..\a
+BUILD_START_ACTION [MSX_DEV_PATH]\..\..\..\a.[SHELL_SCRIPT_EXTENSION]
 
 ;----------------------------------------------------------
 ;	Not executed if build clean without all
-BEFORE_COMPILE_ACTION [MSX_DEV_PATH]\..\..\..\b
-AFTER_COMPILE_ACTION [MSX_DEV_PATH]\..\..\..\c
-AFTER_BINARY_ACTION [MSX_DEV_PATH]\..\..\..\d
+BEFORE_COMPILE_ACTION [MSX_DEV_PATH]\..\..\..\b.[SHELL_SCRIPT_EXTENSION] [PROFILE]
+AFTER_COMPILE_ACTION [MSX_DEV_PATH]\..\..\..\c.[SHELL_SCRIPT_EXTENSION]
+AFTER_BINARY_ACTION [MSX_DEV_PATH]\..\..\..\d.[SHELL_SCRIPT_EXTENSION] jkhdksjha
 
 ;----------------------------------------------------------
 ; Always executed in build end
-BUILD_END_ACTION [MSX_DEV_PATH]\..\..\..\e
+BUILD_END_ACTION [MSX_DEV_PATH]\..\..\..\e.[SHELL_SCRIPT_EXTENSION]
