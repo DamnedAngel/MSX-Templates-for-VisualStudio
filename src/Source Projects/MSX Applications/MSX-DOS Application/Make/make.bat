@@ -54,6 +54,45 @@ goto :orchestration
 	set VALUE=!VALUE:%SEARCH_STR%=%REPLACE_STR%!
 	exit /B
 
+:replace_variables
+	if "!VALUE!" neq "" (
+		rem replaces PROFILE
+		set SEARCH_STR=[PROFILE]
+		set REPLACE_STR=!PROFILE!
+		call :replace_string
+			
+		rem replaces MSX_FILE_NAME 
+		set SEARCH_STR=[MSX_FILE_NAME]
+		set REPLACE_STR=!MSX_FILE_NAME!
+		call :replace_string
+
+		rem replaces MSX_FILE_EXTENSION
+		set SEARCH_STR=[MSX_FILE_EXTENSION]
+		set REPLACE_STR=!MSX_FILE_EXTENSION!
+		call :replace_string
+
+		rem replaces MSX_DEV_PATH
+		set SEARCH_STR=[MSX_DEV_PATH]
+		set REPLACE_STR=!MSX_DEV_PATH!
+		call :replace_string
+
+		rem replaces MSX_OBJ_PATH
+		set SEARCH_STR=[MSX_OBJ_PATH]
+		set REPLACE_STR=!MSX_OBJ_PATH!
+		call :replace_string
+			
+		rem replaces MSX_BIN_PATH
+		set SEARCH_STR=[MSX_BIN_PATH]
+		set REPLACE_STR=!MSX_BIN_PATH!
+		call :replace_string
+			
+		rem replaces MSX_LIB_PATH
+		set SEARCH_STR=[MSX_LIB_PATH]
+		set REPLACE_STR=!MSX_LIB_PATH!
+		call :replace_string
+	)
+	exit /B
+
 :debug
 	if %1 GTR %BUILD_DEBUG% exit /B
 	set MSG=%2
@@ -105,6 +144,15 @@ goto :orchestration
 	del OUTPUT.TMP
 	exit /B
 
+:exec_action
+	if "%3" neq "" (
+		call :debug %DBG_STEPS% -------------------------------------------------------------------------------
+		call :debug %DBG_STEPS% Executing %1 %2 action...
+		call :exec %DBG_CALL3% %3
+		call :debug %DBG_STEPS% Done executing %1 %2 action.
+	)
+	exit /B
+
 :create_dir
 	set NEW_PATH=%1
 	set ACC_PATH=.
@@ -139,7 +187,6 @@ goto :orchestration
 		echo Done creating BIN path.
 	)
 	exit /B
-
 
 #
 # Build phases
@@ -191,42 +238,7 @@ goto :orchestration
 			) else ( 
 				rem .BUILD & .FILESYSTEM
 				set VALUE=%%B
-				if "!VALUE!" neq "" (
-					rem replaces PROFILE
-					set SEARCH_STR=[PROFILE]
-					set REPLACE_STR=!PROFILE!
-					call :replace_string
-			
-					rem replaces MSX_FILE_NAME 
-					set SEARCH_STR=[MSX_FILE_NAME]
-					set REPLACE_STR=!MSX_FILE_NAME!
-					call :replace_string
-
-					rem replaces MSX_FILE_EXTENSION
-					set SEARCH_STR=[MSX_FILE_EXTENSION]
-					set REPLACE_STR=!MSX_FILE_EXTENSION!
-					call :replace_string
-
-					rem replaces MSX_DEV_PATH
-					set SEARCH_STR=[MSX_DEV_PATH]
-					set REPLACE_STR=!MSX_DEV_PATH!
-					call :replace_string
-
-					rem replaces MSX_OBJ_PATH
-					set SEARCH_STR=[MSX_OBJ_PATH]
-					set REPLACE_STR=!MSX_OBJ_PATH!
-					call :replace_string
-			
-					rem replaces MSX_BIN_PATH
-					set SEARCH_STR=[MSX_BIN_PATH]
-					set REPLACE_STR=!MSX_BIN_PATH!
-					call :replace_string
-			
-					rem replaces MSX_LIB_PATH
-					set SEARCH_STR=[MSX_LIB_PATH]
-					set REPLACE_STR=!MSX_LIB_PATH!
-					call :replace_string
-				)
+				call :replace_variables
 				set %%A=!VALUE!
 			)
 		)
@@ -248,6 +260,18 @@ goto :orchestration
     )
 	exit /B
 
+:configure_build_events
+	for /F "tokens=1,2" %%A in  (%MSX_CFG_PATH%\BuildEvents.txt) do  (
+		set TAG=%%A
+		set TAG1=!TAG:~0,1!
+		if NOT "!TAG1!" == ";" (
+			set VALUE=%%B
+			call :replace_variables
+			set %%A=!VALUE!
+		)
+	)
+	exit /B
+
 :opening
 	call :debug %DBG_OPENING% -------------------------------------------------------------------------------
 	call :debug %DBG_OPENING% %OPEN1%
@@ -257,14 +281,44 @@ goto :orchestration
 
 :filesystem_settings
     call :debug %DBG_SETTING% -------------------------------------------------------------------------------
-    call :debug %DBG_SETTING% Filesystem config...
-    call :debug %DBG_SETTING% Current dir=%CURRENT_DIR%
-    call :debug %DBG_SETTING% Target file=.\%MSX_FILE_NAME%.%MSX_FILE_EXTENSION%
-    call :debug %DBG_SETTING% Object path=.\%MSX_OBJ_PATH%
-    call :debug %DBG_SETTING% Binary path=.\%MSX_BIN_PATH%
-    call :debug %DBG_SETTING% MSX dev path=.\%MSX_DEV_PATH%
-    call :debug %DBG_SETTING% MSX lib path=.\%MSX_LIB_PATH%
+    call :debug %DBG_SETTING% Filesystem settings...
+    call :debug %DBG_SETTING% Current dir: %CURRENT_DIR%
+    call :debug %DBG_SETTING% Target file: .\%MSX_FILE_NAME%.%MSX_FILE_EXTENSION%
+    call :debug %DBG_SETTING% Object path: .\%MSX_OBJ_PATH%
+    call :debug %DBG_SETTING% Binary path: .\%MSX_BIN_PATH%
+    call :debug %DBG_SETTING% MSX dev path: .\%MSX_DEV_PATH%
+    call :debug %DBG_SETTING% MSX lib path: .\%MSX_LIB_PATH%
 	exit /B
+
+:build_events_settings
+    call :debug %DBG_EXTROVERT% -------------------------------------------------------------------------------
+    call :debug %DBG_EXTROVERT% Build events settings...
+	if /I "%BUILD_START_ACTION%"=="" (
+		call :debug %DBG_EXTROVERT% Build start action: [NONE]
+	) else (
+		call :debug %DBG_EXTROVERT% Build start action: %BUILD_START_ACTION%
+	)
+	if /I "%BEFORE_COMPILE_ACTION%"=="" (
+		call :debug %DBG_EXTROVERT% Before compile action: [NONE]
+	) else (
+		call :debug %DBG_EXTROVERT% Before compile action: %BEFORE_COMPILE_ACTION%
+	)
+	if /I "%BUILD_START_ACTION%"=="" (
+		call :debug %DBG_EXTROVERT% After compile action: [NONE]
+	) else (
+		call :debug %DBG_EXTROVERT% After compile action: %AFTER_COMPILE_ACTION%
+	)
+	if /I "%BUILD_START_ACTION%"=="" (
+		call :debug %DBG_EXTROVERT% After binary generation action: [NONE]
+	) else (
+		call :debug %DBG_EXTROVERT% After binary generation: %AFTER_BINARY_ACTION%
+	)
+	if /I "%BUILD_END_ACTION%"=="" (
+		call :debug %DBG_EXTROVERT% Build end action: [NONE]
+	) else (
+		call :debug %DBG_EXTROVERT% Build end action: %BUILD_END_ACTION%
+	)
+    exit /B
 
 :house_cleaning
     call :debug %DBG_STEPS% -------------------------------------------------------------------------------
@@ -545,8 +599,11 @@ goto :orchestration
 :orchestration
 call :configure_target
 call :configure_verbose_parameters
+call :configure_build_events
 call :opening
 call :filesystem_settings
+call :build_events_settings
+call :exec_action build start %BUILD_START_ACTION%
 call :create_dir_struct
 call :house_cleaning
 call :application_settings
@@ -557,6 +614,7 @@ if /I not "%3"=="all" GOTO :orchestration_end
 
 :orchestration_cont1
 call :collect_include_dirs
+call :exec_action before compile %BEFORE_COMPILE_ACTION%
 
 if "%2"=="" GOTO :orchestration_compile
 if /I "%2"=="all" GOTO :orchestration_all
@@ -567,8 +625,11 @@ call :build_lib
 
 :orchestration_compile
 call :compile
+call :exec_action after compile %AFTER_COMPILE_ACTION%
 call :build_msx_bin
+call :exec_action after binary %AFTER_BINARY_ACTION%
 
 :orchestration_end
+call :exec_action build end %BUILD_END_ACTION%
 call :finish
 exit 0

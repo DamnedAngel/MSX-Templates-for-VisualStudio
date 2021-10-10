@@ -108,5 +108,8 @@
     <Text Include="Config\TargetConfig_Release.txt">
       <Filter>Project Config</Filter>
     </Text>
+    <Text Include="Config\BuildEvents.txt">
+      <Filter>Project Config</Filter>
+    </Text>
   </ItemGroup>
 </Project>
