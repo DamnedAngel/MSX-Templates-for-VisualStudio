@@ -73,6 +73,7 @@
   <ItemGroup>
     <Text Include="Config\ApplicationSettings.txt" />
     <Text Include="Config\ApplicationSources.txt" />
+    <Text Include="Config\BuildEvents.txt" />
     <Text Include="Config\IncludeDirectories.txt" />
     <Text Include="Config\Libraries.txt" />
     <Text Include="Config\LibrarySources.txt" />
