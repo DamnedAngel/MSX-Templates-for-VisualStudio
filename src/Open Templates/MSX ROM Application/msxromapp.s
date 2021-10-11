@@ -29,8 +29,9 @@ _main::
 
 .if CALL_EXPANSION
 ; ----------------------------------------------------------
-;	This is a CALL handler example.
-;	CALL CMD1
+;	This is a parameterized CALL handler example.
+;	CALL CMD1 (<STRING>)
+;   return	0: Success; anything else: syntax error
 ;
 ;	This is only for the demo app.
 ;	To disable the support for BASIC's CALL statement:
@@ -40,27 +41,85 @@ _main::
 ;	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 ;	3) Remove all onCallXXXXX functions from this file
 _onCallCMD1::
-    ld      hl, #_msgCMD1
-    call    _printMSG
-
-	ld      hl, #2			; retrieve param address from stack
-	add     hl, sp
-	ld		b, (hl)
-	inc		hl
-	ld		h, (hl)
-	ld		l, b
+	ld      ix, #0			; retrieve param address from stack
+	add     ix, sp
+	ld		l, 2(ix)
+	ld		h, 3(ix)
+    ld      e, (hl)
+    inc     hl
+    ld      h, (hl)
+    ld      l, e
 _onCallCMD1_findEndOfCommand:
     ld      a, (hl)
-    cp      #0
-    ret z
-    cp      #0x3a
-    ret z
+    cp      #'('
+    jr nz,  _onCallCMD_fail
     inc     hl
-    jr      _onCallCMD1_findEndOfCommand
+    call    _onCallCMD1_ignoreSpaces
+    cp      #'"'
+    jr nz,  _onCallCMD_fail
+    push    hl
+    inc     hl
+    ld      b, #1
+_onCallCMD1_mapString:
+    ld      a, (hl)
+    inc     hl
+    inc     b
+    cp      #'"'
+    jr nz,  _onCallCMD1_mapString
+    call    _onCallCMD1_ignoreSpaces
+    cp      #')'
+    jr nz,  _onCallCMD_fail
+    inc     hl
+    call    _onCallCMD1_ignoreSpaces
+    cp      #0
+    jr z,   _onCallCMD1_printMsg
+    cp      #0x3a
+    jr nz,  _onCallCMD_fail
+
+
+_onCallCMD1_printMsg:
+    push    bc
+    ex      de, hl
+	ld		l, 2(ix)
+	ld		h, 3(ix)
+    ld      (hl), e
+    inc     hl
+    ld      (hl), d
+
+    ld      hl, #_msgCMD1_1
+    call    _printMSG
+    pop     bc
+    pop     hl
+
+_onCallCMD1_printString:
+    ld      a, (hl)
+    push    hl
+	ld		iy, (#0xfcc0); BIOS_ROMSLT
+	ld		ix, #0x00a2; BIOS_CHPUT
+	call	#0x001c; BIOS_CALSLT
+    pop     hl
+    inc     hl
+    djnz    _onCallCMD1_printString
+
+_onCallCMD1_ending:    
+    ld      hl, #_msgCMD1_2
+    call    _printMSG
+    ld      l, #0
+    ret
+_onCallCMD1_ignoreSpaces:
+    ld      a, (hl)
+    cp      #' '
+    ret nz
+    inc     hl
+    jr _onCallCMD1_ignoreSpaces
+_onCallCMD_fail:
+    ld      l, #0xff
+    ret
 
 ; ----------------------------------------------------------
-;	This is a CALL handler example.
+;	This is a parameterless CALL handler example.
 ;	CALL CMD2
+;   return	0: Success; anything else: syntax error
 ;
 ;	This is only for the demo app.
 ;	To disable the support for BASIC's CALL statement:
@@ -70,9 +129,6 @@ _onCallCMD1_findEndOfCommand:
 ;	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 ;	3) Remove all onCallXXXXX functions from this file
 _onCallCMD2::
-    ld      hl, #_msgCMD2
-    call    _printMSG
-
 	ld      hl, #2			; retrieve param address from stack
 	add     hl, sp
 	ld		b, (hl)
@@ -82,11 +138,15 @@ _onCallCMD2::
 _onCallCMD2_findEndOfCommand:
     ld      a, (hl)
     cp      #0
-    ret z
+    jr z,   _onCallCMD_fail
     cp      #0x3a
-    ret z
-    inc     hl
-    jr      _onCallCMD2_findEndOfCommand
+    jr z,   _onCallCMD_fail
+
+_onCallCMD2_printMsg:
+    ld      hl, #_msgCMD2
+    call    _printMSG
+    ld      l, #0
+    ret
 .endif
 
 .if DEVICE_EXPANSION
@@ -161,8 +221,10 @@ _msg::
 .ascii      "the RET instruction.\r\n\0"
 
 .if CALL_EXPANSION
-_msgCMD1::
-.ascii		"The ASM handler for CMD1 says hi!\r\n\0"
+_msgCMD1_1::
+.ascii		"The ASM handler for CMD1 says \0"
+_msgCMD1_2::
+.ascii		"!\r\n\0"
 _msgCMD2::
 .ascii		"The ASM handler for CMD2 says hi!\r\n\0"
 .endif
