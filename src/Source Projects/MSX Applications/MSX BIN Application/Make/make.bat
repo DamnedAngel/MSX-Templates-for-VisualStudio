@@ -1,13 +1,14 @@
 @echo off
 
 REM -----------------------------------------------------------------------------------
-set OPEN1=MSX SDCC Make Script Copyright © 2020-2021 Danilo Angelo, 2021 Pedro Medeiros
-set OPEN2=version 00.05.00 - Codename Mac\'n\'Tux
+set OPEN1=MSX SDCC Make Script Copyright ï¿½ 2020-2021 Danilo Angelo, 2021 Pedro Medeiros
+set OPEN2=version 00.05.01 - Codename Baltazar
 REM -----------------------------------------------------------------------------------
 
 set CURRENT_DIR=%CD%
 set MSX_BUILD_TIME=%TIME% 
 set MSX_BUILD_DATE=%DATE% 
+set SHELL_SCRIPT_EXTENSION=BAT
 
 SETLOCAL ENABLEDELAYEDEXPANSION
 
@@ -17,6 +18,7 @@ set MSX_OBJ_PATH=%PROFILE%\objs
 set MSX_BIN_PATH=%PROFILE%\bin
 set MSX_DEV_PATH=..\..\..
 set MSX_LIB_PATH=%MSX_DEV_PATH%\libs
+set MSX_CFG_PATH=Config
 
 set OBJLIST=
 set INCDIRS=
@@ -37,6 +39,7 @@ set DBG_DETAIL=120
 set DBG_CALL1=150
 set DBG_CALL2=160
 set DBG_CALL3=170
+set DBG_TOOLSDETAIL=190
 set DBG_EXTROVERT=200
 set DBG_PARAMS=230
 set DBG_VERBOSE=255
@@ -50,6 +53,50 @@ goto :orchestration
 
 :replace_string
 	set VALUE=!VALUE:%SEARCH_STR%=%REPLACE_STR%!
+	exit /B
+
+:replace_variables
+	if "!VALUE!" neq "" (
+		rem replaces PROFILE
+		set SEARCH_STR=[PROFILE]
+		set REPLACE_STR=!PROFILE!
+		call :replace_string
+			
+		rem replaces MSX_FILE_NAME 
+		set SEARCH_STR=[MSX_FILE_NAME]
+		set REPLACE_STR=!MSX_FILE_NAME!
+		call :replace_string
+
+		rem replaces MSX_FILE_EXTENSION
+		set SEARCH_STR=[MSX_FILE_EXTENSION]
+		set REPLACE_STR=!MSX_FILE_EXTENSION!
+		call :replace_string
+
+		rem replaces MSX_DEV_PATH
+		set SEARCH_STR=[MSX_DEV_PATH]
+		set REPLACE_STR=!MSX_DEV_PATH!
+		call :replace_string
+
+		rem replaces MSX_OBJ_PATH
+		set SEARCH_STR=[MSX_OBJ_PATH]
+		set REPLACE_STR=!MSX_OBJ_PATH!
+		call :replace_string
+			
+		rem replaces MSX_BIN_PATH
+		set SEARCH_STR=[MSX_BIN_PATH]
+		set REPLACE_STR=!MSX_BIN_PATH!
+		call :replace_string
+			
+		rem replaces MSX_LIB_PATH
+		set SEARCH_STR=[MSX_LIB_PATH]
+		set REPLACE_STR=!MSX_LIB_PATH!
+		call :replace_string
+				
+		rem replaces SHELL_SCRIPT_EXTENSION
+		set SEARCH_STR=[SHELL_SCRIPT_EXTENSION]
+		set REPLACE_STR=!SHELL_SCRIPT_EXTENSION!
+		call :replace_string
+	)
 	exit /B
 
 :debug
@@ -103,6 +150,18 @@ goto :orchestration
 	del OUTPUT.TMP
 	exit /B
 
+:exec_action
+	set n1=%1
+	set n2=%2
+	for /f "tokens=1,2,* delims= " %%a in ("%*") do set ACTION=%%c
+	if "%ACTION%" neq "" (
+		call :debug %DBG_STEPS% -------------------------------------------------------------------------------
+		call :debug %DBG_STEPS% Executing %n1% %n2% action...
+		call :exec %DBG_CALL3% %ACTION%
+		call :debug %DBG_STEPS% Done executing %n1% %n2% action.
+	)
+	exit /B
+
 :create_dir
 	set NEW_PATH=%1
 	set ACC_PATH=.
@@ -138,14 +197,11 @@ goto :orchestration
 	)
 	exit /B
 
-
 #
 # Build phases
 #
 
 :configure_target
-	echo -------------------------------------------------------------------------------
-	echo Building target configuration files...
 	echo //-------------------------------------------------	>  TargetConfig.h
 	echo // targetconfig.h created automatically by make.bat	>> TargetConfig.h
 	echo // on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%				>> TargetConfig.h
@@ -167,77 +223,62 @@ goto :orchestration
 	echo ;-------------------------------------------------		>> TargetConfig.s
 	echo.														>> TargetConfig.s
 
-	for /F "tokens=1,2" %%A in  (TargetConfig_%PROFILE%.txt) do  (
+	for /F "tokens=1,2" %%A in  (%MSX_CFG_PATH%\TargetConfig_%PROFILE%.txt) do  (
 		set TAG=%%A
 		set TAG1=!TAG:~0,1!
 		if NOT "!TAG1!" == ";" (
 			if "!TAG1!" == "." (
 				set TARGET_SECTION=!TAG!
-			) else if /I "!TARGET_SECTION!"==".COMPILE" (
-				if /I "%%A"=="BUILD_DEBUG" (
-					REM configure compile level debug
-					set BUILD_DEBUG=%%B
+			) else if /I "!TARGET_SECTION!"==".APPLICATION" (
+				rem .APPLICATION
+				if /I "%%B"=="_off" (
+					echo //#define %%A						>> targetconfig.h
+					echo %%A = 0							>> targetconfig.s
+				) else if /I "%%B"=="_on" (
+					echo #define %%A						>> targetconfig.h
+					echo %%A = 1							>> targetconfig.s
+				) else if /I "%%B"=="" (
+					echo #define %%A 						>> targetconfig.h
+					echo %%A = 1							>> targetconfig.s
 				) else (
-					if /I "%%B"=="_off" (
-						echo //#define %%A						>> targetconfig.h
-						echo %%A = 0							>> targetconfig.s
-					) else if /I "%%B"=="_on" (
-						echo #define %%A						>> targetconfig.h
-						echo %%A = 1							>> targetconfig.s
-					) else if /I "%%B"=="" (
-						echo #define %%A 						>> targetconfig.h
-						echo %%A = 1							>> targetconfig.s
-					) else (
-						echo #define %%A %%B					>> targetconfig.h
-						echo %%A = %%B							>> targetconfig.s
-					)
+					echo #define %%A %%B					>> targetconfig.h
+					echo %%A = %%B							>> targetconfig.s
 				)
-			) else if /I "!TARGET_SECTION!"==".FILESYSTEM" (
+			) else ( 
+				rem .BUILD & .FILESYSTEM
 				set VALUE=%%B
-
-				rem replaces PROFILE
-				set SEARCH_STR=[PROFILE]
-				set REPLACE_STR=!PROFILE!
-				call :replace_string
-			
-				rem replaces MSX_FILE_NAME 
-				set SEARCH_STR=[MSX_FILE_NAME]
-				set REPLACE_STR=!MSX_FILE_NAME!
-				call :replace_string
-
-				rem replaces MSX_FILE_EXTENSION
-				set SEARCH_STR=[MSX_FILE_EXTENSION]
-				set REPLACE_STR=!MSX_FILE_EXTENSION!
-				call :replace_string
-
-				rem replaces MSX_DEV_PATH
-				set SEARCH_STR=[MSX_DEV_PATH]
-				set REPLACE_STR=!MSX_DEV_PATH!
-				call :replace_string
-
-				rem replaces MSX_OBJ_PATH
-				set SEARCH_STR=[MSX_OBJ_PATH]
-				set REPLACE_STR=!MSX_OBJ_PATH!
-				call :replace_string
-			
-				rem replaces MSX_BIN_PATH
-				set SEARCH_STR=[MSX_BIN_PATH]
-				set REPLACE_STR=!MSX_BIN_PATH!
-				call :replace_string
-			
-				rem replaces MSX_LIB_PATH
-				set SEARCH_STR=[MSX_LIB_PATH]
-				set REPLACE_STR=!MSX_LIB_PATH!
-				call :replace_string
-			
+				call :replace_variables
 				set %%A=!VALUE!
-				if "!VALUE!"=="" echo ### Warning: variable %%A erased.
 			)
 		)
 	)
 
 	echo.														>> TargetConfig.h
 	echo #endif	//  __TARGETCONFIG_H__							>> TargetConfig.h
+	exit /B
+
+:configure_verbose_parameters
+    if %DBG_TOOLSDETAIL% LEQ %BUILD_DEBUG% (
+        set SDCC_DETAIL=-V --verbose
+        set SYMBOL_DETAIL=-v
+        set HEX2BIN_DETAIL=-v
+	) else (
+        set SDCC_DETAIL=
+        set SYMBOL_DETAIL=
+        set HEX2BIN_DETAIL=
+    )
+	exit /B
+
+:configure_build_events
+	for /F "tokens=1,*" %%A in  (%MSX_CFG_PATH%\BuildEvents.txt) do  (
+		set TAG=%%A
+		set TAG1=!TAG:~0,1!
+		if NOT "!TAG1!" == ";" (
+			set VALUE=%%B
+			call :replace_variables
+			set %%A=!VALUE!
+		)
+	)
 	exit /B
 
 :opening
@@ -249,14 +290,44 @@ goto :orchestration
 
 :filesystem_settings
     call :debug %DBG_SETTING% -------------------------------------------------------------------------------
-    call :debug %DBG_SETTING% Filesystem config...
-    call :debug %DBG_SETTING% Current dir=%CURRENT_DIR%
-    call :debug %DBG_SETTING% Target file=.\%MSX_FILE_NAME%.%MSX_FILE_EXTENSION%
-    call :debug %DBG_SETTING% Object path=.\%MSX_OBJ_PATH%
-    call :debug %DBG_SETTING% Binary path=.\%MSX_BIN_PATH%
-    call :debug %DBG_SETTING% MSX dev path=.\%MSX_DEV_PATH%
-    call :debug %DBG_SETTING% MSX lib path=.\%MSX_LIB_PATH%
+    call :debug %DBG_SETTING% Filesystem settings...
+    call :debug %DBG_SETTING% Current dir: %CURRENT_DIR%
+    call :debug %DBG_SETTING% Target file: .\%MSX_FILE_NAME%.%MSX_FILE_EXTENSION%
+    call :debug %DBG_SETTING% Object path: .\%MSX_OBJ_PATH%
+    call :debug %DBG_SETTING% Binary path: .\%MSX_BIN_PATH%
+    call :debug %DBG_SETTING% MSX dev path: .\%MSX_DEV_PATH%
+    call :debug %DBG_SETTING% MSX lib path: .\%MSX_LIB_PATH%
 	exit /B
+
+:build_events_settings
+    call :debug %DBG_EXTROVERT% -------------------------------------------------------------------------------
+    call :debug %DBG_EXTROVERT% Build events settings...
+	if /I "%BUILD_START_ACTION%"=="" (
+		call :debug %DBG_EXTROVERT% Build start action: [NONE]
+	) else (
+		call :debug %DBG_EXTROVERT% Build start action: %BUILD_START_ACTION%
+	)
+	if /I "%BEFORE_COMPILE_ACTION%"=="" (
+		call :debug %DBG_EXTROVERT% Before compile action: [NONE]
+	) else (
+		call :debug %DBG_EXTROVERT% Before compile action: %BEFORE_COMPILE_ACTION%
+	)
+	if /I "%AFTER_COMPILE_ACTION%"=="" (
+		call :debug %DBG_EXTROVERT% After compile action: [NONE]
+	) else (
+		call :debug %DBG_EXTROVERT% After compile action: %AFTER_COMPILE_ACTION%
+	)
+	if /I "%AFTER_BINARY_ACTION%"=="" (
+		call :debug %DBG_EXTROVERT% After binary generation action: [NONE]
+	) else (
+		call :debug %DBG_EXTROVERT% After binary generation action: %AFTER_BINARY_ACTION%
+	)
+	if /I "%BUILD_END_ACTION%"=="" (
+		call :debug %DBG_EXTROVERT% Build end action: [NONE]
+	) else (
+		call :debug %DBG_EXTROVERT% Build end action: %BUILD_END_ACTION%
+	)
+    exit /B
 
 :house_cleaning
     call :debug %DBG_STEPS% -------------------------------------------------------------------------------
@@ -282,7 +353,7 @@ goto :orchestration
 	echo ;-------------------------------------------------		>> applicationsettings.s
 	echo.														>> applicationsettings.s
 
-	for /F "tokens=1,2" %%A in  (ApplicationSettings.txt) do  (
+	for /F "tokens=1,2" %%A in  (%MSX_CFG_PATH%\ApplicationSettings.txt) do  (
 		set TAG=%%A
 		if NOT "!TAG:~0,1!"==";" (
 			if /I ".!TAG!"==".PROJECT_TYPE" (
@@ -399,7 +470,7 @@ goto :orchestration
 :collect_include_dirs
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Collecting include cirectories...
-	for /F "tokens=*" %%A in (IncludeDirectories.txt) do (
+	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\IncludeDirectories.txt) do (
 		set INCDIR=%%A
 		if NOT "%INCDIR:~0,1%"==";" (
 			set INCDIR=!INCDIR:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
@@ -414,7 +485,7 @@ goto :orchestration
 :build_lib
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Building libraries...
-	for /F "tokens=*" %%A in (LibrarySources.txt) do (
+	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\LibrarySources.txt) do (
 		set LIBFILE=%%A
 		if NOT "%LIBFILE:~0,1%"==";" (
 			set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
@@ -422,10 +493,10 @@ goto :orchestration
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			if /I "%%~xA"==".c" (
 				call :debug %DBG_DETAIL% Processing C file !LIBFILE!... 
-				call :exec %DBG_CALL3% sdcc -mz80 -c %INCDIRS% -o "!RELFILE!" "!LIBFILE!"
+				call :exec %DBG_CALL2% sdcc %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!LIBFILE!"
 			) else (
 				call :debug %DBG_DETAIL% Processing ASM file !LIBFILE!... 
-				call :exec %DBG_CALL3% sdasz80 -o "!RELFILE!" "!LIBFILE!"
+				call :exec %DBG_CALL2% sdasz80 %ASSEMBLER_EXTRA_DIRECTIVES% -o "!RELFILE!" "!LIBFILE!"
 			)
 		)
 	)
@@ -435,7 +506,7 @@ goto :orchestration
 :compile
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Building application modules...
-	for /F "tokens=1" %%A in  (ApplicationSources.txt) do  (
+	for /F "tokens=1" %%A in  (%MSX_CFG_PATH%\ApplicationSources.txt) do  (
 		set APPFILE=%%A
 		if NOT "%APPFILE:~0,1%"==";" (
 			set APPFILE=!APPFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
@@ -443,10 +514,10 @@ goto :orchestration
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			if /I "%%~xA"==".c" (
 				call :debug %DBG_DETAIL% Processing C file !APPFILE!... 
-				call :exec %DBG_CALL3% sdcc -mz80 -c %INCDIRS% -o "!RELFILE!" "!APPFILE!"
+				call :exec %DBG_CALL2% sdcc %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!APPFILE!"
 			) else (
 				call :debug %DBG_DETAIL% Processing ASM file !APPFILE!... 
-				call :exec %DBG_CALL3% sdasz80 -o "!RELFILE!" "!APPFILE!"
+				call :exec %DBG_CALL2% sdasz80 %ASSEMBLER_EXTRA_DIRECTIVES% -o "!RELFILE!" "!APPFILE!"
 			)
 			set OBJLIST=!OBJLIST! "!RELFILE!"
 		)
@@ -455,7 +526,7 @@ goto :orchestration
 
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Collecting libraries...
-	for /F "tokens=*" %%A in (LibrarySources.txt) do (
+	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\LibrarySources.txt) do (
 		set LIBFILE=%%A
 		if NOT "%LIBFILE:~0,1%"==";" (
 			set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
@@ -465,7 +536,7 @@ goto :orchestration
 			call :debug %DBG_DETAIL% Collected !RELFILE!
 		)
 	)
-	for /F "tokens=*" %%A in (Libraries.txt) do (
+	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\Libraries.txt) do (
 		set LIBFILE=%%A
 		if NOT "%LIBFILE:~0,1%"==";" (
 			set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
@@ -499,7 +570,7 @@ goto :orchestration
 
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Compiling...
-	call :exec %DBG_CALL1% sdcc --code-loc %CODE_LOC% --data-loc %DATA_LOC% -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 %OBJLIST% %INCDIRS% -o "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
+	call :exec %DBG_CALL1% sdcc %SDCC_DETAIL% %LINKER_EXTRA_DIRECTIVES% --code-loc %CODE_LOC% --data-loc %DATA_LOC% -mz80 --no-std-crt0 %OBJLIST% %INCDIRS% -o "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
 	call :debug %DBG_STEPS% Done compiling.
 	exit /B
 
@@ -507,9 +578,9 @@ goto :orchestration
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Build MSX binary...
 	if ".%BIN_SIZE%"=="." (
-		call :exec %DBG_CALL2% hex2bin -e %MSX_FILE_EXTENSION% "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
+		call :exec %DBG_CALL3% hex2bin %HEX2BIN_DETAIL% %EXECGEN_EXTRA_DIRECTIVES% -e %MSX_FILE_EXTENSION% "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
 	) else (
-		call :exec %DBG_CALL2% hex2bin -e %MSX_FILE_EXTENSION% -l %BIN_SIZE% "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
+		call :exec %DBG_CALL3% hex2bin %HEX2BIN_DETAIL% %EXECGEN_EXTRA_DIRECTIVES% -e %MSX_FILE_EXTENSION% -l %BIN_SIZE% "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
 	)
 	call :debug %DBG_STEPS% Done building MSX binary.
 
@@ -520,7 +591,7 @@ goto :orchestration
 
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Building symbol file...
-	call :exec %DBG_EXTROVERT% python Make\symbol.py %MSX_OBJ_PATH%\ %MSX_FILE_NAME%
+	call :exec %DBG_CALL3% python Make\symbol.py %MSX_OBJ_PATH%\ %MSX_FILE_NAME% %SYMBOL_DETAIL%
 	call :debug %DBG_STEPS% Done building symbol file.
 
 	exit /B
@@ -536,8 +607,12 @@ goto :orchestration
 
 :orchestration
 call :configure_target
+call :configure_verbose_parameters
+call :configure_build_events
 call :opening
 call :filesystem_settings
+call :build_events_settings
+call :exec_action build start %BUILD_START_ACTION%
 call :create_dir_struct
 call :house_cleaning
 call :application_settings
@@ -548,6 +623,7 @@ if /I not "%3"=="all" GOTO :orchestration_end
 
 :orchestration_cont1
 call :collect_include_dirs
+call :exec_action before compile %BEFORE_COMPILE_ACTION%
 
 if "%2"=="" GOTO :orchestration_compile
 if /I "%2"=="all" GOTO :orchestration_all
@@ -558,8 +634,11 @@ call :build_lib
 
 :orchestration_compile
 call :compile
+call :exec_action after compile %AFTER_COMPILE_ACTION%
 call :build_msx_bin
+call :exec_action after binary %AFTER_BINARY_ACTION%
 
 :orchestration_end
+call :exec_action build end %BUILD_END_ACTION%
 call :finish
 exit 0

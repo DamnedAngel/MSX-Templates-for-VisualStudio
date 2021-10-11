@@ -2,10 +2,11 @@
 
 # -----------------------------------------------------------------------------------
 OPEN1="MSX SDCC Make Script Copyright © 2020-2021 Danilo Angelo, 2021 Pedro Medeiros"
-OPEN2="version 00.05.00 - Codename Mac\'n\'Tux"
+OPEN2="version 00.05.01 - Codename Baltazar"
 # -----------------------------------------------------------------------------------
 
 IFS=$' \t\r\n'
+SHELL_SCRIPT_EXTENSION='sh'
 
 # retrieve current environment directory
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." >/dev/null 2>&1 && pwd)"
@@ -17,6 +18,7 @@ MSX_OBJ_PATH=$PROFILE/objs
 MSX_BIN_PATH=$PROFILE/bin
 MSX_DEV_PATH=../../..
 MSX_LIB_PATH=$MSX_DEV_PATH/libs
+MSX_CFG_PATH=Config
 
 OBJLIST=
 INCDIRS=
@@ -37,10 +39,11 @@ DBG_DETAIL=120
 DBG_CALL1=150
 DBG_CALL2=160
 DBG_CALL3=170
+DBG_TOOLSDETAIL=190
 DBG_EXTROVERT=200
 DBG_PARAMS=230
 DBG_VERBOSE=255
-BUILD_DEBUG=255 # $DBG_CALL2
+BUILD_DEBUG=$DBG_CALL2
 
 #
 # Helper Functions
@@ -50,6 +53,21 @@ path_replace () {
     P1=${1//\\//} # replace windows directory sep
     P1=${P1/"$2"/$3}
     echo "$P1"
+}
+
+replace_variables () {
+    res=$1
+    if [[ -n $res ]]; then
+        res=$(path_replace "$res" '[PROFILE]' "$PROFILE")
+        res=$(path_replace "$res" '[MSX_FILE_NAME]' "$MSX_FILE_NAME")
+        res=$(path_replace "$res" '[MSX_FILE_EXTENSION]' "$MSX_FILE_EXTENSION")
+        res=$(path_replace "$res" '[MSX_DEV_PATH]' "$MSX_DEV_PATH")
+        res=$(path_replace "$res" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
+        res=$(path_replace "$res" '[MSX_BIN_PATH]' "$MSX_BIN_PATH")
+        res=$(path_replace "$res" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
+        res=$(path_replace "$res" '[SHELL_SCRIPT_EXTENSION]' "$SHELL_SCRIPT_EXTENSION")
+    fi
+    echo "$res"
 }
 
 debug () {
@@ -77,6 +95,19 @@ _exec () {
         [[ ! -z $OUTPUT ]] && echo "$OUTPUT"
     fi
     return 0
+}
+
+exec_action () {
+    n1=$1
+    n2=$2
+    shift
+    shift
+    if [[ -n $1 ]]; then
+		debug $DBG_STEPS -------------------------------------------------------------------------------
+		debug $DBG_STEPS Executing $n1 $n2 action...
+        _exec $DBG_CALL3 $@
+		debug $DBG_STEPS Done executing $n1 $n2 action.
+	fi
 }
 
 #
@@ -107,7 +138,7 @@ configure_target() {
 
     shopt -s nocasematch # caseless matching
 
-    if [[ ! -f "TargetConfig_$PROFILE.txt" ]]; then
+    if [[ ! -f "$MSX_CFG_PATH/TargetConfig_$PROFILE.txt" ]]; then
         debug $DBG_STEPS File TargetConfig_$PROFILE.txt not found.
         exit 1
     fi
@@ -118,42 +149,56 @@ configure_target() {
         if [[ -n $HEAD && ${HEAD:0:1} != ';' ]]; then
             if [[ ${HEAD:0:1} == '.' ]]; then
                 TARGET_SECTION=$HEAD
-            elif [[ $TARGET_SECTION == '.COMPILE' ]]; then
-                if [[ $HEAD == 'BUILD_DEBUG' ]]; then
-                    BUILD_DEBUG=$REST # configure compile level debug
+            elif [[ $TARGET_SECTION == '.APPLICATION' ]]; then
+                if [[ $REST == '_off' ]]; then
+                    echo "//#define $HEAD"                  >> targetconfig.h
+                    echo $HEAD = 0                          >> targetconfig.s
+                elif [[ $REST == '_on' || -z $REST ]]; then
+                    echo "#define $HEAD"                    >> targetconfig.h
+                    echo $HEAD = 1                          >> targetconfig.s
                 else
-                    if [[ $REST == '_off' ]]; then
-                        echo "//#define $HEAD"                  >> targetconfig.h
-                        echo $HEAD = 0                          >> targetconfig.s
-                    elif [[ $REST == '_on' || -z $REST ]]; then
-                        echo "#define $HEAD"                    >> targetconfig.h
-                        echo $HEAD = 1                          >> targetconfig.s
-                    else
-                        echo "#define $HEAD $REST"              >> targetconfig.h
-                        echo $HEAD = $REST                      >> targetconfig.s
-                    fi
+                    echo "#define $HEAD $REST"              >> targetconfig.h
+                    echo $HEAD = $REST                      >> targetconfig.s
                 fi
-            elif [[ $TARGET_SECTION == '.FILESYSTEM' ]]; then
-                # replaces PROFILE
-                if [[ -n $REST ]]; then
-                    REST=$(path_replace "$REST" '[PROFILE]' "$PROFILE")
-                    REST=$(path_replace "$REST" '[MSX_FILE_NAME]' "$MSX_FILE_NAME")
-                    REST=$(path_replace "$REST" '[MSX_FILE_EXTENSION]' "$MSX_FILE_EXTENSION")
-                    REST=$(path_replace "$REST" '[MSX_DEV_PATH]' "$MSX_DEV_PATH")
-                    REST=$(path_replace "$REST" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
-                    REST=$(path_replace "$REST" '[MSX_BIN_PATH]' "$MSX_BIN_PATH")
-                    REST=$(path_replace "$REST" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
-                    eval $HEAD=\$REST   # indirect variable assignment
-                    if [[ -z $REST ]]; then
-                        echo Warning: variable $HEAD erased.
-                    fi
-                fi
+            else # .BUILD & .FILESYSTEM
+                REST=$(replace_variables "$REST")
+                eval $HEAD=\$REST   # indirect variable assignment
             fi
         fi
-    done < "TargetConfig_$PROFILE.txt"
+    done < "$MSX_CFG_PATH/TargetConfig_$PROFILE.txt"
 
     echo                                                        >> targetconfig.h
     echo '#endif //  __TARGETCONFIG_H__'                        >> targetconfig.h
+}
+
+configure_verbose_parameters() {
+    if [[ "$DBG_TOOLSDETAIL" -le "$BUILD_DEBUG" ]]; then
+        SDCC_DETAIL="-V --verbose" 
+        SYMBOL_DETAIL="-v"
+        HEX2BIN_DETAIL="-v"
+    else
+        SDCC_DETAIL=""
+        SYMBOL_DETAIL=""
+        HEX2BIN_DETAIL=""
+    fi
+}
+
+configure_build_events() {
+    shopt -s nocasematch # caseless matching
+
+    if [[ ! -f "$MSX_CFG_PATH/BuildEvents.txt" ]]; then
+        debug $DBG_STEPS File BuildEvents.txt not found.
+        exit 1
+    fi
+
+    while read -r HEAD REST; do
+        REST=${REST/;*/} # remove comment
+        REST="${REST%"${REST##*[![:space:]]}"}" # remove trailing spaces
+        if [[ -n $HEAD && ${HEAD:0:1} != ';' ]]; then
+            REST=$(replace_variables "$REST")
+            eval $HEAD=\$REST   # indirect variable assignment
+        fi
+    done < "$MSX_CFG_PATH/BuildEvents.txt"
 }
 
 opening() {
@@ -166,12 +211,42 @@ opening() {
 filesystem_settings() {
     debug $DBG_SETTING -------------------------------------------------------------------------------
     debug $DBG_SETTING Filesystem config...
-    debug $DBG_SETTING Current dir=$CURRENT_DIR
-    debug $DBG_SETTING Target file=./$MSX_FILE_NAME.$MSX_FILE_EXTENSION
-    debug $DBG_SETTING Object path=./$MSX_OBJ_PATH
-    debug $DBG_SETTING Binary path=./$MSX_BIN_PATH
-    debug $DBG_SETTING MSX dev path=./$MSX_DEV_PATH
-    debug $DBG_SETTING MSX lib path=./$MSX_LIB_PATH
+    debug $DBG_SETTING Current dir: $CURRENT_DIR
+    debug $DBG_SETTING Target file: ./$MSX_FILE_NAME.$MSX_FILE_EXTENSION
+    debug $DBG_SETTING Object path: ./$MSX_OBJ_PATH
+    debug $DBG_SETTING Binary path: ./$MSX_BIN_PATH
+    debug $DBG_SETTING MSX dev path: ./$MSX_DEV_PATH
+    debug $DBG_SETTING MSX lib path: ./$MSX_LIB_PATH
+}
+
+build_events_settings () {
+    debug $DBG_EXTROVERT -------------------------------------------------------------------------------
+    debug $DBG_EXTROVERT Build events config...
+    if [[ -z $BUILD_START_ACTION ]]; then
+        debug $DBG_EXTROVERT Build start action: [NONE]
+    else
+        debug $DBG_EXTROVERT Build start action: $BUILD_START_ACTION
+    fi
+    if [[ -z $BEFORE_COMPILE_ACTION ]]; then
+        debug $DBG_EXTROVERT Before compile action: [NONE]
+    else
+        debug $DBG_EXTROVERT Before compile action: $BEFORE_COMPILE_ACTION
+    fi
+    if [[ -z $AFTER_COMPILE_ACTION ]]; then
+        debug $DBG_EXTROVERT After compile action: [NONE]
+    else
+        debug $DBG_EXTROVERT After compile action: $AFTER_COMPILE_ACTION
+    fi
+    if [[ -z $AFTER_BINARY_ACTION ]]; then
+        debug $DBG_EXTROVERT After binary generation action: [NONE]
+    else
+        debug $DBG_EXTROVERT After binary generation action: $AFTER_BINARY_ACTION
+    fi
+    if [[ -z $BUILD_END_ACTION ]]; then
+        debug $DBG_EXTROVERT Build end action: [NONE]
+    else
+        debug $DBG_EXTROVERT Build end action: $BUILD_END_ACTION
+    fi
 }
 
 create_dir_struct() {
@@ -277,7 +352,7 @@ application_settings() {
                 fi
             fi
         fi
-    done < ApplicationSettings.txt
+    done < "$MSX_CFG_PATH/ApplicationSettings.txt"
 
     if [[ $PROJECT_TYPE == 'BIN' ]]; then
         debug $DBG_STEPS Adding specific BIN settings...
@@ -340,7 +415,7 @@ collect_include_dirs() {
             I+=1
             debug $DBG_DETAIL "Collected $INCDIR"
         fi
-    done < IncludeDirectories.txt
+    done < "$MSX_CFG_PATH/IncludeDirectories.txt"
     debug $DBG_STEPS Done collecting include directories.
 }
 
@@ -355,13 +430,13 @@ build_lib() {
             RELFILE="$MSX_OBJ_PATH"/$(basename "$LIBFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
                 debug $DBG_DETAIL "Processing C file $(basename "$LIBFILE")... "
-                _exec $DBG_CALL3 sdcc -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'"
+                _exec $DBG_CALL2 sdcc $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'"
             else
                 debug $DBG_DETAIL "Processing ASM file $(basename "$LIBFILE")... "
-                _exec $DBG_CALL3 sdasz80 -o "'$RELFILE'" "'$LIBFILE'"
+                _exec $DBG_CALL2 sdasz80 $ASSEMBLER_EXTRA_DIRECTIVES -o "'$RELFILE'" "'$LIBFILE'"
             fi
         fi
-    done < LibrarySources.txt
+    done < "$MSX_CFG_PATH/LibrarySources.txt"
     debug $DBG_STEPS Done building libraries.
 }
 
@@ -378,15 +453,15 @@ compile () {
             RELFILE="$MSX_OBJ_PATH"/$(basename "$APPFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
                 debug $DBG_DETAIL "Processing C file $(basename "$APPFILE")... "
-                _exec $DBG_CALL3 sdcc -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
+                _exec $DBG_CALL2 sdcc $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
             else
                 debug $DBG_DETAIL "Processing ASM file $(basename "$APPFILE")... "
-                _exec $DBG_CALL3 sdasz80 -o "'$RELFILE'" "'$APPFILE'"
+                _exec $DBG_CALL2 sdasz80 $ASSEMBLER_EXTRA_DIRECTIVES -o "'$RELFILE'" "'$APPFILE'"
             fi
             OBJLIST[$I]="'$RELFILE'"
             I+=1
         fi
-    done < ApplicationSources.txt
+    done < "$MSX_CFG_PATH/ApplicationSources.txt"
     debug $DBG_STEPS Done building application modules.
     
     debug $DBG_STEPS -------------------------------------------------------------------------------
@@ -401,7 +476,7 @@ compile () {
             I+=1
             debug $DBG_DETAIL Collected $(basename "$RELFILE")
         fi
-    done < LibrarySources.txt
+    done < "$MSX_CFG_PATH/LibrarySources.txt"
     
     while read -r LIBFILE; do
         if [[ -n $LIBFILE && ${LIBFILE:0:1} != ';' ]]; then
@@ -411,7 +486,7 @@ compile () {
             I+=1
             debug $DBG_DETAIL Collected $(basename "$LIBFILE")
         fi
-    done < Libraries.txt
+    done < "$MSX_CFG_PATH/Libraries.txt"
     debug $DBG_STEPS Done collecting libraries.
     
     if [[ -z $CODE_LOC ]]; then
@@ -437,7 +512,7 @@ compile () {
     
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Compiling...
-    _exec $DBG_CALL1 sdcc --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 --opt-code-size --disable-warning 196 ${OBJLIST[*]} ${INCDIRS[*]} -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
+    _exec $DBG_CALL1 sdcc $SDCC_DETAIL $LINKER_EXTRA_DIRECTIVES --code-loc $CODE_LOC --data-loc $DATA_LOC -mz80 --no-std-crt0 ${OBJLIST[*]} ${INCDIRS[*]} -o "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
     debug $DBG_STEPS Done compiling.
 }
 
@@ -445,9 +520,9 @@ build_msx_bin () {
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Build MSX binary...
     if [[ -z $BIN_SIZE ]]; then
-        _exec $DBG_CALL2 hex2bin -e $MSX_FILE_EXTENSION "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
+        _exec $DBG_CALL3 hex2bin $HEX2BIN_DETAIL $EXECGEN_EXTRA_DIRECTIVES -e $MSX_FILE_EXTENSION "'$MSX_OBJ_PATH/$MSX_FILE_NAME.ihx'"
     else
-        _exec $DBG_CALL2 hex2bin -e $MSX_FILE_EXTENSION -l $BIN_SIZE "'$MSX_OBJ_PATH'/'$MSX_FILE_NAME.ihx'"
+        _exec $DBG_CALL3 hex2bin $HEX2BIN_DETAIL $EXECGEN_EXTRA_DIRECTIVES -e $MSX_FILE_EXTENSION -l $BIN_SIZE "'$MSX_OBJ_PATH'/'$MSX_FILE_NAME.ihx'"
     fi
     debug $DBG_STEPS Done building MSX binary.
     
@@ -458,7 +533,7 @@ build_msx_bin () {
 
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Building symbol file...
-    _exec $DBG_EXTROVERT python Make/symbol.py "$MSX_OBJ_PATH/" "$MSX_FILE_NAME"
+    _exec $DBG_CALL3 python Make/symbol.py "$MSX_OBJ_PATH/" "$MSX_FILE_NAME" $SYMBOL_DETAIL
     debug $DBG_STEPS Done building symbol file.
 }
 
@@ -473,8 +548,12 @@ finish () {
 #
 
 configure_target
+configure_verbose_parameters
+configure_build_events
 opening
 filesystem_settings
+build_events_settings
+exec_action build start $BUILD_START_ACTION
 create_dir_struct
 house_cleaning
 application_settings
@@ -485,16 +564,23 @@ if [[ $2 == 'clean' ]]; then
 fi
 
 collect_include_dirs
+exec_action before compile $BEFORE_COMPILE_ACTION
 
 if [[ -z $2 ]]; then    # no parameters specified
     compile
+    exec_action after compile $AFTER_COMPILE_ACTION
     build_msx_bin
+    exec_action after binary $AFTER_BINARY_ACTION
+    exec_action build end $BUILD_END_ACTION
     finish
 fi
 
 if [[ $2 == 'all' || $3 == 'all' ]]; then
     build_lib
+    exec_action after compile $AFTER_COMPILE_ACTION
     compile
     build_msx_bin
+    exec_action after binary $AFTER_BINARY_ACTION
+    exec_action build end $BUILD_END_ACTION
     finish
 fi
