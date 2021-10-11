@@ -9,14 +9,6 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -35,16 +27,6 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -56,12 +38,6 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>Make\make $(Configuration)</NMakeBuildCommandLine>
@@ -70,26 +46,12 @@
     <NMakeReBuildCommandLine>Make\make $(Configuration) clean all</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <NMakeBuildCommandLine>make $(Configuration) $(ProjectName)</NMakeBuildCommandLine>
-    <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
-    <NMakeCleanCommandLine>make $(Configuration) $(ProjectName) clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>make $(Configuration) $(ProjectName) clean all</NMakeReBuildCommandLine>
-    <NMakePreprocessorDefinitions>_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>Make\make $(Configuration)</NMakeBuildCommandLine>
     <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
     <NMakeCleanCommandLine>Make\make $(Configuration) clean</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>Make\make $(Configuration) clean all</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <NMakeBuildCommandLine>make $(Configuration) $(ProjectName)</NMakeBuildCommandLine>
-    <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
-    <NMakeCleanCommandLine>make $(Configuration) $(ProjectName) clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>make $(Configuration) $(ProjectName) clean all</NMakeReBuildCommandLine>
-    <NMakePreprocessorDefinitions>NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
@@ -109,13 +71,15 @@
     <None Include="targetconfig.s" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ApplicationSources.txt" />
-    <Text Include="IncludeDirectories.txt" />
-    <Text Include="LibrarySources.txt" />
-    <Text Include="ApplicationSettings.txt" />
-    <Text Include="Libraries.txt" />
-    <Text Include="TargetConfig_Debug.txt" />
-    <Text Include="TargetConfig_Release.txt" />
+    <Text Include="Config\ApplicationSettings.txt" />
+    <Text Include="Config\ApplicationSources.txt" />
+    <Text Include="Config\BuildEvents.txt" />
+    <Text Include="Config\IncludeDirectories.txt" />
+    <Text Include="Config\Libraries.txt" />
+    <Text Include="Config\LibrarySources.txt" />
+    <Text Include="Config\Symbols.txt" />
+    <Text Include="Config\TargetConfig_Debug.txt" />
+    <Text Include="Config\TargetConfig_Release.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msxbinapp.c" />
