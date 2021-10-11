@@ -14,28 +14,29 @@
 //	You can safely remove it for your application.
 #pragma disable_warning 85	// because the var msg is not used in C context
 void _print(char* msg) {
-	__asm
-		ld      hl, #2; retrieve address from stack
-		add     hl, sp
-		ld		b, (hl)
-		inc		hl
-		ld		h, (hl)
-		ld		l, b
+__asm
+	ld      hl, #2; retrieve address from stack
+	add     hl, sp
+	ld		b, (hl)
+	inc		hl
+	ld		h, (hl)
+	ld		l, b
 
-		_printMSG_loop :
-		ld		a, (hl); print
-		or		a
-		ret z
-		push	hl
-		push	ix
-		ld		iy, (#0xfcc0); BIOS_ROMSLT
-		ld		ix, #0x00a2; BIOS_CHPUT
-		call	#0x001c; BIOS_CALSLT
-		pop		ix
-		pop		hl
-		inc		hl
-		jr		_printMSG_loop
-	__endasm;
+_printMSG_loop :
+	ld		a, (hl)	; print
+	or a
+	ret z
+	push	hl
+	push	ix
+	ld		iy, (BIOS_ROMSLT)
+	ld		ix, #BIOS_CHPUT
+	call	BIOS_CALSLT
+	ei				; in some MSXs (i.e. F1XV) CALSLT returns with di.
+	pop		ix
+	pop		hl
+	inc		hl
+	jr		_printMSG_loop
+__endasm;
 
 	return;
 }
@@ -66,8 +67,9 @@ void main(void) {
 }
 
 // ----------------------------------------------------------
-//	This is a CALL handler example.
-//	CALL CMD1
+//	This is a parameterized CALL handler example.
+//	CALL CMD1 (<STRING>)
+//	return	0: Success; anything else: syntax error
 //
 //	This is only for the demo app.
 //	To disable the support for BASIC's CALL statement:
@@ -76,19 +78,55 @@ void main(void) {
 //	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
 //	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 //	3) Remove all onCallXXXXX functions from this file
-char* onCallCMD1(char* param) {
-	print("The C handler for CMD1 says hi!\r\n\0");
-	// seek end of command (0x00/EoL ou 0x3a/":")
-	while ((*param != 0) && (*param != 0x3a)) {
-		param++;
+unsigned char onCallCMD1(char** param) {
+	char buffer[255];
+	int i = 1;
+
+	if (**param != '(') {
+		return -1;
 	}
-	return param;
+	(*param)++;
+	while (**param == ' ') {
+		(*param)++;
+	}
+	if (**param != '"') {
+		return -1;
+	}
+	(*param)++;
+	buffer[0] = '"';
+	while (**param != '"') {
+		buffer[i++] = *((*param)++);
+	}
+	buffer[i++] = '"';
+	buffer[i] = 0;
+	(*param)++;
+	while (**param == ' ') {
+		(*param)++;
+	}
+	if (**param != ')') {
+		return -1;
+	}
+	(*param)++;
+
+	// seek end of command (0x00/EoL ou 0x3a/":")
+	while (**param == ' ') {
+		(*param)++;
+	}
+	if ((**param != 0) && (**param != 0x3a)) {
+		return -1;
+	}
+
+	print("The C handler for CMD1 says: \0");
+	print(buffer);
+	print("!\r\n\0");
+	return 0;
 }
 
 // ----------------------------------------------------------
-//	This is a CALL handler example.
+//	This is a parameterless CALL handler example.
 //	CALL CMD2
-//
+//	return	0: Success; anything else: syntax error
+// 
 //	This is only for the demo app.
 //	To disable the support for BASIC's CALL statement:
 //	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
@@ -96,13 +134,14 @@ char* onCallCMD1(char* param) {
 //	1) Set CALL_EXPANSION to _OFF in ApplicationSettings.txt
 //	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 //	3) Remove all onCallXXXXX functions from this file
-char* onCallCMD2(char* param) {
-	print("The C handler for CMD2 says hi!\r\n\0");
-	// seek end of command (0x00/EoL ou 0x3a/":")
-	while ((*param != 0) && (*param != 0x3a)) {
-		param++;
+unsigned char onCallCMD2(char** param) {
+	// check no parameters (next char must be 0x00/EoL ou 0x3a/":")
+	if ((**param != 0) && (**param != 0x3a)) {
+		return -1;
 	}
-	return param;
+
+	print("The C handler for CMD2 says hi!\r\n\0");
+	return 0;
 }
 
 // ----------------------------------------------------------
