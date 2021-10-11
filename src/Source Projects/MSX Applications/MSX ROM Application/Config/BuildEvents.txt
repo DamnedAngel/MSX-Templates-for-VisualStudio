@@ -8,14 +8,14 @@
 
 ;----------------------------------------------------------
 ;	Always executed in build start
-BUILD_START_ACTION [MSX_DEV_PATH]\..\..\..\a.[SHELL_SCRIPT_EXTENSION]
+BUILD_START_ACTION
 
 ;----------------------------------------------------------
 ;	Not executed if build clean without all
-BEFORE_COMPILE_ACTION [MSX_DEV_PATH]\..\..\..\b.[SHELL_SCRIPT_EXTENSION] [PROFILE]
-AFTER_COMPILE_ACTION [MSX_DEV_PATH]\..\..\..\c.[SHELL_SCRIPT_EXTENSION]
-AFTER_BINARY_ACTION [MSX_DEV_PATH]\..\..\..\d.[SHELL_SCRIPT_EXTENSION] jkhdksjha
+BEFORE_COMPILE_ACTION
+AFTER_COMPILE_ACTION
+AFTER_BINARY_ACTION
 
 ;----------------------------------------------------------
 ; Always executed in build end
-BUILD_END_ACTION [MSX_DEV_PATH]\..\..\..\e.[SHELL_SCRIPT_EXTENSION]
+BUILD_END_ACTION

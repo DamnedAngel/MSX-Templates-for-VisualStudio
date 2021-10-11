@@ -151,11 +151,14 @@ goto :orchestration
 	exit /B
 
 :exec_action
-	if "%3" neq "" (
+	set n1=%1
+	set n2=%2
+	for /f "tokens=1,2,* delims= " %%a in ("%*") do set ACTION=%%c
+	if "%ACTION%" neq "" (
 		call :debug %DBG_STEPS% -------------------------------------------------------------------------------
-		call :debug %DBG_STEPS% Executing %1 %2 action...
-		call :exec %DBG_CALL3% %3
-		call :debug %DBG_STEPS% Done executing %1 %2 action.
+		call :debug %DBG_STEPS% Executing %n1% %n2% action...
+		call :exec %DBG_CALL3% %ACTION%
+		call :debug %DBG_STEPS% Done executing %n1% %n2% action.
 	)
 	exit /B
 
@@ -267,7 +270,7 @@ goto :orchestration
 	exit /B
 
 :configure_build_events
-	for /F "tokens=1,2" %%A in  (%MSX_CFG_PATH%\BuildEvents.txt) do  (
+	for /F "tokens=1,*" %%A in  (%MSX_CFG_PATH%\BuildEvents.txt) do  (
 		set TAG=%%A
 		set TAG1=!TAG:~0,1!
 		if NOT "!TAG1!" == ";" (
