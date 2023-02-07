@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # -----------------------------------------------------------------------------------
-OPEN1="MSX SDCC Make Script Copyright © 2020-2021 Danilo Angelo, 2021 Pedro Medeiros"
-OPEN2="version 00.05.01 - Codename Baltazar"
+OPEN1="MSX SDCC Make Script Copyright © 2020-2023 Danilo Angelo, 2021 Pedro Medeiros"
+OPEN2="version 00.05.02 - Codename Rubens"
 # -----------------------------------------------------------------------------------
 
 IFS=$' \t\r\n'
