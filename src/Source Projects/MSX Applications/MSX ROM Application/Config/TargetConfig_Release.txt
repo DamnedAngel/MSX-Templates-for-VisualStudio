@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	TargetConfig_Debug.txt - by Danilo Angelo, 2020-2021
+;	TargetConfig_Debug.txt - by Danilo Angelo, 2020-2023
 ;
 ;	Configuration for the RELEASE profile
 ;----------------------------------------------------------
@@ -8,7 +8,7 @@
 ;	Build settings
 ;   Determine operation of the build tools
 .BUILD
-BUILD_DEBUG			        150 				; DBG_MUTE=0
+BUILD_DEBUG			        100 				; DBG_MUTE=0
                                                 ; DBG_ERROR=10
                                                 ; DBG_OPENING=40
                                                 ; DBG_STEPS=50

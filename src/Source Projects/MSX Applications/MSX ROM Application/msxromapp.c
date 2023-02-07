@@ -155,7 +155,7 @@ unsigned char onCallCMD2(char** param) {
 //	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
 //	2) Optionally, remove / comment all DEVICE items in ApplicationSettings.txt
 //	3) Remove all onDeviceXXXXX_getIdand onDeviceXXXXX_IO routines from this file
-char onDeviceDEV_getId() {
+char onDeviceDEV_getId(void) {
 	print("The C handler for DEV_getId says hi!\r\n\0");
 	return 0;
 }
