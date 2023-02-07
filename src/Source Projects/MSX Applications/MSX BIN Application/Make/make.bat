@@ -197,6 +197,14 @@ goto :orchestration
 	)
 	exit /B
 
+:testString
+	if /I "%1"=="%2" (
+		set TESTSTRING=TRUE
+	) else (
+		set TESTSTRING=FALSE
+	)
+	exit /B
+	
 #
 # Build phases
 #
@@ -223,32 +231,46 @@ goto :orchestration
 	echo ;-------------------------------------------------		>> TargetConfig.s
 	echo.														>> TargetConfig.s
 
-	for /F "tokens=1,2" %%A in  (%MSX_CFG_PATH%\TargetConfig_%PROFILE%.txt) do  (
+	for /F "tokens=1*" %%A in (%MSX_CFG_PATH%\TargetConfig_%PROFILE%.txt) do (
 		set TAG=%%A
 		set TAG1=!TAG:~0,1!
 		if NOT "!TAG1!" == ";" (
 			if "!TAG1!" == "." (
 				set TARGET_SECTION=!TAG!
-			) else if /I "!TARGET_SECTION!"==".APPLICATION" (
-				rem .APPLICATION
-				if /I "%%B"=="_off" (
-					echo //#define %%A						>> targetconfig.h
-					echo %%A = 0							>> targetconfig.s
-				) else if /I "%%B"=="_on" (
-					echo #define %%A						>> targetconfig.h
-					echo %%A = 1							>> targetconfig.s
-				) else if /I "%%B"=="" (
-					echo #define %%A 						>> targetconfig.h
-					echo %%A = 1							>> targetconfig.s
-				) else (
-					echo #define %%A %%B					>> targetconfig.h
-					echo %%A = %%B							>> targetconfig.s
+			) else (
+				if /I "%%B"=="" (
+					if /I "!TARGET_SECTION!"==".APPLICATION" (
+						rem .APPLICATION
+						echo #define %%A 						>> targetconfig.h
+						echo %%A = 1							>> targetconfig.s
+					) else (
+						rem .BUILD & .FILESYSTEM
+						set %%A=
+					)
+				) else for /F "tokens=1* delims=;" %%C in ("%%B") do  (
+					if /I "!TARGET_SECTION!"==".APPLICATION" (
+						rem .APPLICATION
+						call :testString %%C _off
+						if "!TESTSTRING!"=="TRUE" (
+							echo //#define %%A					>> targetconfig.h
+							echo %%A = 0						>> targetconfig.s
+						) else (
+							call :testString %%C _on
+							if "!TESTSTRING!"=="TRUE" (
+								echo #define %%A				>> targetconfig.h
+								echo %%A = 1					>> targetconfig.s
+							) else (
+								echo #define %%A %%C			>> targetconfig.h
+								echo %%A = %%C					>> targetconfig.s
+							)
+						)
+					) else ( 
+						rem .BUILD & .FILESYSTEM
+						set VALUE=%%C
+						call :replace_variables
+						set %%A=!VALUE!
+					)
 				)
-			) else ( 
-				rem .BUILD & .FILESYSTEM
-				set VALUE=%%B
-				call :replace_variables
-				set %%A=!VALUE!
 			)
 		)
 	)

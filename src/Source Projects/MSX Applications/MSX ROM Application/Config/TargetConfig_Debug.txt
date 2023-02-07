@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	TargetConfig_Debug.txt - by Danilo Angelo, 2020-2021
+;	TargetConfig_Debug.txt - by Danilo Angelo, 2020-2023
 ;
 ;	Configuration for the DEBUG profile
 ;----------------------------------------------------------
