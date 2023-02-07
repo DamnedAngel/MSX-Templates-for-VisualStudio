@@ -14,6 +14,11 @@ GLOBALS_INITIALIZER		_ON							; _ON: include routine to initialize global varia
 CMDLINE_PARAMETERS		_OFF						; _ON: include routine to parse cmdline parameters; _OFF: Don't include
 
 ;----------------------------------------------------------
+;	C Calling Convention
+SDCCCALL                0                           ; SDCCCALL=0    Old C calling convention (STACK)
+                                                    ; SDCCCALL=1    New C calling convention (REGs)
+
+;----------------------------------------------------------
 ;	Temporary MSX-DOS cmdline routine start
 ;		0 -> routine starts at start of heap
 ;		other value -> routine address (warning: may overlap data/code)

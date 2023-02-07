@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxbinapp.s - by Danilo Angelo, 2020
+;		msxbinapp.s - by Danilo Angelo, 2020-2023
 ;
 ;		BIN program (BLOAD'able) for MSX example
 ;		Assembly version
@@ -7,6 +7,7 @@
 
 	.include "targetconfig.s"
 	.include "MSX/BIOS/msxbios.s"
+	.include "applicationsettings.s"
 
 	.area	_CODE
 
@@ -63,7 +64,11 @@ _printMSG_loop:
 ; ----------------------------------------------------------
 ;	Debug Message
 _msg::
-.ascii		"Hello MSX from Assembly!\r\n\0"
+.if __SDCCCALL
+.ascii		"Hello MSX from Assembly (sdcccall(REGs))!\r\n\0"
+.else
+.ascii		"Hello MSX from Assembly (sdcccall(STACK))!\r\n\0"
+.endif
 
 ; ----------------------------------------------------------
 ;	Debug Message

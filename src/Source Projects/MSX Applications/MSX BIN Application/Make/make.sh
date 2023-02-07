@@ -23,6 +23,7 @@ MSX_CFG_PATH=Config
 OBJLIST=
 INCDIRS=
 
+SDCC_CALL=1
 BIN_SIZE=
 FILE_START=0x0100
 CODE_LOC=
@@ -298,6 +299,9 @@ application_settings() {
             elif [[ $HEAD == 'FILESTART' ]]; then
                 echo fileStart .equ $REST                       >> applicationsettings.s
                 FILE_START=$REST
+            elif [[ $HEAD == 'SDCCCALL' ]]; then
+                echo __SDCCCALL = $REST                         >> applicationsettings.s
+                SDCC_CALL=$REST
             elif [[ $HEAD == 'ROM_SIZE' ]]; then
                 if [[ $REST == '16k' ]]; then
                     BIN_SIZE=4000
@@ -430,7 +434,7 @@ build_lib() {
             RELFILE="$MSX_OBJ_PATH"/$(basename "$LIBFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
                 debug $DBG_DETAIL "Processing C file $(basename "$LIBFILE")... "
-                _exec $DBG_CALL2 sdcc $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'"
+                _exec $DBG_CALL2 sdcc --sdcccall $SDCC_CALL $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'"
             else
                 debug $DBG_DETAIL "Processing ASM file $(basename "$LIBFILE")... "
                 _exec $DBG_CALL2 sdasz80 $ASSEMBLER_EXTRA_DIRECTIVES -o "'$RELFILE'" "'$LIBFILE'"
@@ -453,7 +457,7 @@ compile () {
             RELFILE="$MSX_OBJ_PATH"/$(basename "$APPFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
                 debug $DBG_DETAIL "Processing C file $(basename "$APPFILE")... "
-                _exec $DBG_CALL2 sdcc $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
+                _exec $DBG_CALL2 sdcc --sdcccall $SDCC_CALL $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
             else
                 debug $DBG_DETAIL "Processing ASM file $(basename "$APPFILE")... "
                 _exec $DBG_CALL2 sdasz80 $ASSEMBLER_EXTRA_DIRECTIVES -o "'$RELFILE'" "'$APPFILE'"

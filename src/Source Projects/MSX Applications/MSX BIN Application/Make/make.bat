@@ -23,6 +23,7 @@ set MSX_CFG_PATH=Config
 set OBJLIST=
 set INCDIRS=
 
+set SDCC_CALL=1
 set BIN_SIZE=
 set FILE_START=0x0100
 set CODE_LOC=
@@ -383,6 +384,9 @@ goto :orchestration
 			) else if /I ".!TAG!"==".FILESTART" (
 				echo fileStart .equ %%B							>> applicationsettings.s
 				set FILE_START=%%B
+			) else if /I ".!TAG!"==".SDCCCALL" (
+				echo __SDCCCALL = %%B							>> applicationsettings.s
+				set SDCC_CALL=%%B
 			) else if /I ".!TAG!"==".ROM_SIZE" (
 				if /I "%%B"=="16k" (
 					set BIN_SIZE=4000
@@ -515,7 +519,7 @@ goto :orchestration
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			if /I "%%~xA"==".c" (
 				call :debug %DBG_DETAIL% Processing C file !LIBFILE!... 
-				call :exec %DBG_CALL2% sdcc %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!LIBFILE!"
+				call :exec %DBG_CALL2% sdcc --sdcccall %SDCC_CALL% %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!LIBFILE!"
 			) else (
 				call :debug %DBG_DETAIL% Processing ASM file !LIBFILE!... 
 				call :exec %DBG_CALL2% sdasz80 %ASSEMBLER_EXTRA_DIRECTIVES% -o "!RELFILE!" "!LIBFILE!"
@@ -536,7 +540,7 @@ goto :orchestration
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			if /I "%%~xA"==".c" (
 				call :debug %DBG_DETAIL% Processing C file !APPFILE!... 
-				call :exec %DBG_CALL2% sdcc %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!APPFILE!"
+				call :exec %DBG_CALL2% sdcc --sdcccall %SDCC_CALL% %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!APPFILE!"
 			) else (
 				call :debug %DBG_DETAIL% Processing ASM file !APPFILE!... 
 				call :exec %DBG_CALL2% sdasz80 %ASSEMBLER_EXTRA_DIRECTIVES% -o "!RELFILE!" "!APPFILE!"

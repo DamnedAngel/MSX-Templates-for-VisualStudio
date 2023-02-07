@@ -16,6 +16,11 @@ STACK_HIMEM				_OFF						; _ON: Sets stack to HIMEM (RETURN_TO_BASIC *MUST* be _
 SET_PAGE_2				_OFF						; _ON: Enables page 2 on the same slot/subslot as page 1 (useful for 32kb ROMs on pages 1 and 2); _OFF: Leaves page 2 as is
 
 ;----------------------------------------------------------
+;	C Calling Convention
+SDCCCALL                0                           ; SDCCCALL=0    Old C calling convention (STACK)
+                                                    ; SDCCCALL=1    New C calling convention (REGs)
+
+;----------------------------------------------------------
 ;	ROM settings
 ROM_SIZE				16k							; 16k/32k
 FILESTART				0x4000						; Typically,    0x4000 for 32kb ROM or 16kb ROM with CALL/DEVICE expasions; or

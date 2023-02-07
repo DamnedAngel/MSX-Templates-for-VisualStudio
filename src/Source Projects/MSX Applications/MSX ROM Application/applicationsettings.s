@@ -1,7 +1,7 @@
 ;-------------------------------------------------		
 ; applicationsettings.s created automatically			
 ; by make.bat											
-; on 16:27:28,50 , 07/02/2023 				
+; on 18:14:57,77 , 07/02/2023 				
 ;														
 ; DO NOT BOTHER EDITING THIS.							
 ; ALL CHANGES WILL BE LOST.							
@@ -11,6 +11,7 @@ GLOBALS_INITIALIZER = 1
 RETURN_TO_BASIC = 1								
 STACK_HIMEM = 0								
 SET_PAGE_2 = 0								
+__SDCCCALL = 0							
 fileStart .equ 0x4000							
 CALL_EXPANSION = 1								
 DEVICE_EXPANSION = 1								
