@@ -1,8 +1,8 @@
 @echo off
 
 REM -----------------------------------------------------------------------------------
-set OPEN1=MSX SDCC Make Script Copyright � 2020-2021 Danilo Angelo, 2021 Pedro Medeiros
-set OPEN2=version 00.05.01 - Codename Baltazar
+set OPEN1=MSX SDCC Make Script Copyright � 2020-2023 Danilo Angelo, 2021 Pedro Medeiros
+set OPEN2=version 00.05.02 - Codename Rubens
 REM -----------------------------------------------------------------------------------
 
 set CURRENT_DIR=%CD%
@@ -469,7 +469,7 @@ goto :orchestration
 
 :collect_include_dirs
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
-	call :debug %DBG_STEPS% Collecting include cirectories...
+	call :debug %DBG_STEPS% Collecting include directories...
 	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\IncludeDirectories.txt) do (
 		set INCDIR=%%A
 		if NOT "%INCDIR:~0,1%"==";" (
