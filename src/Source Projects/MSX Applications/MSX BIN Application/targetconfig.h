@@ -1,6 +1,6 @@
 //-------------------------------------------------	
 // targetconfig.h created automatically by make.bat	
-// on 18:14:57,80 , 07/02/2023 				
+// on 19:53:33,32 , 07/02/2023 				
 //														
 // DO NOT BOTHER EDITING THIS.							
 // ALL CHANGES WILL BE LOST.							

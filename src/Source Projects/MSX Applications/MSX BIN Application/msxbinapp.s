@@ -62,7 +62,7 @@ _printMSG_loop:
 		.area	_DATA
 
 ; ----------------------------------------------------------
-;	Debug Message
+;	Hello Message
 _msg::
 .if __SDCCCALL
 .ascii		"Hello MSX from Assembly (sdcccall(REGs))!\r\n\0"

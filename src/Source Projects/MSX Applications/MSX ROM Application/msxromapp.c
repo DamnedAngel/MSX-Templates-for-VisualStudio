@@ -15,12 +15,14 @@
 #pragma disable_warning 85	// because the var msg is not used in C context
 void _print(char* msg) {
 __asm
+#if !__SDCCCALL
 	ld      hl, #2; retrieve address from stack
 	add     hl, sp
 	ld		b, (hl)
 	inc		hl
 	ld		h, (hl)
 	ld		l, b
+#endif
 
 _printMSG_loop :
 	ld		a, (hl)	; print
@@ -59,8 +61,12 @@ void print(char* msg) {
 //	Your fun starts here!!!
 //	Replace the code below with your art.
 void main(void) {
-	print("Hello MSX from C!\r\n"
-		"If you don't want your\r\n"
+#if __SDCCCALL
+	print("Hello MSX from C (sdcccall(REGs))!\r\n\0");
+#else
+	print("Hello MSX from C (sdcccall(STACK))!\r\n\0");
+#endif // __SDCCCALL
+	print("If you don't want your\r\n"
 		"ROM program to return to\r\n"
 		"BASIC/MSX-DOS, just avoid\r\n"
 		"main's return instruction.\r\n\0");
@@ -148,6 +154,9 @@ unsigned char onCallCMD2(char** param) {
 //	This is a DEVICE getID handler example.
 //	"DEV:"
 //
+//	PLEASE NOTE THAT SUPPORT FOR DEVICE EXPANSION
+//	IS EMBRYONIC AND FAR FROM COMPLETE!
+// 
 //	This is only for the demo app.
 //	To disable the support for BASIC's devices:
 //	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
@@ -164,6 +173,9 @@ char onDeviceDEV_getId(void) {
 //	This is a DEVICE IO handler example.
 //	"DEV:"
 //
+//	PLEASE NOTE THAT SUPPORT FOR DEVICE EXPANSION
+//	IS EMBRYONIC AND FAR FROM COMPLETE!
+// 
 //	This is only for the demo app.
 //	To disable the support for BASIC's devices:
 //	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
@@ -171,7 +183,7 @@ char onDeviceDEV_getId(void) {
 //	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
 //	2) Optionally, remove / comment all DEVICE items in ApplicationSettings.txt
 //	3) Remove all onDeviceXXXXX_getIdand onDeviceXXXXX_IO routines from this file
-void onDeviceDEV_IO(char* param, char cmd) {
+void onDeviceDEV_IO(char cmd, char* param) {
 	print("The C handler for DEV_IO says hi!\r\n\0");
 }
 

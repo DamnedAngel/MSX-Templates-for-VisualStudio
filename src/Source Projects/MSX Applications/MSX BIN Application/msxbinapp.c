@@ -14,24 +14,24 @@
 //	You can safely remove it for your application.
 #pragma disable_warning 85	// because the var msg is not used in C context
 void _print(char* msg) {
-	__asm
+__asm
 #if !__SDCCCALL
 	ld      hl, #2; retrieve address from stack
-		add     hl, sp
-		ld		b, (hl)
-		inc		hl
-		ld		h, (hl)
-		ld		l, b
+	add     hl, sp
+	ld		b, (hl)
+	inc		hl
+	ld		h, (hl)
+	ld		l, b
 #endif
 
-	_printMSG_loop:
+_printMSG_loop:
 	ld		a, (hl); print
-		or a
-		ret z
-		call	0x00a2; BIOS_CHPUT
-		inc		hl
-		jr		_printMSG_loop
-		__endasm;
+	or		a
+	ret z
+	call	0x00a2; BIOS_CHPUT
+	inc		hl
+	jr		_printMSG_loop
+__endasm;
 }
 
 // ----------------------------------------------------------

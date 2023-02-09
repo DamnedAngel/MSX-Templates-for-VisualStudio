@@ -17,7 +17,7 @@ SET_PAGE_2				_OFF						; _ON: Enables page 2 on the same slot/subslot as page 1
 
 ;----------------------------------------------------------
 ;	C Calling Convention
-SDCCCALL                0                           ; SDCCCALL=0    Old C calling convention (STACK)
+SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
                                                     ; SDCCCALL=1    New C calling convention (REGs)
 
 ;----------------------------------------------------------

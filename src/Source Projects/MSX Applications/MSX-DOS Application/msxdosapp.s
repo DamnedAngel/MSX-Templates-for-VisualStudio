@@ -57,7 +57,7 @@ _printMSG_loop:
 		.area	_DATA
 
 ; ----------------------------------------------------------
-;	Debug Message
+;	Hello Message
 _msg::
 .ascii		"Hello MSX from Assembly!\r\n\0"
 

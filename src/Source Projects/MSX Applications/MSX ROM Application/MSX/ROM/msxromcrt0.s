@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxromcrt0.s - by Danilo Angelo 2020
+;		msxromcrt0.s - by Danilo Angelo 2020 - 2023
 ;
 ;		Template for ROM (cartridges) programs for MSX 
 ;		Derived from the work of mvac7/303bcn
@@ -124,6 +124,9 @@ init::
 ;   ========== HOME SEGMENT ==========
 ;   ==================================
 	.area _HOME
+
+;----------------------------------------------------------
+;	Support for MSXBasic CALL command expansion
 .if CALL_EXPANSION
 STR_COMPARE = 1
 _call_expansion::
@@ -161,8 +164,7 @@ callExpansionNotEndOfList:
 	jr nz,	callExpansionStmtNotFound
 	ld		a, b
 	cp		#0x20
-	jr z,	callExpansionStmtFound
-	jr		callExpansionStmtNotFound
+	jr nz,	callExpansionStmtNotFound
 
 callExpansionStmtFound:
 ;	statement found; execute and exit
@@ -173,22 +175,33 @@ callExpansionStmtFound:
 	pop		de				; *handler
 	push	hl
 	ld		(#_pBuffer), hl
+
+.ifeq __SDCCCALL
 	ld		hl, #_pBuffer
 	push	hl				; parameters
+.endif
+
 	ld		hl, #callExpansionFinalize
 	push	hl				; finalize
 	ex		de, hl
 	ld		e, (hl)
 	inc		hl
 	ld		d, (hl)
+
+.if __SDCCCALL
+	ld		hl, #_pBuffer
+.endif
+
 	push	de				; handler
 	ret						; calls handler with return to finalize below
 							; handler must return hl pointing to end of command (end of line or ":")
 	
 callExpansionFinalize:
 ; at this point, hl must be pointing to end of command (end of line or ":")
+.ifeq __SDCCCALL
 	ld		a, l
 	pop		hl
+.endif
 	pop		hl
 	or		a
 	jr z,	callExpansionFinalizeNoError
@@ -200,6 +213,12 @@ callExpansionFinalizeNoError:
 	ret
 .endif
 
+;----------------------------------------------------------
+;	Support for MSX-Basic DEVICES expansion
+;
+;	PLEASE NOTE THAT SUPPORT FOR DEVICE EXPANSION
+;	IS EMBRYONIC AND FAR FROM COMPLETE!
+;
 .if DEVICE_EXPANSION
 STR_COMPARE = 1
 _device_expansion::
@@ -237,24 +256,34 @@ deviceExpansionNotEndOfList:
 	jr nz,	deviceNotFound
 ;	device found; execute and exit
 	ex		af, af'			; restores phase of operation from af'
-	cp		#0xff			; if device probe (getId)
-	jr nz,	deviceExpansionHandlerCall
-	inc		de
+	cp		#0xff			; tests whether phase is device probe (getId)
+	jr nz,	deviceExpansionHandler
+	inc		de				; points to getId handler (-1)
 	inc		de
 
-deviceExpansionHandlerCall:
+deviceExpansionHandler:
 	pop		hl
 	push	de
 	exx
 	pop		de				; *handler
 	inc		de
 
-	push	hl				; parameters
-	ld		h, a
-	push	hl				; IO command
+.ifeq __SDCCCALL
+	jr z,	deviceExpansionGetIdCall
+	; Dev IO - Set Parameters
+	push	af				; IO command
 	inc		sp
-	ld		hl,	#deviceExpansionFinalize
-	push	hl				; finalize
+	push	hl				; parameters
+	; Dev IO - Set return routine
+	ld		hl,	#deviceExpansionIOFinalize
+	push	hl				; finalize IO
+	jr		deviceExpansionCall
+deviceExpansionGetIdCall:
+	; Dev GetId - No parameters needed
+	; Dev GetId - Set return routine
+	ld		hl,	#deviceExpansioGetIdFinalize
+	push	hl				; finalize Get Id
+deviceExpansionCall:
 	ex		de, hl
 	ld		e, (hl)
 	inc		hl
@@ -262,14 +291,31 @@ deviceExpansionHandlerCall:
 	push	de				; handler
 	ret						; calls handler with return to finalize below
 							; handler must return hl pointing to end of command (end of line or ":")
-	
-deviceExpansionFinalize:
+
+deviceExpansionIOFinalize:
+	inc		sp				; unstack parameters and return
+	pop		de
+	ret
+
+deviceExpansioGetIdFinalize:
 ; at this point, l must contain device number (0-3)
-	inc		sp
 	ld		a, l
-	pop		hl
 	or		a				; resets CY flag without destroying A
 	ret
+	
+.else
+	; Dev IO - Parameters already set;
+	; Dev GetId - No parameters needed;
+	; Dev GetId/IO - No return routine (return direct to caller)
+deviceExpansionCall:
+	ex		de, hl
+	ld		c, (hl)
+	inc		hl
+	ld		b, (hl)
+	push	bc				; handler
+	ret						; calls handler with return to finalize below
+							; handler must return hl pointing to end of command (end of line or ":")
+.endif
 
 .endif
 

@@ -154,6 +154,9 @@ _onCallCMD2_printMsg:
 ;	This is a DEVICE getID handler example.
 ;	"DEV:"
 ;
+;	PLEASE NOTE THAT SUPPORT FOR DEVICE EXPANSION
+;	IS EMBRYONIC AND FAR FROM COMPLETE!
+;
 ;	This is only for the demo app.
 ;	To disable the support for BASIC's devices:
 ;	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
@@ -170,6 +173,9 @@ _onDeviceDEV_getId::
 ; ----------------------------------------------------------
 ;	This is a DEVICE IO handler example.
 ;	"DEV:"
+;
+;	PLEASE NOTE THAT SUPPORT FOR DEVICE EXPANSION
+;	IS EMBRYONIC AND FAR FROM COMPLETE!
 ;
 ;	This is only for the demo app.
 ;	To disable the support for BASIC's devices:
@@ -212,9 +218,13 @@ _printMSG_loop:
 	.area	_ROMDATA
 
 ; ----------------------------------------------------------
-;	Debug Message
+;	Hello Message
 _msg::
-.ascii		"Hello MSX from Assembly!\r\n"
+.if __SDCCCALL
+.ascii		"Hello MSX from Assembly (sdcccall(REGs))!\r\n\"
+.else
+.ascii		"Hello MSX from Assembly (sdcccall(STACK))!\r\n\"
+.endif
 .ascii		"If you don't want your\r\n"
 .ascii		"ROM program to return to\r\n"
 .ascii		"BASIC/MSX-DOS, just avoid\r\n"
