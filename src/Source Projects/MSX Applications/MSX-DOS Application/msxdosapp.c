@@ -15,14 +15,16 @@
 #pragma disable_warning 85	// because the var msg is not used in C context
 void _print(char* msg) {
 __asm
+#if !__SDCCCALL
 	ld      hl, #2; retrieve address from stack
 	add     hl, sp
 	ld		b, (hl)
 	inc		hl
 	ld		h, (hl)
 	ld		l, b
+#endif
 
-	_printMSG_loop :
+_printMSG_loop :
 	ld		a, (hl)	; print
 	or		a
 	ret z
@@ -60,8 +62,12 @@ void print(char* msg) {
 //	Replace the code below with your art.
 //	Note: Only use argv and argc if you enabled
 //	CMDLINE_PARAMETERS on TargetConfig_XXXXX.txt
-int main(char** argv, int argc) {
-	print("Hello MSX from C!\r\n\0");
+unsigned char main(char** argv, int argc) {
+#if __SDCCCALL
+	print("Hello MSX from C (sdcccall(REGs))!\r\n\0");
+#else
+	print("Hello MSX from C (sdcccall(STACK))!\r\n\0");
+#endif // __SDCCCALL
 #ifdef CMDLINE_PARAMETERS
 	print("Parameters:\r\n\0");
 	for (int i = 0; i < argc; i++) {

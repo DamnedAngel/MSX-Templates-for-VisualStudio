@@ -8,7 +8,7 @@
 ;	Build settings
 ;   Determine operation of the build tools
 .BUILD
-BUILD_DEBUG			        150 				; DBG_MUTE=0
+BUILD_DEBUG			        230 				; DBG_MUTE=0
                                                 ; DBG_ERROR=10
                                                 ; DBG_OPENING=40
                                                 ; DBG_STEPS=50

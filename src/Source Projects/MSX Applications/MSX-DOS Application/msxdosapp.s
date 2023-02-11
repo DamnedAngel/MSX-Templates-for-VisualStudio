@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxdosapp.s - by Danilo Angelo, 2020
+;		msxdosapp.s - by Danilo Angelo, 2020-2023
 ;
 ;		MSX-DOS program example
 ;		Assembly version
@@ -17,12 +17,16 @@
 ;	Replace the code below with your art.
 _main::
 ;   Replace the two lines below with your own program logic
-    ld hl, #_msg
-    call _printMSG
+    ld		hl,	#_msg
+    call	_printMSG
 
 	
 ;   Return to MSX-DOS
-	ld l, #0
+.if __SDCCCALL
+	ld a,	#0
+.else
+	ld l,	#0
+.endif
 	ret
 
 ; ----------------------------------------------------------
@@ -37,29 +41,33 @@ _main::
 ;	You can safely remove it for your application.
 _printMSG:
 .if DEBUG
-	push hl
-    ld hl, #_msgdbg
-	call _printMSG_loop
-	pop hl
+	push	hl
+    ld hl,	#_msgdbg
+	call	_printMSG_loop
+	pop		hl
 .endif
 _printMSG_loop:
-    ld a,(hl)
-    or a
+    ld		a,(hl)
+    or		a
     ret z
 	push	hl
 	ld		iy, (#0xfcc0)	; BIOS_ROMSLT
 	ld		ix, #0x00a2		; BIOS_CHPUT
 	call	#0x001c			; BIOS_CALSLT
 	pop		hl
-    inc hl
-    jr _printMSG_loop
+    inc		hl
+    jr		_printMSG_loop
 
 		.area	_DATA
 
 ; ----------------------------------------------------------
 ;	Hello Message
 _msg::
-.ascii		"Hello MSX from Assembly!\r\n\0"
+.if __SDCCCALL
+.ascii		"Hello MSX from Assembly (sdcccall(REGs))!\r\n\0"
+.else
+.ascii		"Hello MSX from Assembly (sdcccall(STACK))!\r\n\0"
+.endif
 
 ; ----------------------------------------------------------
 ;	Debug Message
