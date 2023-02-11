@@ -173,7 +173,7 @@ callExpansionStmtFound:
 	push	de
 	exx
 	pop		de				; *handler
-	push	hl
+;	push	hl
 	ld		(#_pBuffer), hl
 
 .ifeq __SDCCCALL
@@ -197,12 +197,12 @@ callExpansionStmtFound:
 							; handler must return hl pointing to end of command (end of line or ":")
 	
 callExpansionFinalize:
-; at this point, hl must be pointing to end of command (end of line or ":")
+; at this point, pBuffer must be pointing to end of command (end of line or ":")
 .ifeq __SDCCCALL
 	ld		a, l
 	pop		hl
 .endif
-	pop		hl
+;	pop		hl
 	or		a
 	jr z,	callExpansionFinalizeNoError
 callExpansionFinalizeError:

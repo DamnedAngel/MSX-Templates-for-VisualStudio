@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	ApplicationSettings.txt - by Danilo Angelo, 2020
+;	ApplicationSettings.txt - by Danilo Angelo, 2020-2023
 ;
 ;	MSX-DOS project general configuration.
 ;----------------------------------------------------------

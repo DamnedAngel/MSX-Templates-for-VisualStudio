@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxromapp.s - by Danilo Angelo, 2020
+;		msxromapp.s - by Danilo Angelo, 2020-2023
 ;
 ;		ROM program (cartridge) for MSX example
 ;		Assembly version
@@ -41,15 +41,19 @@ _main::
 ;	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 ;	3) Remove all onCallXXXXX functions from this file
 _onCallCMD1::
+.ifeq __SDCCCALL
 	ld      ix, #0			; retrieve param address from stack
 	add     ix, sp
 	ld		l, 2(ix)
 	ld		h, 3(ix)
-    ld      e, (hl)
+.endif
+    ld      e, l
+    ld      d, h
+    ld      c, (hl)
     inc     hl
     ld      h, (hl)
-    ld      l, e
-_onCallCMD1_findEndOfCommand:
+    ld      l, c
+ _onCallCMD1_findEndOfCommand:
     ld      a, (hl)
     cp      #'('
     jr nz,  _onCallCMD_fail
@@ -68,20 +72,18 @@ _onCallCMD1_mapString:
     jr nz,  _onCallCMD1_mapString
     call    _onCallCMD1_ignoreSpaces
     cp      #')'
-    jr nz,  _onCallCMD_fail
+    jr nz,  _onCallCMD_popFail
     inc     hl
     call    _onCallCMD1_ignoreSpaces
     cp      #0
     jr z,   _onCallCMD1_printMsg
     cp      #0x3a
-    jr nz,  _onCallCMD_fail
+    jr nz,  _onCallCMD_popFail
 
 
 _onCallCMD1_printMsg:
     push    bc
     ex      de, hl
-	ld		l, 2(ix)
-	ld		h, 3(ix)
     ld      (hl), e
     inc     hl
     ld      (hl), d
@@ -104,7 +106,11 @@ _onCallCMD1_printString:
 _onCallCMD1_ending:    
     ld      hl, #_msgCMD1_2
     call    _printMSG
+.ifeq __SDCCCALL
     ld      l, #0
+.else
+    xor     a
+.endif
     ret
 _onCallCMD1_ignoreSpaces:
     ld      a, (hl)
@@ -112,8 +118,14 @@ _onCallCMD1_ignoreSpaces:
     ret nz
     inc     hl
     jr _onCallCMD1_ignoreSpaces
+_onCallCMD_popFail:
+    pop bc
 _onCallCMD_fail:
+.ifeq __SDCCCALL
     ld      l, #0xff
+.else
+    ld      a, #0xff
+.endif
     ret
 
 ; ----------------------------------------------------------
@@ -129,12 +141,14 @@ _onCallCMD_fail:
 ;	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 ;	3) Remove all onCallXXXXX functions from this file
 _onCallCMD2::
+.ifeq __SDCCCALL
 	ld      hl, #2			; retrieve param address from stack
 	add     hl, sp
 	ld		b, (hl)
 	inc		hl
 	ld		h, (hl)
 	ld		l, b
+.endif
 _onCallCMD2_findEndOfCommand:
     ld      a, (hl)
     cp      #0
@@ -145,7 +159,11 @@ _onCallCMD2_findEndOfCommand:
 _onCallCMD2_printMsg:
     ld      hl, #_msgCMD2
     call    _printMSG
+.ifeq __SDCCCALL
     ld      l, #0
+.else
+    xor     a
+.endif
     ret
 .endif
 

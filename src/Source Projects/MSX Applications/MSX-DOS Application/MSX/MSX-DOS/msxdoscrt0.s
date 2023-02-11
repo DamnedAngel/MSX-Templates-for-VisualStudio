@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxdoscrt0.s - by Danilo Angelo 2020
+;		msxdoscrt0.s - by Danilo Angelo 2020-2023
 ;
 ;		Template for COM (executable) programs for MSX-DOS
 ;		Derived from the work of Konamiman/Avelino
