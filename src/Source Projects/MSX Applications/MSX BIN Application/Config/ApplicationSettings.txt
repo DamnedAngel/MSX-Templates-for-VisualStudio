@@ -15,7 +15,7 @@ PUBLISH_FILESTART		_ON							; _ON: register program start address at HIMEM-1; _
 
 ;----------------------------------------------------------
 ;	C Calling Convention
-SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
+SDCCCALL                0                           ; SDCCCALL=0    Old C calling convention (STACK)
                                                     ; SDCCCALL=1    New C calling convention (REGs)
 
 ;----------------------------------------------------------
