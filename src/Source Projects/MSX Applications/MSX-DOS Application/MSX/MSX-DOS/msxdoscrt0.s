@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxdoscrt0.s - by Danilo Angelo 2020-2023
+;		msxdoscrt0.s - by Danilo Angelo, 2020-2023
 ;
 ;		Template for COM (executable) programs for MSX-DOS
 ;		Derived from the work of Konamiman/Avelino
@@ -7,6 +7,7 @@
 ;			https://github.com/Konamiman/MSX/blob/master/SRC/SDCC/crt0-msxdos/crt0msx_msxdos_advanced.asm
 ;----------------------------------------------------------
 
+	.include "MSX/BIOS/msxbios.s"
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
 
@@ -19,7 +20,7 @@
 .endif
 
 .if PARAM_HANDLING_ROUTINE
-phrAddr	.equ paramHandlingRoutine
+phrAddr	.equ PARAM_HANDLING_ROUTINE
 .else
 phrAddr	.equ _HEAP_start
 .endif
@@ -47,7 +48,7 @@ params::
     ;* Terminate command line with 0
     ;  (DOS 2 does this automatically but DOS 1 does not)
     ld      hl, #0x81
-    ld      bc, (#0x80)
+    ld      c, a
     ld      b, #0
     add     hl, bc
     ld      (hl), #0

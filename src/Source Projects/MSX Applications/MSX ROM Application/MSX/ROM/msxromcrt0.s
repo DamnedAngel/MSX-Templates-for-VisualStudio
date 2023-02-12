@@ -1,12 +1,12 @@
 ;----------------------------------------------------------
-;		msxromcrt0.s - by Danilo Angelo 2020 - 2023
+;		msxromcrt0.s - by Danilo Angelo, 2020-2023
 ;
 ;		Template for ROM (cartridges) programs for MSX 
 ;		Derived from the work of mvac7/303bcn
 ;----------------------------------------------------------
 
-	.include "targetconfig.s"
 	.include "MSX/BIOS/msxbios.s"
+	.include "targetconfig.s"
 	.include "applicationsettings.s"
 
 	.globl	_main

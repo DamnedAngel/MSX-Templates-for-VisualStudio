@@ -10,7 +10,7 @@ PROJECT_TYPE			BIN
 
 ;----------------------------------------------------------
 ;	crt0 features
-GLOBALS_INITIALIZER		_ON							; _ON: include routine to initialize global variables; _OFF: Don't include
+GLOBALS_INITIALIZER		_ON 						; _ON: include routine to initialize global variables; _OFF: Don't include
 PUBLISH_FILESTART		_ON							; _ON: register program start address at HIMEM-1; _OFF: Don't register
 
 ;----------------------------------------------------------

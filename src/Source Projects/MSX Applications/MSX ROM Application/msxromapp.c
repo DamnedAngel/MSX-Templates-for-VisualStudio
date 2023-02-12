@@ -5,8 +5,9 @@
 //		C version
 // ----------------------------------------------------------
 
-#include "targetconfig.h"
 #include "MSX/BIOS/msxbios.h"
+#include "targetconfig.h"
+#include "applicationsettings.h"
 
 // ----------------------------------------------------------
 //	This is an example of embedding asm code into C.
@@ -123,8 +124,8 @@ unsigned char onCallCMD1(char** param) {
 	}
 
 	print("The C handler for CMD1 says: \0");
-	print(buffer);
-	print("!\r\n\0");
+	_print(buffer);
+	_print("!\r\n\0");
 	return 0;
 }
 

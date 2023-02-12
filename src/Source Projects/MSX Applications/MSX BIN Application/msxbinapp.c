@@ -5,8 +5,9 @@
 //		C version
 // ----------------------------------------------------------
 
-#include "targetconfig.h"
 #include "MSX/BIOS/msxbios.h"
+#include "targetconfig.h"
+#include "applicationsettings.h"
 
 // ----------------------------------------------------------
 //	This is an example of embedding asm code into C.

@@ -10,14 +10,14 @@ PROJECT_TYPE			ROM
 
 ;----------------------------------------------------------
 ;	crt0 features
-GLOBALS_INITIALIZER		_ON							; _ON: Includes routine to initialize global variables; _OFF: Don't include
+GLOBALS_INITIALIZER		_ON 						; _ON: Includes routine to initialize global variables; _OFF: Don't include
 RETURN_TO_BASIC			_ON							; _ON: Returns to basic; _OFF: Don't return
 STACK_HIMEM				_OFF						; _ON: Sets stack to HIMEM (RETURN_TO_BASIC *MUST* be _OFF); _OFF: Don't set
 SET_PAGE_2				_OFF						; _ON: Enables page 2 on the same slot/subslot as page 1 (useful for 32kb ROMs on pages 1 and 2); _OFF: Leaves page 2 as is
 
 ;----------------------------------------------------------
 ;	C Calling Convention
-SDCCCALL                0                           ; SDCCCALL=0    Old C calling convention (STACK)
+SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
                                                     ; SDCCCALL=1    New C calling convention (REGs)
 
 ;----------------------------------------------------------

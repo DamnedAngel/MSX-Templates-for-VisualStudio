@@ -5,8 +5,8 @@
 ;		Assembly version
 ;----------------------------------------------------------
 
-	.include "targetconfig.s"
 	.include "MSX/BIOS/msxbios.s"
+	.include "targetconfig.s"
 	.include "applicationsettings.s"
 
 	.area	_CODE

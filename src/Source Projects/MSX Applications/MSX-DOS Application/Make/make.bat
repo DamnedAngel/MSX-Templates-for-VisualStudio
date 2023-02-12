@@ -366,6 +366,19 @@ goto :orchestration
 :application_settings
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Building application settings file...
+	echo //-------------------------------------------------	>  applicationsettings.h
+	echo // applicationsettings.h created automatically			>> applicationsettings.h
+	echo // by make.bat											>> applicationsettings.h
+	echo // on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%				>> applicationsettings.h
+	echo //														>> applicationsettings.h
+	echo // DO NOT BOTHER EDITING THIS.							>> applicationsettings.h
+	echo // ALL CHANGES WILL BE LOST.							>> applicationsettings.h
+	echo //-------------------------------------------------	>> applicationsettings.h
+	echo.														>> applicationsettings.h
+	echo #ifndef  __APPLICATIONSETTINGS_H__						>> applicationsettings.h
+	echo #define  __APPLICATIONSETTINGS_H__						>> applicationsettings.h
+	echo.														>> applicationsettings.h
+	
 	echo ;-------------------------------------------------		>  applicationsettings.s
 	echo ; applicationsettings.s created automatically			>> applicationsettings.s
 	echo ; by make.bat											>> applicationsettings.s
@@ -387,6 +400,12 @@ goto :orchestration
 			) else if /I ".!TAG!"==".SDCCCALL" (
 				echo __SDCCCALL = %%B							>> applicationsettings.s
 				set SDCC_CALL=%%B
+			) else if /I ".!TAG!"==".GLOBALS_INITIALIZER" (
+				if /I "%%B"=="_off" (
+					echo GLOBALS_INITIALIZER = 0				>> applicationsettings.s
+				) else (
+					echo GLOBALS_INITIALIZER = 1				>> applicationsettings.s
+				)
 			) else if /I ".!TAG!"==".ROM_SIZE" (
 				if /I "%%B"=="16k" (
 					set BIN_SIZE=4000
@@ -398,7 +417,6 @@ goto :orchestration
 			) else if /I ".!TAG!"==".DATA_LOC" (
 				set DATA_LOC=%%B
 			) else if /I ".!TAG!"==".PARAM_HANDLING_ROUTINE" (
-				echo paramHandlingRoutine .equ %%B				>> applicationsettings.s
 				echo PARAM_HANDLING_ROUTINE = %%B				>> applicationsettings.s
 			) else if /I ".!TAG!"==".SYMBOL" (
 				IF NOT EXIST %MSX_OBJ_PATH%\bin_usrcalls.tmp (
@@ -433,12 +451,16 @@ goto :orchestration
 				echo .dw		_onDevice%%B_getId				>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
 			) else (
 				if /I "%%B"=="_off" (
+					echo //#define %%A							>> applicationsettings.h
 					echo %%A = 0								>> applicationsettings.s
 				) else if /I "%%B"=="_on" (
+					echo #define %%A							>> applicationsettings.h
 					echo %%A = 1								>> applicationsettings.s
 				) else if /I "%%B"=="" (
+					echo #define %%A							>> applicationsettings.h
 					echo %%A = 1								>> applicationsettings.s
 				) else (
+					echo #define %%A %%B						>> applicationsettings.h
 					echo %%A = %%B								>> applicationsettings.s
 				)
 			)
@@ -481,6 +503,9 @@ goto :orchestration
 		)
 		echo .endm												>> applicationsettings.s
 	)
+
+	echo.														>> applicationsettings.h
+	echo #endif	//  __APPLICATIONSETTINGS_H__					>> applicationsettings.h
 
     call :debug %DBG_STEPS% Done building application settings file.
 	exit /B

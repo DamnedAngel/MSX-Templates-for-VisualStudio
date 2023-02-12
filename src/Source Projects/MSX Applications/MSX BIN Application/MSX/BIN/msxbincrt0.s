@@ -1,11 +1,11 @@
 ;----------------------------------------------------------
-;		msxbincrt0.s - by Danilo Angelo 2020
+;		msxbincrt0.s - by Danilo Angelo, 2020-2023
 ;
 ;		Template for BIN (BLOADable) programs for MSX 
 ;----------------------------------------------------------
 
-	.include "targetconfig.s"
 	.include "MSX/BIOS/msxbios.s"
+	.include "targetconfig.s"
 	.include "applicationsettings.s"
 
 	.globl	_main

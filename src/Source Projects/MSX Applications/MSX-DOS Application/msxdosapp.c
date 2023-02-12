@@ -1,12 +1,13 @@
 // ----------------------------------------------------------
-//		msxbinapp.c - by Danilo Angelo, 2020
+//		msxbinapp.c - by Danilo Angelo, 2020-2023
 //
 //		BIN program(BLOAD'able) for MSX example
 //		C version
 // ----------------------------------------------------------
 
-#include "targetconfig.h"
 #include "MSX/BIOS/msxbios.h"
+#include "targetconfig.h"
+#include "applicationsettings.h"
 
 // ----------------------------------------------------------
 //	This is an example of embedding asm code into C.
@@ -72,7 +73,7 @@ unsigned char main(char** argv, int argc) {
 	print("Parameters:\r\n\0");
 	for (int i = 0; i < argc; i++) {
 		print(argv[i]);
-		print("\r\n\0");
+		_print("\r\n\0");
 	}
 #endif
 	return 0;
