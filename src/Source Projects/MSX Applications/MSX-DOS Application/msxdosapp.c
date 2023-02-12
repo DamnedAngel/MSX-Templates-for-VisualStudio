@@ -25,7 +25,7 @@ __asm
 	ld		l, b
 #endif
 
-_printMSG_loop :
+_print_loop :
 	ld		a, (hl)	; print
 	or		a
 	ret z
@@ -38,7 +38,7 @@ _printMSG_loop :
 	pop		ix
 	pop		hl
 	inc		hl
-	jr		_printMSG_loop
+	jr		_print_loop
 __endasm;
 
 	return;

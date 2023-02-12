@@ -139,7 +139,16 @@ cont:
 
 ;----------------------------------------------------------
 ;	Step 3: Run application
+.if __SDCCCALL
+    pop     hl
+    pop     de
 	call    _main
+.else
+	call    _main
+    pop     bc
+    pop     bc
+.endif
+
 
 ;----------------------------------------------------------
 ;	Step 4: Program termination.

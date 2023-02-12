@@ -21,7 +21,7 @@ STRING_COMPARE = 0
 _main::
 ;   Replace the two lines below with your own program logic
     ld hl, #_msg
-    call _printMSG
+    call print
 
 ;   Return to BASIC
     ret
@@ -89,7 +89,7 @@ _onCallCMD1_printMsg:
     ld      (hl), d
 
     ld      hl, #_msgCMD1_1
-    call    _printMSG
+    call    print
     pop     bc
     pop     hl
 
@@ -105,7 +105,7 @@ _onCallCMD1_printString:
 
 _onCallCMD1_ending:    
     ld      hl, #_msgCMD1_2
-    call    _printMSG
+    call    print
 .ifeq __SDCCCALL
     ld      l, #0
 .else
@@ -158,7 +158,7 @@ _onCallCMD2_findEndOfCommand:
 
 _onCallCMD2_printMsg:
     ld      hl, #_msgCMD2
-    call    _printMSG
+    call    print
 .ifeq __SDCCCALL
     ld      l, #0
 .else
@@ -184,7 +184,7 @@ _onCallCMD2_printMsg:
 ;	3) Remove all onDeviceXXXXX_getId and onDeviceXXXXX_IO routines from this file
 _onDeviceDEV_getId::
     ld      hl, #_msgDEV_getId
-    call    _printMSG
+    call    print
     ld      l, #0
     ret
 
@@ -204,7 +204,7 @@ _onDeviceDEV_getId::
 ;	3) Remove all onDeviceXXXXX_getId and onDeviceXXXXX_IO routines from this file
 _onDeviceDEV_IO::
     ld      hl, #_msgDEV_IO
-    call    _printMSG
+    call    print
     ret
 .endif
 
@@ -218,20 +218,25 @@ _onDeviceDEV_IO::
 ;	This is an example of using debug code in ASM.
 ;	This is only for the demo app.
 ;	You can safely remove it for your application.
-_printMSG:
+print:
 .if DEBUG
-	push hl
-    ld hl, #_msgdbg
-	call _printMSG_loop
-	pop hl
+	push	hl
+    ld hl,	#_msgdbg
+	call	_print
+	pop		hl
 .endif
-_printMSG_loop:
-    ld a,(hl)
-    or a
+
+_print:
+    ld		a,(hl)
+    or		a
     ret z
-    call BIOS_CHPUT
-    inc hl
-    jr _printMSG_loop
+	push	hl
+	ld		iy, (#0xfcc0)	; BIOS_ROMSLT
+	ld		ix, #0x00a2		; BIOS_CHPUT
+	call	#0x001c			; BIOS_CALSLT
+	pop		hl
+    inc		hl
+    jr		_print
 
 	.area	_ROMDATA
 

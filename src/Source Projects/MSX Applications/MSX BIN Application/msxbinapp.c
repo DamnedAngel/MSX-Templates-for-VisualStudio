@@ -25,13 +25,13 @@ __asm
 	ld		l, b
 #endif
 
-_printMSG_loop:
+_print_loop:
 	ld		a, (hl); print
 	or		a
 	ret z
 	call	0x00a2; BIOS_CHPUT
 	inc		hl
-	jr		_printMSG_loop
+	jr		_print_loop
 __endasm;
 }
 
