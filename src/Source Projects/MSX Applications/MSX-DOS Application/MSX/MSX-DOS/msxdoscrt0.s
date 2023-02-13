@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxdoscrt0.s - by Danilo Angelo 2020
+;		msxdoscrt0.s - by Danilo Angelo, 2020-2023
 ;
 ;		Template for COM (executable) programs for MSX-DOS
 ;		Derived from the work of Konamiman/Avelino
@@ -7,6 +7,7 @@
 ;			https://github.com/Konamiman/MSX/blob/master/SRC/SDCC/crt0-msxdos/crt0msx_msxdos_advanced.asm
 ;----------------------------------------------------------
 
+	.include "MSX/BIOS/msxbios.s"
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
 
@@ -19,7 +20,7 @@
 .endif
 
 .if PARAM_HANDLING_ROUTINE
-phrAddr	.equ paramHandlingRoutine
+phrAddr	.equ PARAM_HANDLING_ROUTINE
 .else
 phrAddr	.equ _HEAP_start
 .endif
@@ -47,7 +48,7 @@ params::
     ;* Terminate command line with 0
     ;  (DOS 2 does this automatically but DOS 1 does not)
     ld      hl, #0x81
-    ld      bc, (#0x80)
+    ld      c, a
     ld      b, #0
     add     hl, bc
     ld      (hl), #0
@@ -138,13 +139,26 @@ cont:
 
 ;----------------------------------------------------------
 ;	Step 3: Run application
+.if __SDCCCALL
+    pop     hl
+    pop     de
 	call    _main
+.else
+	call    _main
+    pop     bc
+    pop     bc
+.endif
+
 
 ;----------------------------------------------------------
 ;	Step 4: Program termination.
 ;	Termination code for DOS 2 was returned on L.         
     ld      c,#0x62	    ; DOS 2 function for program termination (_TERM)
+.if __SDCCCALL
+    ld      b,a
+.else
     ld      b,l
+.endif
     call    5			; On DOS 2 this terminates; on DOS 1 this returns...
     ld      c,#0x0
     jp      5			;...and then this one terminates

@@ -23,6 +23,7 @@ set MSX_CFG_PATH=Config
 set OBJLIST=
 set INCDIRS=
 
+set SDCC_CALL=1
 set BIN_SIZE=
 set FILE_START=0x0100
 set CODE_LOC=
@@ -365,6 +366,19 @@ goto :orchestration
 :application_settings
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Building application settings file...
+	echo //-------------------------------------------------	>  applicationsettings.h
+	echo // applicationsettings.h created automatically			>> applicationsettings.h
+	echo // by make.bat											>> applicationsettings.h
+	echo // on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%				>> applicationsettings.h
+	echo //														>> applicationsettings.h
+	echo // DO NOT BOTHER EDITING THIS.							>> applicationsettings.h
+	echo // ALL CHANGES WILL BE LOST.							>> applicationsettings.h
+	echo //-------------------------------------------------	>> applicationsettings.h
+	echo.														>> applicationsettings.h
+	echo #ifndef  __APPLICATIONSETTINGS_H__						>> applicationsettings.h
+	echo #define  __APPLICATIONSETTINGS_H__						>> applicationsettings.h
+	echo.														>> applicationsettings.h
+	
 	echo ;-------------------------------------------------		>  applicationsettings.s
 	echo ; applicationsettings.s created automatically			>> applicationsettings.s
 	echo ; by make.bat											>> applicationsettings.s
@@ -383,6 +397,15 @@ goto :orchestration
 			) else if /I ".!TAG!"==".FILESTART" (
 				echo fileStart .equ %%B							>> applicationsettings.s
 				set FILE_START=%%B
+			) else if /I ".!TAG!"==".SDCCCALL" (
+				echo __SDCCCALL = %%B							>> applicationsettings.s
+				set SDCC_CALL=%%B
+			) else if /I ".!TAG!"==".GLOBALS_INITIALIZER" (
+				if /I "%%B"=="_off" (
+					echo GLOBALS_INITIALIZER = 0				>> applicationsettings.s
+				) else (
+					echo GLOBALS_INITIALIZER = 1				>> applicationsettings.s
+				)
 			) else if /I ".!TAG!"==".ROM_SIZE" (
 				if /I "%%B"=="16k" (
 					set BIN_SIZE=4000
@@ -394,7 +417,6 @@ goto :orchestration
 			) else if /I ".!TAG!"==".DATA_LOC" (
 				set DATA_LOC=%%B
 			) else if /I ".!TAG!"==".PARAM_HANDLING_ROUTINE" (
-				echo paramHandlingRoutine .equ %%B				>> applicationsettings.s
 				echo PARAM_HANDLING_ROUTINE = %%B				>> applicationsettings.s
 			) else if /I ".!TAG!"==".SYMBOL" (
 				IF NOT EXIST %MSX_OBJ_PATH%\bin_usrcalls.tmp (
@@ -429,12 +451,16 @@ goto :orchestration
 				echo .dw		_onDevice%%B_getId				>> %MSX_OBJ_PATH%\rom_deviceexpansionhandler.tmp
 			) else (
 				if /I "%%B"=="_off" (
+					echo //#define %%A							>> applicationsettings.h
 					echo %%A = 0								>> applicationsettings.s
 				) else if /I "%%B"=="_on" (
+					echo #define %%A							>> applicationsettings.h
 					echo %%A = 1								>> applicationsettings.s
 				) else if /I "%%B"=="" (
+					echo #define %%A							>> applicationsettings.h
 					echo %%A = 1								>> applicationsettings.s
 				) else (
+					echo #define %%A %%B						>> applicationsettings.h
 					echo %%A = %%B								>> applicationsettings.s
 				)
 			)
@@ -478,6 +504,9 @@ goto :orchestration
 		echo .endm												>> applicationsettings.s
 	)
 
+	echo.														>> applicationsettings.h
+	echo #endif	//  __APPLICATIONSETTINGS_H__					>> applicationsettings.h
+
     call :debug %DBG_STEPS% Done building application settings file.
 	exit /B
 
@@ -515,7 +544,7 @@ goto :orchestration
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			if /I "%%~xA"==".c" (
 				call :debug %DBG_DETAIL% Processing C file !LIBFILE!... 
-				call :exec %DBG_CALL2% sdcc %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!LIBFILE!"
+				call :exec %DBG_CALL2% sdcc --sdcccall %SDCC_CALL% %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!LIBFILE!"
 			) else (
 				call :debug %DBG_DETAIL% Processing ASM file !LIBFILE!... 
 				call :exec %DBG_CALL2% sdasz80 %ASSEMBLER_EXTRA_DIRECTIVES% -o "!RELFILE!" "!LIBFILE!"
@@ -536,7 +565,7 @@ goto :orchestration
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			if /I "%%~xA"==".c" (
 				call :debug %DBG_DETAIL% Processing C file !APPFILE!... 
-				call :exec %DBG_CALL2% sdcc %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!APPFILE!"
+				call :exec %DBG_CALL2% sdcc --sdcccall %SDCC_CALL% %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!APPFILE!"
 			) else (
 				call :debug %DBG_DETAIL% Processing ASM file !APPFILE!... 
 				call :exec %DBG_CALL2% sdasz80 %ASSEMBLER_EXTRA_DIRECTIVES% -o "!RELFILE!" "!APPFILE!"

@@ -1,14 +1,15 @@
 ;-------------------------------------------------		
 ; applicationsettings.s created automatically			
 ; by make.bat											
-; on 16:27:28,50 , 07/02/2023 				
+; on 13:49:14.10 , Sun 02/12/2023 				
 ;														
 ; DO NOT BOTHER EDITING THIS.							
 ; ALL CHANGES WILL BE LOST.							
 ;-------------------------------------------------		
 														
-GLOBALS_INITIALIZER = 1								
+GLOBALS_INITIALIZER = 1				
 PUBLISH_FILESTART = 1								
+__SDCCCALL = 0							
 fileStart .equ 0xb000							
 .macro MCR_USRCALLSINDEX							
 												

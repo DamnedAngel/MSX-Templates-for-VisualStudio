@@ -23,6 +23,7 @@ MSX_CFG_PATH=Config
 OBJLIST=
 INCDIRS=
 
+SDCC_CALL=1
 BIN_SIZE=
 FILE_START=0x0100
 CODE_LOC=
@@ -115,13 +116,13 @@ exec_action () {
 #
 
 configure_target() {
-    echo //------------------------------------------------     >  targetconfig.h
-    echo // targetconfig.h created automatically by make.sh     >> targetconfig.h
-    echo // on $MSX_BUILD_DATETIME                              >> targetconfig.h
-    echo //                                                     >> targetconfig.h
-    echo // DO NOT BOTHER EDITING THIS.                         >> targetconfig.h
-    echo // ALL CHANGES WILL BE LOST.                           >> targetconfig.h
-    echo //------------------------------------------------     >> targetconfig.h
+    echo '//------------------------------------------------'   >  targetconfig.h
+    echo '// targetconfig.h created automatically by make.sh'   >> targetconfig.h
+    echo "// on $MSX_BUILD_DATETIME"                            >> targetconfig.h
+    echo '//'                                                   >> targetconfig.h
+    echo '// DO NOT BOTHER EDITING THIS.'                       >> targetconfig.h
+    echo '// ALL CHANGES WILL BE LOST.'                         >> targetconfig.h
+    echo '//------------------------------------------------'   >> targetconfig.h
     echo                                                        >> targetconfig.h
     echo '#ifndef  __TARGETCONFIG_H__'                          >> targetconfig.h
     echo '#define  __TARGETCONFIG_H__'                          >> targetconfig.h
@@ -278,6 +279,19 @@ house_cleaning() {
 application_settings() {
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Building application settings file...
+    echo '//-------------------------------------------------'  >  applicationsettings.h
+    echo '// applicationsettings.h created automatically'       >> applicationsettings.h
+    echo '// by make.sh'                                        >> applicationsettings.h
+    echo "// on $MSX_BUILD_DATETIME"                            >> applicationsettings.h
+    echo '//'                                                   >> applicationsettings.h
+    echo '// DO NOT BOTHER EDITING THIS.'                       >> applicationsettings.h
+    echo '// ALL CHANGES WILL BE LOST.'                         >> applicationsettings.h
+    echo '//-------------------------------------------------'  >> applicationsettings.h
+    echo                                                        >> applicationsettings.h
+	echo '#ifndef  __APPLICATIONSETTINGS_H__'					>> applicationsettings.h
+	echo '#define  __APPLICATIONSETTINGS_H__'					>> applicationsettings.h
+	echo														>> applicationsettings.h
+    
     echo ';-------------------------------------------------'   >  applicationsettings.s
     echo '; applicationsettings.s created automatically'        >> applicationsettings.s
     echo '; by make.sh'                                         >> applicationsettings.s
@@ -298,6 +312,15 @@ application_settings() {
             elif [[ $HEAD == 'FILESTART' ]]; then
                 echo fileStart .equ $REST                       >> applicationsettings.s
                 FILE_START=$REST
+            elif [[ $HEAD == 'SDCCCALL' ]]; then
+                echo __SDCCCALL = $REST                         >> applicationsettings.s
+                SDCC_CALL=$REST
+            elif [[ $HEAD == 'GLOBALS_INITIALIZER' ]]; then
+                if [[ $REST == '_OFF' ]]; then
+                    echo GLOBALS_INITIALIZER = 0                >> applicationsettings.s
+                else
+                    echo GLOBALS_INITIALIZER = 1                >> applicationsettings.s
+                fi
             elif [[ $HEAD == 'ROM_SIZE' ]]; then
                 if [[ $REST == '16k' ]]; then
                     BIN_SIZE=4000
@@ -309,7 +332,6 @@ application_settings() {
             elif [[ $HEAD == 'DATA_LOC' ]]; then
                 DATA_LOC=$REST
             elif [[ $HEAD == 'PARAM_HANDLING_ROUTINE' ]]; then
-                echo paramHandlingRoutine .equ $REST            >> applicationsettings.s
                 echo PARAM_HANDLING_ROUTINE = $REST             >> applicationsettings.s
             elif [[ $HEAD == 'SYMBOL' ]]; then
                 if [[ ! -f $MSX_OBJ_PATH/bin_usrcalls.tmp ]]; then
@@ -344,8 +366,10 @@ application_settings() {
                 echo .dw        _onDevice${REST}_getId          >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
             else
                 if [[ $REST == '_off' ]]; then
+                    echo "//#define $HEAD"                      >> applicationsettings.h
                     echo $HEAD = 0                              >> applicationsettings.s
                 elif [[ $REST == '_on' || -z $REST ]]; then
+                    echo "#define $HEAD"                      >> applicationsettings.h
                     echo $HEAD = 1                              >> applicationsettings.s
                 else
                     echo $HEAD = $REST                          >> applicationsettings.s
@@ -391,6 +415,9 @@ application_settings() {
         echo .endm                                              >> applicationsettings.s
     fi
 
+	echo														>> applicationsettings.h
+	echo '#endif //  __APPLICATIONSETTINGS_H__'					>> applicationsettings.h
+
     debug $DBG_STEPS Done building application settings file.
 }
 
@@ -430,7 +457,7 @@ build_lib() {
             RELFILE="$MSX_OBJ_PATH"/$(basename "$LIBFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
                 debug $DBG_DETAIL "Processing C file $(basename "$LIBFILE")... "
-                _exec $DBG_CALL2 sdcc $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'"
+                _exec $DBG_CALL2 sdcc --sdcccall $SDCC_CALL $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80  -c ${INCDIRS[*]} -o "'$RELFILE'" "'$LIBFILE'"
             else
                 debug $DBG_DETAIL "Processing ASM file $(basename "$LIBFILE")... "
                 _exec $DBG_CALL2 sdasz80 $ASSEMBLER_EXTRA_DIRECTIVES -o "'$RELFILE'" "'$LIBFILE'"
@@ -453,7 +480,7 @@ compile () {
             RELFILE="$MSX_OBJ_PATH"/$(basename "$APPFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
                 debug $DBG_DETAIL "Processing C file $(basename "$APPFILE")... "
-                _exec $DBG_CALL2 sdcc $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
+                _exec $DBG_CALL2 sdcc --sdcccall $SDCC_CALL $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
             else
                 debug $DBG_DETAIL "Processing ASM file $(basename "$APPFILE")... "
                 _exec $DBG_CALL2 sdasz80 $ASSEMBLER_EXTRA_DIRECTIVES -o "'$RELFILE'" "'$APPFILE'"

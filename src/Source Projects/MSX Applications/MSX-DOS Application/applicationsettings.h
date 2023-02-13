@@ -1,15 +1,15 @@
 //-------------------------------------------------	
-// targetconfig.h created automatically by make.bat	
+// applicationsettings.h created automatically			
+// by make.bat											
 // on 13:41:04.91 , Sun 02/12/2023 				
 //														
 // DO NOT BOTHER EDITING THIS.							
 // ALL CHANGES WILL BE LOST.							
 //-------------------------------------------------	
 														
-#ifndef  __TARGETCONFIG_H__							
-#define  __TARGETCONFIG_H__							
+#ifndef  __APPLICATIONSETTINGS_H__						
+#define  __APPLICATIONSETTINGS_H__						
 														
-//#define DEBUG					
-//#define OPENMSX_PROFILING					
+#define CMDLINE_PARAMETERS							
 														
-#endif	//  __TARGETCONFIG_H__							
+#endif	//  __APPLICATIONSETTINGS_H__					
