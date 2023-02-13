@@ -116,13 +116,13 @@ exec_action () {
 #
 
 configure_target() {
-    echo //------------------------------------------------     >  targetconfig.h
-    echo // targetconfig.h created automatically by make.sh     >> targetconfig.h
-    echo // on $MSX_BUILD_DATETIME                              >> targetconfig.h
-    echo //                                                     >> targetconfig.h
-    echo // DO NOT BOTHER EDITING THIS.                         >> targetconfig.h
-    echo // ALL CHANGES WILL BE LOST.                           >> targetconfig.h
-    echo //------------------------------------------------     >> targetconfig.h
+    echo '//------------------------------------------------'   >  targetconfig.h
+    echo '// targetconfig.h created automatically by make.sh'   >> targetconfig.h
+    echo "// on $MSX_BUILD_DATETIME"                            >> targetconfig.h
+    echo '//'                                                   >> targetconfig.h
+    echo '// DO NOT BOTHER EDITING THIS.'                       >> targetconfig.h
+    echo '// ALL CHANGES WILL BE LOST.'                         >> targetconfig.h
+    echo '//------------------------------------------------'   >> targetconfig.h
     echo                                                        >> targetconfig.h
     echo '#ifndef  __TARGETCONFIG_H__'                          >> targetconfig.h
     echo '#define  __TARGETCONFIG_H__'                          >> targetconfig.h
@@ -279,14 +279,14 @@ house_cleaning() {
 application_settings() {
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Building application settings file...
-    echo ';-------------------------------------------------'   >  applicationsettings.h
-    echo '; applicationsettings.h created automatically'        >> applicationsettings.h
-    echo '; by make.sh'                                         >> applicationsettings.h
-    echo "; on $MSX_BUILD_DATETIME"                             >> applicationsettings.h
-    echo ';'                                                    >> applicationsettings.h
-    echo '; DO NOT BOTHER EDITING THIS.'                        >> applicationsettings.h
-    echo '; ALL CHANGES WILL BE LOST.'                          >> applicationsettings.h
-    echo ';-------------------------------------------------'   >> applicationsettings.h
+    echo '//-------------------------------------------------'  >  applicationsettings.h
+    echo '// applicationsettings.h created automatically'       >> applicationsettings.h
+    echo '// by make.sh'                                        >> applicationsettings.h
+    echo "// on $MSX_BUILD_DATETIME"                            >> applicationsettings.h
+    echo '//'                                                   >> applicationsettings.h
+    echo '// DO NOT BOTHER EDITING THIS.'                       >> applicationsettings.h
+    echo '// ALL CHANGES WILL BE LOST.'                         >> applicationsettings.h
+    echo '//-------------------------------------------------'  >> applicationsettings.h
     echo                                                        >> applicationsettings.h
 	echo '#ifndef  __APPLICATIONSETTINGS_H__'					>> applicationsettings.h
 	echo '#define  __APPLICATIONSETTINGS_H__'					>> applicationsettings.h
