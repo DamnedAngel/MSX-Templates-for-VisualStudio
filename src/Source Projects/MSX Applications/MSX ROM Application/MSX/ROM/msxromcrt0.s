@@ -56,21 +56,7 @@ init::
 	ld		(#_heap_top), hl
 
 ;----------------------------------------------------------
-;	Step 2: Initialize globals
-    call    gsinit
-
-;----------------------------------------------------------
-;	Step 3: Sets stack to HIMEM
-.ifne RETURN_TO_BASIC
-.if STACK_HIMEM
-	di
-	ld		sp, (#BIOS_HIMEM)		;Stack at the top of memory.
-	ei
-.endif
-.endif
-
-;----------------------------------------------------------
-;	Step 4: Enables page 2 on the same slot/subslot as page 1
+;	Step 2: Enables page 2 on the same slot/subslot as page 1
 ;           (useful for 32kb ROMs on pages 1 and 2)
 .if SET_PAGE_2
 	di
@@ -97,6 +83,20 @@ init::
 	call	#BIOS_ENASLT
 	ei
 .endif
+
+;----------------------------------------------------------
+;	Step 3: Sets stack to HIMEM
+.ifeq RETURN_TO_BASIC
+.if STACK_HIMEM
+	di
+	ld		sp, (#BIOS_HIMEM)		;Stack at the top of memory.
+	ei
+.endif
+.endif
+
+;----------------------------------------------------------
+;	Step 4: Initialize globals
+    call    gsinit
 
 ;----------------------------------------------------------
 ;	Step 5: Run application
