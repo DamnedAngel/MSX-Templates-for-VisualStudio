@@ -96,7 +96,9 @@ init::
 
 ;----------------------------------------------------------
 ;	Step 4: Initialize globals
-    call    gsinit
+.if GLOBALS_INITIALIZER
+	call    gsinit
+.endif
 
 ;----------------------------------------------------------
 ;	Step 5: Run application
@@ -336,9 +338,9 @@ compareString::
 ;   =====================================
 ;   ========== GSINIT SEGMENTS ==========
 ;   =====================================
+.if GLOBALS_INITIALIZER
 	.area	_GSINIT
 gsinit::
-.if GLOBALS_INITIALIZER
     ld      bc,#l__INITIALIZER
     ld      a,b
     or      a,c
@@ -346,11 +348,11 @@ gsinit::
     ld	    de,#s__INITIALIZED
     ld      hl,#s__INITIALIZER
     ldir
-.endif
 
 	.area	_GSFINAL
 gsinit_next:
     ret
+.endif
 	
 ;   ======================================
 ;   ========== ROM_DATA SEGMENT ==========

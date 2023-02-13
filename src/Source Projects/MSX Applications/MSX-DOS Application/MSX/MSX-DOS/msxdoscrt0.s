@@ -135,7 +135,9 @@ cont:
 
 ;----------------------------------------------------------
 ;	Step 2: Initialize globals
-    call    gsinit
+.if GLOBALS_INITIALIZER
+	call    gsinit
+.endif
 
 ;----------------------------------------------------------
 ;	Step 3: Run application
@@ -180,9 +182,9 @@ cont:
 ;   =====================================
 ;   ========== GSINIT SEGMENTS ==========
 ;   =====================================
+.if GLOBALS_INITIALIZER
 	.area	_GSINIT
 gsinit::
-.if GLOBALS_INITIALIZER
     ld      bc,#l__INITIALIZER
     ld      a,b
     or      a,c
@@ -190,11 +192,11 @@ gsinit::
     ld	    de,#s__INITIALIZED
     ld      hl,#s__INITIALIZER
     ldir
-.endif
 
 	.area	_GSFINAL
 gsinit_next:
     ret
+.endif
 
 ;   ==================================
 ;   ========== DATA SEGMENT ==========
