@@ -369,7 +369,7 @@ application_settings() {
                     echo "//#define $HEAD"                      >> applicationsettings.h
                     echo $HEAD = 0                              >> applicationsettings.s
                 elif [[ $REST == '_on' || -z $REST ]]; then
-                    echo "//#define $HEAD"                      >> applicationsettings.h
+                    echo "#define $HEAD"                      >> applicationsettings.h
                     echo $HEAD = 1                              >> applicationsettings.s
                 else
                     echo $HEAD = $REST                          >> applicationsettings.s

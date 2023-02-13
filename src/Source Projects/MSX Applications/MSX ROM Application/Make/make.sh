@@ -117,12 +117,12 @@ exec_action () {
 
 configure_target() {
     echo '//------------------------------------------------'   >  targetconfig.h
-    echo '// targetconfig.h created automatically by make.sh    >> targetconfig.h
-    echo '// on $MSX_BUILD_DATETIME                             >> targetconfig.h
-    echo '//                                                    >> targetconfig.h
-    echo '// DO NOT BOTHER EDITING THIS.                        >> targetconfig.h
-    echo '// ALL CHANGES WILL BE LOST.                          >> targetconfig.h
-    echo '//------------------------------------------------    >> targetconfig.h
+    echo '// targetconfig.h created automatically by make.sh'   >> targetconfig.h
+    echo "// on $MSX_BUILD_DATETIME"                            >> targetconfig.h
+    echo '//'                                                   >> targetconfig.h
+    echo '// DO NOT BOTHER EDITING THIS.'                       >> targetconfig.h
+    echo '// ALL CHANGES WILL BE LOST.'                         >> targetconfig.h
+    echo '//------------------------------------------------'   >> targetconfig.h
     echo                                                        >> targetconfig.h
     echo '#ifndef  __TARGETCONFIG_H__'                          >> targetconfig.h
     echo '#define  __TARGETCONFIG_H__'                          >> targetconfig.h
@@ -282,7 +282,7 @@ application_settings() {
     echo '//-------------------------------------------------'  >  applicationsettings.h
     echo '// applicationsettings.h created automatically'       >> applicationsettings.h
     echo '// by make.sh'                                        >> applicationsettings.h
-    echo '// on $MSX_BUILD_DATETIME'                            >> applicationsettings.h
+    echo "// on $MSX_BUILD_DATETIME"                            >> applicationsettings.h
     echo '//'                                                   >> applicationsettings.h
     echo '// DO NOT BOTHER EDITING THIS.'                       >> applicationsettings.h
     echo '// ALL CHANGES WILL BE LOST.'                         >> applicationsettings.h
@@ -369,7 +369,7 @@ application_settings() {
                     echo "//#define $HEAD"                      >> applicationsettings.h
                     echo $HEAD = 0                              >> applicationsettings.s
                 elif [[ $REST == '_on' || -z $REST ]]; then
-                    echo "//#define $HEAD"                      >> applicationsettings.h
+                    echo "#define $HEAD"                      >> applicationsettings.h
                     echo $HEAD = 1                              >> applicationsettings.s
                 else
                     echo $HEAD = $REST                          >> applicationsettings.s
