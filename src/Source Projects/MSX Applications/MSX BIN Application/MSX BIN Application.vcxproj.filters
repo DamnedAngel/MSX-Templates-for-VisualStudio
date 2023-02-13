@@ -33,9 +33,6 @@
     <Filter Include="ASM Source Files\MSX\BIN">
       <UniqueIdentifier>{b4394834-d571-48ed-a6b8-66a93731e6b2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ASM Source Files\Profiling">
-      <UniqueIdentifier>{7615ad5b-1aef-4941-9bfd-f7606082964d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetconfig.h">
@@ -51,9 +48,6 @@
   <ItemGroup>
     <None Include="MSX\BIOS\msxbios.s">
       <Filter>ASM Source Files\MSX\BIOS</Filter>
-    </None>
-    <None Include="MSX\Profiling\openmsxprofiling.s">
-      <Filter>ASM Source Files\Profiling</Filter>
     </None>
     <None Include="targetconfig.s">
       <Filter>ASM Source Files</Filter>
