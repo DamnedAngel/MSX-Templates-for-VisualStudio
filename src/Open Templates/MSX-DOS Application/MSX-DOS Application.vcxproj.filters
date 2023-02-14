@@ -5,10 +5,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Make">
       <UniqueIdentifier>{3ef91682-59b4-4500-8b1e-472a09b82231}</UniqueIdentifier>
     </Filter>
@@ -37,9 +33,6 @@
     <Filter Include="ASM Source Files\MSX\MSX-DOS">
       <UniqueIdentifier>{fb61106d-43ca-44a6-804d-3c9e63975b1a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ASM Source Files\Profiling">
-      <UniqueIdentifier>{7615ad5b-1aef-4941-9bfd-f7606082964d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetconfig.h">
@@ -48,13 +41,13 @@
     <ClInclude Include="MSX\BIOS\msxbios.h">
       <Filter>Header Files\MSX\BIOS</Filter>
     </ClInclude>
+    <ClInclude Include="applicationsettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="MSX\BIOS\msxbios.s">
       <Filter>ASM Source Files\MSX\BIOS</Filter>
-    </None>
-    <None Include="MSX\Profiling\openmsxprofiling.s">
-      <Filter>ASM Source Files\Profiling</Filter>
     </None>
     <None Include="targetconfig.s">
       <Filter>ASM Source Files</Filter>

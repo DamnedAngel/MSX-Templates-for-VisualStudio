@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	ApplicationSettings.txt - by Danilo Angelo, 2020
+;	ApplicationSettings.txt - by Danilo Angelo, 2020-2023
 ;
 ;	MSX-DOS project general configuration.
 ;----------------------------------------------------------
@@ -10,8 +10,13 @@ PROJECT_TYPE			DOS
 
 ;----------------------------------------------------------
 ;	crt0 features
-GLOBALS_INITIALIZER		_ON							; _ON: include routine to initialize global variables; _OFF: Don't include
-CMDLINE_PARAMETERS		_OFF						; _ON: include routine to parse cmdline parameters; _OFF: Don't include
+GLOBALS_INITIALIZER		_ON             			; _ON: include routine to initialize global variables; _OFF: Don't include
+CMDLINE_PARAMETERS		_ON 						; _ON: include routine to parse cmdline parameters; _OFF: Don't include
+
+;----------------------------------------------------------
+;	C Calling Convention
+SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
+                                                    ; SDCCCALL=1    New C calling convention (REGs)
 
 ;----------------------------------------------------------
 ;	Temporary MSX-DOS cmdline routine start

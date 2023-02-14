@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	ApplicationSettings.txt - by Danilo Angelo, 2020-2021
+;	ApplicationSettings.txt - by Danilo Angelo, 2020-2023
 ;
 ;	MSX BIN project general configuration.
 ;----------------------------------------------------------
@@ -10,8 +10,13 @@ PROJECT_TYPE			BIN
 
 ;----------------------------------------------------------
 ;	crt0 features
-GLOBALS_INITIALIZER		_ON							; _ON: include routine to initialize global variables; _OFF: Don't include
+GLOBALS_INITIALIZER		_ON 						; _ON: include routine to initialize global variables; _OFF: Don't include
 PUBLISH_FILESTART		_ON							; _ON: register program start address at HIMEM-1; _OFF: Don't register
+
+;----------------------------------------------------------
+;	C Calling Convention
+SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
+                                                    ; SDCCCALL=1    New C calling convention (REGs)
 
 ;----------------------------------------------------------
 ;	BIN file settings

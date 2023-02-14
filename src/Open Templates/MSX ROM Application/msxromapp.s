@@ -1,12 +1,12 @@
 ;----------------------------------------------------------
-;		msxromapp.s - by Danilo Angelo, 2020
+;		msxromapp.s - by Danilo Angelo, 2020-2023
 ;
 ;		ROM program (cartridge) for MSX example
 ;		Assembly version
 ;----------------------------------------------------------
 
-	.include "targetconfig.s"
 	.include "MSX/BIOS/msxbios.s"
+	.include "targetconfig.s"
 	.include "applicationsettings.s"
 
 	.area	_CODE
@@ -21,7 +21,7 @@ STRING_COMPARE = 0
 _main::
 ;   Replace the two lines below with your own program logic
     ld hl, #_msg
-    call _printMSG
+    call print
 
 ;   Return to BASIC
     ret
@@ -41,15 +41,19 @@ _main::
 ;	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 ;	3) Remove all onCallXXXXX functions from this file
 _onCallCMD1::
+.ifeq __SDCCCALL
 	ld      ix, #0			; retrieve param address from stack
 	add     ix, sp
 	ld		l, 2(ix)
 	ld		h, 3(ix)
-    ld      e, (hl)
+.endif
+    ld      e, l
+    ld      d, h
+    ld      c, (hl)
     inc     hl
     ld      h, (hl)
-    ld      l, e
-_onCallCMD1_findEndOfCommand:
+    ld      l, c
+ _onCallCMD1_findEndOfCommand:
     ld      a, (hl)
     cp      #'('
     jr nz,  _onCallCMD_fail
@@ -68,26 +72,24 @@ _onCallCMD1_mapString:
     jr nz,  _onCallCMD1_mapString
     call    _onCallCMD1_ignoreSpaces
     cp      #')'
-    jr nz,  _onCallCMD_fail
+    jr nz,  _onCallCMD_popFail
     inc     hl
     call    _onCallCMD1_ignoreSpaces
     cp      #0
     jr z,   _onCallCMD1_printMsg
     cp      #0x3a
-    jr nz,  _onCallCMD_fail
+    jr nz,  _onCallCMD_popFail
 
 
 _onCallCMD1_printMsg:
     push    bc
     ex      de, hl
-	ld		l, 2(ix)
-	ld		h, 3(ix)
     ld      (hl), e
     inc     hl
     ld      (hl), d
 
     ld      hl, #_msgCMD1_1
-    call    _printMSG
+    call    print
     pop     bc
     pop     hl
 
@@ -103,8 +105,12 @@ _onCallCMD1_printString:
 
 _onCallCMD1_ending:    
     ld      hl, #_msgCMD1_2
-    call    _printMSG
+    call    print
+.ifeq __SDCCCALL
     ld      l, #0
+.else
+    xor     a
+.endif
     ret
 _onCallCMD1_ignoreSpaces:
     ld      a, (hl)
@@ -112,8 +118,14 @@ _onCallCMD1_ignoreSpaces:
     ret nz
     inc     hl
     jr _onCallCMD1_ignoreSpaces
+_onCallCMD_popFail:
+    pop bc
 _onCallCMD_fail:
+.ifeq __SDCCCALL
     ld      l, #0xff
+.else
+    ld      a, #0xff
+.endif
     ret
 
 ; ----------------------------------------------------------
@@ -129,12 +141,14 @@ _onCallCMD_fail:
 ;	2) Optionally, remove/comment all CALL_STATEMENT items in ApplicationSettings.txt
 ;	3) Remove all onCallXXXXX functions from this file
 _onCallCMD2::
+.ifeq __SDCCCALL
 	ld      hl, #2			; retrieve param address from stack
 	add     hl, sp
 	ld		b, (hl)
 	inc		hl
 	ld		h, (hl)
 	ld		l, b
+.endif
 _onCallCMD2_findEndOfCommand:
     ld      a, (hl)
     cp      #0
@@ -144,8 +158,12 @@ _onCallCMD2_findEndOfCommand:
 
 _onCallCMD2_printMsg:
     ld      hl, #_msgCMD2
-    call    _printMSG
+    call    print
+.ifeq __SDCCCALL
     ld      l, #0
+.else
+    xor     a
+.endif
     ret
 .endif
 
@@ -153,6 +171,9 @@ _onCallCMD2_printMsg:
 ; ----------------------------------------------------------
 ;	This is a DEVICE getID handler example.
 ;	"DEV:"
+;
+;	PLEASE NOTE THAT SUPPORT FOR DEVICE EXPANSION
+;	IS EMBRYONIC AND FAR FROM COMPLETE!
 ;
 ;	This is only for the demo app.
 ;	To disable the support for BASIC's devices:
@@ -163,13 +184,16 @@ _onCallCMD2_printMsg:
 ;	3) Remove all onDeviceXXXXX_getId and onDeviceXXXXX_IO routines from this file
 _onDeviceDEV_getId::
     ld      hl, #_msgDEV_getId
-    call    _printMSG
+    call    print
     ld      l, #0
     ret
 
 ; ----------------------------------------------------------
 ;	This is a DEVICE IO handler example.
 ;	"DEV:"
+;
+;	PLEASE NOTE THAT SUPPORT FOR DEVICE EXPANSION
+;	IS EMBRYONIC AND FAR FROM COMPLETE!
 ;
 ;	This is only for the demo app.
 ;	To disable the support for BASIC's devices:
@@ -180,7 +204,7 @@ _onDeviceDEV_getId::
 ;	3) Remove all onDeviceXXXXX_getId and onDeviceXXXXX_IO routines from this file
 _onDeviceDEV_IO::
     ld      hl, #_msgDEV_IO
-    call    _printMSG
+    call    print
     ret
 .endif
 
@@ -194,27 +218,36 @@ _onDeviceDEV_IO::
 ;	This is an example of using debug code in ASM.
 ;	This is only for the demo app.
 ;	You can safely remove it for your application.
-_printMSG:
+print:
 .if DEBUG
-	push hl
-    ld hl, #_msgdbg
-	call _printMSG_loop
-	pop hl
+	push	hl
+    ld hl,	#_msgdbg
+	call	_print
+	pop		hl
 .endif
-_printMSG_loop:
-    ld a,(hl)
-    or a
+
+_print:
+    ld		a,(hl)
+    or		a
     ret z
-    call BIOS_CHPUT
-    inc hl
-    jr _printMSG_loop
+	push	hl
+	ld		iy, (#0xfcc0)	; BIOS_ROMSLT
+	ld		ix, #0x00a2		; BIOS_CHPUT
+	call	#0x001c			; BIOS_CALSLT
+	pop		hl
+    inc		hl
+    jr		_print
 
 	.area	_ROMDATA
 
 ; ----------------------------------------------------------
-;	Debug Message
+;	Hello Message
 _msg::
-.ascii		"Hello MSX from Assembly!\r\n"
+.if __SDCCCALL
+.ascii		"Hello MSX from Assembly (sdcccall(REGs))!\r\n\"
+.else
+.ascii		"Hello MSX from Assembly (sdcccall(STACK))!\r\n\"
+.endif
 .ascii		"If you don't want your\r\n"
 .ascii		"ROM program to return to\r\n"
 .ascii		"BASIC/MSX-DOS, just avoid\r\n"

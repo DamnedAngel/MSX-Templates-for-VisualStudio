@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	ApplicationSettings.txt - by Danilo Angelo, 2021
+;	ApplicationSettings.txt - by Danilo Angelo, 2021-2023
 ;
 ;	MSX ROM project general configuration.
 ;----------------------------------------------------------
@@ -10,15 +10,20 @@ PROJECT_TYPE			ROM
 
 ;----------------------------------------------------------
 ;	crt0 features
-GLOBALS_INITIALIZER		_ON							; _ON: Includes routine to initialize global variables; _OFF: Don't include
-RETURN_TO_BASIC			_ON							; _ON: Returns to basic; _OFF: Don't return
-STACK_HIMEM				_OFF						; _ON: Sets stack to HIMEM (RETURN_TO_BASIC *MUST* be _OFF); _OFF: Don't set
-SET_PAGE_2				_OFF						; _ON: Enables page 2 on the same slot/subslot as page 1 (useful for 32kb ROMs on pages 1 and 2); _OFF: Leaves page 2 as is
+GLOBALS_INITIALIZER		_ON 						; _ON: Includes routine to initialize global variables; _OFF: Don't include
+RETURN_TO_BASIC			_ON 						; _ON: Returns to basic; _OFF: Don't return
+STACK_HIMEM				_OFF 						; _ON: Sets stack to HIMEM (RETURN_TO_BASIC *MUST* be _OFF); _OFF: Don't set
+SET_PAGE_2				_OFF     					; _ON: Enables page 2 on the same slot/subslot as page 1 (useful for 32kb ROMs on pages 1 and 2); _OFF: Leaves page 2 as is
+
+;----------------------------------------------------------
+;	C Calling Convention
+SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
+                                                    ; SDCCCALL=1    New C calling convention (REGs)
 
 ;----------------------------------------------------------
 ;	ROM settings
 ROM_SIZE				16k							; 16k/32k
-FILESTART				0x4000						; Typically,    0x4000 for 32kb ROM or 16kb ROM with CALL/DEVICE expasions; or
+FILESTART				0x4000						; Typically,    0x4000 for 32kb ROM or 16kb ROM with CALL/DEVICE expansions; or
                                                     ;               0x8000 for 16kb ROM
 CALL_EXPANSION			_ON							; _ON: expands BASIC's CALL instruction; _OFF: Don't expand
 DEVICE_EXPANSION		_ON							; _ON: creates BASIC's device; _OFF: Don't create
