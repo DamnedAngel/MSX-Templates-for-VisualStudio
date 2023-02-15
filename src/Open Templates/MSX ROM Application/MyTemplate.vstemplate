@@ -1,7 +1,7 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
     <Name>MSX ROM Application</Name>
-    <Description>A project for creating MSX ROM programs for MSX computers. Version 00.05.01.</Description>
+    <Description>A project for creating MSX ROM programs for MSX computers. Version 00.05.02.</Description>
     <ProjectType>VC</ProjectType>
     <ProjectSubType>
     </ProjectSubType>
@@ -16,12 +16,12 @@
   </TemplateData>
   <TemplateContent>
     <Project TargetFileName="MSX ROM Application.vcxproj" File="MSX ROM Application.vcxproj" ReplaceParameters="true">
-      <ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.vcxproj.filters">MSX ROM Application.vcxproj.filters</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="targetconfig.h">targetconfig.h</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="msxbios.h">MSX\BIOS\msxbios.h</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="make.bat">MAKE\make.bat</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="make.sh">MAKE\make.sh</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="symbol.py">MAKE\symbol.py</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="msxbios.h">MSX\BIOS\msxbios.h</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="applicationsettings.h">applicationsettings.h</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="targetconfig.h">targetconfig.h</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="ApplicationSettings.txt">CONFIG\ApplicationSettings.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="ApplicationSources.txt">CONFIG\ApplicationSources.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="BuildEvents.txt">CONFIG\BuildEvents.txt</ProjectItem>
@@ -32,12 +32,12 @@
       <ProjectItem ReplaceParameters="false" TargetFileName="TargetConfig_Debug.txt">CONFIG\TargetConfig_Debug.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="TargetConfig_Release.txt">CONFIG\TargetConfig_Release.txt</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="msxromapp.c">msxromapp.c</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="msxromcrt0.s">MSX\ROM\msxromcrt0.s</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="msxbios.s">MSX\BIOS\msxbios.s</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="applicationsettings.s">applicationsettings.s</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="msxromapp.s">msxromapp.s</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="targetconfig.s">targetconfig.s</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="msxbios.s">MSX\BIOS\msxbios.s</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="msxromcrt0.s">MSX\ROM\msxromcrt0.s</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="openmsxprofiling.s">MSX\PROFILING\openmsxprofiling.s</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.vcxproj.filters">MSX ROM Application.vcxproj.filters</ProjectItem>
     </Project>
   </TemplateContent>
 </VSTemplate>

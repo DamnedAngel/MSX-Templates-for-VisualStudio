@@ -56,6 +56,7 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="applicationsettings.h" />
     <ClInclude Include="MSX\BIOS\msxbios.h" />
     <ClInclude Include="targetconfig.h" />
   </ItemGroup>
@@ -66,7 +67,6 @@
     <None Include="Make\symbol.py" />
     <None Include="msxromapp.s" />
     <None Include="MSX\BIOS\msxbios.s" />
-    <None Include="MSX\Profiling\openmsxprofiling.s" />
     <None Include="MSX\ROM\msxromcrt0.s" />
     <None Include="targetconfig.s" />
   </ItemGroup>
