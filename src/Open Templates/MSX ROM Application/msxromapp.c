@@ -1,12 +1,13 @@
 // ----------------------------------------------------------
-//		msxromapp.c - by Danilo Angelo, 2020
+//		msxromapp.c - by Danilo Angelo, 2020-2023
 //
 //		ROM program(cartridge) for MSX example
 //		C version
 // ----------------------------------------------------------
 
-#include "targetconfig.h"
 #include "MSX/BIOS/msxbios.h"
+#include "targetconfig.h"
+#include "applicationsettings.h"
 
 // ----------------------------------------------------------
 //	This is an example of embedding asm code into C.
@@ -15,16 +16,18 @@
 #pragma disable_warning 85	// because the var msg is not used in C context
 void _print(char* msg) {
 __asm
+#if !__SDCCCALL
 	ld      hl, #2; retrieve address from stack
 	add     hl, sp
 	ld		b, (hl)
 	inc		hl
 	ld		h, (hl)
 	ld		l, b
+#endif
 
-_printMSG_loop :
+_print_loop:
 	ld		a, (hl)	; print
-	or a
+	or		a
 	ret z
 	push	hl
 	push	ix
@@ -35,7 +38,7 @@ _printMSG_loop :
 	pop		ix
 	pop		hl
 	inc		hl
-	jr		_printMSG_loop
+	jr		_print_loop
 __endasm;
 
 	return;
@@ -59,8 +62,12 @@ void print(char* msg) {
 //	Your fun starts here!!!
 //	Replace the code below with your art.
 void main(void) {
-	print("Hello MSX from C!\r\n"
-		"If you don't want your\r\n"
+#if __SDCCCALL
+	print("Hello MSX from C (sdcccall(REGs))!\r\n\0");
+#else
+	print("Hello MSX from C (sdcccall(STACK))!\r\n\0");
+#endif // __SDCCCALL
+	print("If you don't want your\r\n"
 		"ROM program to return to\r\n"
 		"BASIC/MSX-DOS, just avoid\r\n"
 		"main's return instruction.\r\n\0");
@@ -117,8 +124,8 @@ unsigned char onCallCMD1(char** param) {
 	}
 
 	print("The C handler for CMD1 says: \0");
-	print(buffer);
-	print("!\r\n\0");
+	_print(buffer);
+	_print("!\r\n\0");
 	return 0;
 }
 
@@ -148,6 +155,9 @@ unsigned char onCallCMD2(char** param) {
 //	This is a DEVICE getID handler example.
 //	"DEV:"
 //
+//	PLEASE NOTE THAT SUPPORT FOR DEVICE EXPANSION
+//	IS EMBRYONIC AND FAR FROM COMPLETE!
+// 
 //	This is only for the demo app.
 //	To disable the support for BASIC's devices:
 //	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
@@ -155,7 +165,7 @@ unsigned char onCallCMD2(char** param) {
 //	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
 //	2) Optionally, remove / comment all DEVICE items in ApplicationSettings.txt
 //	3) Remove all onDeviceXXXXX_getIdand onDeviceXXXXX_IO routines from this file
-char onDeviceDEV_getId() {
+char onDeviceDEV_getId(void) {
 	print("The C handler for DEV_getId says hi!\r\n\0");
 	return 0;
 }
@@ -164,6 +174,9 @@ char onDeviceDEV_getId() {
 //	This is a DEVICE IO handler example.
 //	"DEV:"
 //
+//	PLEASE NOTE THAT SUPPORT FOR DEVICE EXPANSION
+//	IS EMBRYONIC AND FAR FROM COMPLETE!
+// 
 //	This is only for the demo app.
 //	To disable the support for BASIC's devices:
 //	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
@@ -171,7 +184,7 @@ char onDeviceDEV_getId() {
 //	1) Set DEVICE_EXPANSION to _OFF in ApplicationSettings.txt
 //	2) Optionally, remove / comment all DEVICE items in ApplicationSettings.txt
 //	3) Remove all onDeviceXXXXX_getIdand onDeviceXXXXX_IO routines from this file
-void onDeviceDEV_IO(char* param, char cmd) {
+void onDeviceDEV_IO(char cmd, char* param) {
 	print("The C handler for DEV_IO says hi!\r\n\0");
 }
 

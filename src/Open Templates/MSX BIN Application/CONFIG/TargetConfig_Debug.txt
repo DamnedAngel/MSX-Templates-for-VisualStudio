@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	TargetConfig_Debug.txt - by Danilo Angelo, 2020-2021
+;	TargetConfig_Debug.txt - by Danilo Angelo, 2020-2023
 ;
 ;	Configuration for the DEBUG profile
 ;----------------------------------------------------------
@@ -34,8 +34,7 @@ EXECGEN_EXTRA_DIRECTIVES
 ;   Macros & constants
 .APPLICATION
 DEBUG				        _ON					; _OFF: not defined ; _ON: defined; 1-n defined with debug level
-OPENMSX_PROFILING	        _OFF				; _ON: enable OpenMSX Profiling routines; _OFF: Disable routines
- 
+
 
 ;----------------------------------------------------------
 ;	Filesystem settings

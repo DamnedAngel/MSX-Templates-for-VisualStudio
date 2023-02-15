@@ -56,6 +56,7 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="applicationsettings.h" />
     <ClInclude Include="MSX\BIOS\msxbios.h" />
     <ClInclude Include="targetconfig.h" />
   </ItemGroup>
@@ -67,7 +68,6 @@
     <None Include="Make\make.bat" />
     <None Include="MSX\BIOS\msxbios.s" />
     <None Include="MSX\MSX-DOS\msxdoscrt0.s" />
-    <None Include="MSX\Profiling\openmsxprofiling.s" />
     <None Include="targetconfig.s" />
   </ItemGroup>
   <ItemGroup>

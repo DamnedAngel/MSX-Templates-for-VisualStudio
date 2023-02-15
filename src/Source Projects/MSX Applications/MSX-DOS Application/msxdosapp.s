@@ -1,12 +1,13 @@
 ;----------------------------------------------------------
-;		msxdosapp.s - by Danilo Angelo, 2020
+;		msxdosapp.s - by Danilo Angelo, 2020-2023
 ;
 ;		MSX-DOS program example
 ;		Assembly version
 ;----------------------------------------------------------
 
-	.include "targetconfig.s"
 	.include "MSX/BIOS/msxbios.s"
+	.include "targetconfig.s"
+	.include "applicationsettings.s"
 
 	.area	_CODE
 
@@ -16,13 +17,52 @@
 ;	Your fun starts here!!!
 ;	Replace the code below with your art.
 _main::
-;   Replace the two lines below with your own program logic
-    ld hl, #_msg
-    call _printMSG
+;   Replace the lines below with your own program logic
+.if __SDCCCALL & CMDLINE_PARAMETERS
+	push	hl
+.endif
+    ld		hl,	#_hellomsg
+    call	print
+.if CMDLINE_PARAMETERS
+    ld		hl,	#_parametersmsg
+    call	print
+.if __SDCCCALL
+	pop		hl
+	xor		a
+	cp		e
+	jr z,	_mainEnding
+	ld		b,e
+.else
+	ld      ix, #0			; retrieve param address from stack
+	add     ix, sp
+	ld		l, 2(ix)
+	ld		h, 3(ix)
+    ld      a, 4(ix)
+	or		a
+	jr z,	_mainEnding
+	ld		b,a
+.endif
 
+_paramLoop:
+	ld		e,(hl)
+	inc		hl
+	ld		d,(hl)
+	inc		hl
+	ex		de,hl
+    call	print
+	ld		hl,#_linefeed
+    call	_print
+	ex		de,hl
+	djnz	_paramLoop
+.endif
 	
 ;   Return to MSX-DOS
-	ld l, #0
+_mainEnding:
+.if __SDCCCALL
+	ld		a,#0
+.else
+	ld		l,#0
+.endif
 	ret
 
 ; ----------------------------------------------------------
@@ -35,31 +75,41 @@ _main::
 ;	This is an example of using debug code in ASM.
 ;	This is only for the demo app.
 ;	You can safely remove it for your application.
-_printMSG:
+print:
 .if DEBUG
-	push hl
-    ld hl, #_msgdbg
-	call _printMSG_loop
-	pop hl
+	push	hl
+    ld hl,	#_msgdbg
+	call	_print
+	pop		hl
 .endif
-_printMSG_loop:
-    ld a,(hl)
-    or a
+
+_print:
+    ld		a,(hl)
+    or		a
     ret z
 	push	hl
 	ld		iy, (#0xfcc0)	; BIOS_ROMSLT
 	ld		ix, #0x00a2		; BIOS_CHPUT
 	call	#0x001c			; BIOS_CALSLT
 	pop		hl
-    inc hl
-    jr _printMSG_loop
+    inc		hl
+    jr		_print
 
 		.area	_DATA
 
 ; ----------------------------------------------------------
-;	Debug Message
-_msg::
-.ascii		"Hello MSX from Assembly!\r\n\0"
+;	Messages
+_hellomsg::
+.if __SDCCCALL
+.ascii		"Hello MSX from Assembly (sdcccall(REGs))!\r\n\0"
+.else
+.ascii		"Hello MSX from Assembly (sdcccall(STACK))!\r\n\0"
+.endif
+
+_parametersmsg::
+.ascii		"Parameters:"
+_linefeed::
+.ascii		"\r\n\0"
 
 ; ----------------------------------------------------------
 ;	Debug Message
