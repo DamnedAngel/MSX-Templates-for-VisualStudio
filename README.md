@@ -20,7 +20,7 @@ Feb 15th, 2023
 * [ROM application](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases/download/v00.05.02/MSX.ROM.Application.zip)
 
 ### Basic Instructions
-* **Visual Studio Templates**: Download them to your **\Users\<user>\Documents\Visual Studio <version>\Templates\ProjectTemplates** folder and the templates will appear as options when creating new projecs from within Visual Studio.
+* **Visual Studio Templates**: Download them to your **\Users\\&lt;user&gt;\Documents\Visual Studio &lt;version&gt;\Templates\ProjectTemplates** folder and the templates will appear as options when creating new projecs from within Visual Studio.
 * **Raw Application Templates**: Unzip them and edit away. Call **Make\make.bat** or **Make/make.sh** to build your program.
 
 ### Documentation
