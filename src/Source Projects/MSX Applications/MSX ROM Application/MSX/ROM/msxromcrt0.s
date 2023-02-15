@@ -1,12 +1,12 @@
 ;----------------------------------------------------------
-;		msxromcrt0.s - by Danilo Angelo 2020
+;		msxromcrt0.s - by Danilo Angelo, 2020-2023
 ;
 ;		Template for ROM (cartridges) programs for MSX 
 ;		Derived from the work of mvac7/303bcn
 ;----------------------------------------------------------
 
-	.include "targetconfig.s"
 	.include "MSX/BIOS/msxbios.s"
+	.include "targetconfig.s"
 	.include "applicationsettings.s"
 
 	.globl	_main
@@ -56,21 +56,7 @@ init::
 	ld		(#_heap_top), hl
 
 ;----------------------------------------------------------
-;	Step 2: Initialize globals
-    call    gsinit
-
-;----------------------------------------------------------
-;	Step 3: Sets stack to HIMEM
-.ifne RETURN_TO_BASIC
-.if STACK_HIMEM
-	di
-	ld		sp, (#BIOS_HIMEM)		;Stack at the top of memory.
-	ei
-.endif
-.endif
-
-;----------------------------------------------------------
-;	Step 4: Enables page 2 on the same slot/subslot as page 1
+;	Step 2: Enables page 2 on the same slot/subslot as page 1
 ;           (useful for 32kb ROMs on pages 1 and 2)
 .if SET_PAGE_2
 	di
@@ -99,6 +85,22 @@ init::
 .endif
 
 ;----------------------------------------------------------
+;	Step 3: Sets stack to HIMEM
+.ifeq RETURN_TO_BASIC
+.if STACK_HIMEM
+	di
+	ld		sp, (#BIOS_HIMEM)		;Stack at the top of memory.
+	ei
+.endif
+.endif
+
+;----------------------------------------------------------
+;	Step 4: Initialize globals
+.if GLOBALS_INITIALIZER
+	call    gsinit
+.endif
+
+;----------------------------------------------------------
 ;	Step 5: Run application
 .if RETURN_TO_BASIC
 	jp		_main
@@ -124,6 +126,9 @@ init::
 ;   ========== HOME SEGMENT ==========
 ;   ==================================
 	.area _HOME
+
+;----------------------------------------------------------
+;	Support for MSXBasic CALL command expansion
 .if CALL_EXPANSION
 STR_COMPARE = 1
 _call_expansion::
@@ -161,8 +166,7 @@ callExpansionNotEndOfList:
 	jr nz,	callExpansionStmtNotFound
 	ld		a, b
 	cp		#0x20
-	jr z,	callExpansionStmtFound
-	jr		callExpansionStmtNotFound
+	jr nz,	callExpansionStmtNotFound
 
 callExpansionStmtFound:
 ;	statement found; execute and exit
@@ -171,25 +175,36 @@ callExpansionStmtFound:
 	push	de
 	exx
 	pop		de				; *handler
-	push	hl
+;	push	hl
 	ld		(#_pBuffer), hl
+
+.ifeq __SDCCCALL
 	ld		hl, #_pBuffer
 	push	hl				; parameters
+.endif
+
 	ld		hl, #callExpansionFinalize
 	push	hl				; finalize
 	ex		de, hl
 	ld		e, (hl)
 	inc		hl
 	ld		d, (hl)
+
+.if __SDCCCALL
+	ld		hl, #_pBuffer
+.endif
+
 	push	de				; handler
 	ret						; calls handler with return to finalize below
 							; handler must return hl pointing to end of command (end of line or ":")
 	
 callExpansionFinalize:
-; at this point, hl must be pointing to end of command (end of line or ":")
+; at this point, pBuffer must be pointing to end of command (end of line or ":")
+.ifeq __SDCCCALL
 	ld		a, l
 	pop		hl
-	pop		hl
+.endif
+;	pop		hl
 	or		a
 	jr z,	callExpansionFinalizeNoError
 callExpansionFinalizeError:
@@ -200,6 +215,12 @@ callExpansionFinalizeNoError:
 	ret
 .endif
 
+;----------------------------------------------------------
+;	Support for MSX-Basic DEVICES expansion
+;
+;	PLEASE NOTE THAT SUPPORT FOR DEVICE EXPANSION
+;	IS EMBRYONIC AND FAR FROM COMPLETE!
+;
 .if DEVICE_EXPANSION
 STR_COMPARE = 1
 _device_expansion::
@@ -237,24 +258,34 @@ deviceExpansionNotEndOfList:
 	jr nz,	deviceNotFound
 ;	device found; execute and exit
 	ex		af, af'			; restores phase of operation from af'
-	cp		#0xff			; if device probe (getId)
-	jr nz,	deviceExpansionHandlerCall
-	inc		de
+	cp		#0xff			; tests whether phase is device probe (getId)
+	jr nz,	deviceExpansionHandler
+	inc		de				; points to getId handler (-1)
 	inc		de
 
-deviceExpansionHandlerCall:
+deviceExpansionHandler:
 	pop		hl
 	push	de
 	exx
 	pop		de				; *handler
 	inc		de
 
-	push	hl				; parameters
-	ld		h, a
-	push	hl				; IO command
+.ifeq __SDCCCALL
+	jr z,	deviceExpansionGetIdCall
+	; Dev IO - Set Parameters
+	push	af				; IO command
 	inc		sp
-	ld		hl,	#deviceExpansionFinalize
-	push	hl				; finalize
+	push	hl				; parameters
+	; Dev IO - Set return routine
+	ld		hl,	#deviceExpansionIOFinalize
+	push	hl				; finalize IO
+	jr		deviceExpansionCall
+deviceExpansionGetIdCall:
+	; Dev GetId - No parameters needed
+	; Dev GetId - Set return routine
+	ld		hl,	#deviceExpansioGetIdFinalize
+	push	hl				; finalize Get Id
+deviceExpansionCall:
 	ex		de, hl
 	ld		e, (hl)
 	inc		hl
@@ -262,14 +293,31 @@ deviceExpansionHandlerCall:
 	push	de				; handler
 	ret						; calls handler with return to finalize below
 							; handler must return hl pointing to end of command (end of line or ":")
-	
-deviceExpansionFinalize:
+
+deviceExpansionIOFinalize:
+	inc		sp				; unstack parameters and return
+	pop		de
+	ret
+
+deviceExpansioGetIdFinalize:
 ; at this point, l must contain device number (0-3)
-	inc		sp
 	ld		a, l
-	pop		hl
 	or		a				; resets CY flag without destroying A
 	ret
+	
+.else
+	; Dev IO - Parameters already set;
+	; Dev GetId - No parameters needed;
+	; Dev GetId/IO - No return routine (return direct to caller)
+deviceExpansionCall:
+	ex		de, hl
+	ld		c, (hl)
+	inc		hl
+	ld		b, (hl)
+	push	bc				; handler
+	ret						; calls handler with return to finalize below
+							; handler must return hl pointing to end of command (end of line or ":")
+.endif
 
 .endif
 
@@ -290,9 +338,9 @@ compareString::
 ;   =====================================
 ;   ========== GSINIT SEGMENTS ==========
 ;   =====================================
+.if GLOBALS_INITIALIZER
 	.area	_GSINIT
 gsinit::
-.if GLOBALS_INITIALIZER
     ld      bc,#l__INITIALIZER
     ld      a,b
     or      a,c
@@ -300,11 +348,11 @@ gsinit::
     ld	    de,#s__INITIALIZED
     ld      hl,#s__INITIALIZER
     ldir
-.endif
 
 	.area	_GSFINAL
 gsinit_next:
     ret
+.endif
 	
 ;   ======================================
 ;   ========== ROM_DATA SEGMENT ==========

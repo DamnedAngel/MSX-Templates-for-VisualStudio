@@ -1,7 +1,7 @@
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
     <Name>MSX BIN Application</Name>
-    <Description>A project for creating BLOADable BIN programs for MSX computers. Version 00.05.01.</Description>
+    <Description>A project for creating BLOADable BIN programs for MSX computers. Version 00.05.02.</Description>
     <ProjectType>VC</ProjectType>
     <ProjectSubType>
     </ProjectSubType>
@@ -17,6 +17,7 @@
   <TemplateContent>
     <Project TargetFileName="MSX BIN Application.vcxproj" File="MSX BIN Application.vcxproj" ReplaceParameters="true">
       <ProjectItem ReplaceParameters="false" TargetFileName="$projectname$.vcxproj.filters">MSX BIN Application.vcxproj.filters</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="applicationsettings.h">applicationsettings.h</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="targetconfig.h">targetconfig.h</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="msxbios.h">MSX\BIOS\msxbios.h</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="make.sh">MAKE\make.sh</ProjectItem>
@@ -37,7 +38,6 @@
       <ProjectItem ReplaceParameters="false" TargetFileName="targetconfig.s">targetconfig.s</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="msxbios.s">MSX\BIOS\msxbios.s</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="msxbincrt0.s">MSX\BIN\msxbincrt0.s</ProjectItem>
-      <ProjectItem ReplaceParameters="false" TargetFileName="openmsxprofiling.s">MSX\PROFILING\openmsxprofiling.s</ProjectItem>
     </Project>
   </TemplateContent>
 </VSTemplate>
