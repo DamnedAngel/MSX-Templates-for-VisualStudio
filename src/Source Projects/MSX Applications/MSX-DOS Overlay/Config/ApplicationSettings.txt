@@ -1,17 +1,16 @@
 ;----------------------------------------------------------
-;	ApplicationSettings.txt - by Danilo Angelo, 2020-2023
+;	ApplicationSettings.txt - by Danilo Angelo, 2023
 ;
-;	MSX-DOS application project general configuration.
+;	MSX-DOS overlay project general configuration.
 ;----------------------------------------------------------
 
 ;----------------------------------------------------------
 ;	Project Type
-PROJECT_TYPE			DOS
+PROJECT_TYPE			MDO
 
 ;----------------------------------------------------------
 ;	crt0 features
 GLOBALS_INITIALIZER		_ON             			; _ON: include routine to initialize global variables; _OFF: Don't include
-CMDLINE_PARAMETERS		_ON 						; _ON: include routine to parse cmdline parameters; _OFF: Don't include
 
 ;----------------------------------------------------------
 ;	C Calling Convention
@@ -19,18 +18,10 @@ SDCCCALL                1                           ; SDCCCALL=0    Old C callin
                                                     ; SDCCCALL=1    New C calling convention (REGs)
 
 ;----------------------------------------------------------
-;	Temporary MSX-DOS cmdline routine start
-;		0 -> routine starts at start of heap
-;		other value -> routine address (warning: may overlap data/code)
-;	If you don't know what you are doing,
-;	LEAVE IT AT 0.
-PARAM_HANDLING_ROUTINE	0
-
-;----------------------------------------------------------
 ;	Code segment (.area _CODE) start address
 ;	If you don't know what you are doing,
 ;	LEAVE IT COMMENTED for automatic setting.
-;CODE_LOC				0x0180
+;CODE_LOC				0x1000
 
 ;----------------------------------------------------------
 ;	Data segment (.area _DATA) start address

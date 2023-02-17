@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	ApplicationSources.txt - by Danilo Angelo, 2020
+;	ApplicationSources.txt - by Danilo Angelo, 2023
 ;
 ;	List of all specific application C and ASM sources
 ;	These will always be processed by any build actions
@@ -8,16 +8,16 @@
 ;----------------------------------------------------------
 ;	General structure of a MSX BIN application
 ;	Do NOT remove.
-MSX\BIN\msxbincrt0.s
+MSX\MDO\msxdosovlcrt0.s
 
 ;----------------------------------------------------------
-;	MSX BIN application source files, in C and ASM formats
+;	MSX-DOS overlay source files, in C and ASM formats
 ;	This is where your main function is.
 ;	THIS IS YOUR PROGRAM!
 ;	Choose ONE and ONLY ONE of the lines below,
 ;	and leave the other commented!
-;msxbinapp.s
-msxbinapp.c
+;msxdosovl.s
+msxdosovl.c
 
 ;----------------------------------------------------------
 ;	Additional source files

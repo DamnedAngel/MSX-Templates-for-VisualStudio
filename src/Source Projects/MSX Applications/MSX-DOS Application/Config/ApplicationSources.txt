@@ -11,7 +11,7 @@
 MSX\MSX-DOS\msxdoscrt0.s
 
 ;----------------------------------------------------------
-;	MSX BIN application, in C and ASM formats
+;	MSX-DOS application source files, in C and ASM formats
 ;	This is where your main function is.
 ;	THIS IS YOUR PROGRAM!
 ;	Choose ONE and ONLY ONE of the lines below,
