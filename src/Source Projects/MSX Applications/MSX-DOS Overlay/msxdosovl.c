@@ -63,21 +63,18 @@ void print(char* msg) {
 //	Replace the code below with your art.
 //	Note: Only use argv and argc if you enabled
 //	CMDLINE_PARAMETERS on TargetConfig_XXXXX.txt
-unsigned char main(char** argv, int argc) {
+void initialize (void) {
 #if __SDCCCALL
-	print("Hello MSX from C (sdcccall(REGs))!\r\n\0");
+	print("Hello MSX from overlayed C (sdcccall(REGs))!\r\n\0");
 #else
-	print("Hello MSX from C (sdcccall(STACK))!\r\n\0");
+	print("Hello MSX from overlayed C (sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
-#ifdef CMDLINE_PARAMETERS
-	print("Parameters:\r\n\0");
-	for (int i = 0; i < argc; i++) {
-		print(argv[i]);
-		_print("\r\n\0");
-	}
-#endif
-	return 0;
 }
 
-
-
+void finalize(void) {
+#if __SDCCCALL
+	print("Hello MSX from overlayed C (sdcccall(REGs))!\r\n\0");
+#else
+	print("Hello MSX from overlayed C (sdcccall(STACK))!\r\n\0");
+#endif // __SDCCCALL
+}

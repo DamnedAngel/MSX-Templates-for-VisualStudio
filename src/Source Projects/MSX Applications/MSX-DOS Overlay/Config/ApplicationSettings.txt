@@ -13,6 +13,21 @@ PROJECT_TYPE			MDO
 GLOBALS_INITIALIZER		_ON             			; _ON: include routine to initialize global variables; _OFF: Don't include
 
 ;----------------------------------------------------------
+;	MDO settings
+MDO_NAME		        OVERLAY1
+MDO_PARENT_SYMBOL_FILE	../MSX-DOS Application/[Profile]/objs/MSXAPP.s
+
+;----------------------------------------------------------
+;	Backward Hooks
+BW_HOOK    routine1     routine1
+BW_HOOK    routine2     routine2
+
+;----------------------------------------------------------
+;	Forward Hooks
+FW_HOOK    routine3
+FW_HOOK    routine4
+                                                    
+;----------------------------------------------------------
 ;	C Calling Convention
 SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
                                                     ; SDCCCALL=1    New C calling convention (REGs)
@@ -30,3 +45,11 @@ SDCCCALL                1                           ; SDCCCALL=0    Old C callin
 ;	If you don't know what you are doing,
 ;	LEAVE IT AT 0 OR COMMENTED for automatic setting.
 ;DATA_LOC				0
+
+;----------------------------------------------------------
+;	Heap Size
+;		0 -> No heap space (default)
+;		other value -> Some heap space
+;	If you aren't using dynamic memory allocation,
+;	LEAVE IT AT 0.
+HEAP_SIZE				0

@@ -14,17 +14,31 @@ GLOBALS_INITIALIZER		_ON             			; _ON: include routine to initialize glo
 CMDLINE_PARAMETERS		_ON 						; _ON: include routine to parse cmdline parameters; _OFF: Don't include
 
 ;----------------------------------------------------------
-;	C Calling Convention
-SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
-                                                    ; SDCCCALL=1    New C calling convention (REGs)
-
-;----------------------------------------------------------
 ;	Temporary MSX-DOS cmdline routine start
 ;		0 -> routine starts at start of heap
 ;		other value -> routine address (warning: may overlap data/code)
 ;	If you don't know what you are doing,
 ;	LEAVE IT AT 0.
 PARAM_HANDLING_ROUTINE	0
+
+;----------------------------------------------------------
+;	MDO (overlay) settings
+;   All MDO options will be ignored if OVERLAY_SUPPORT is _OFF
+;	If your application is composed of a single executable file
+;   or if you don't know what you're doing,
+;	LEAVE OVERLAY_SUPPORT _OFF!
+OVERLAY_SUPPORT         _ON                         ; _ON: include support for overlay modules; _OFF: Don't include
+MDO_NAME		        APPLICATION
+
+;----------------------------------------------------------
+;	MDO Forward Hooks
+FW_HOOK                 routine1
+FW_HOOK                 routine2
+
+;----------------------------------------------------------
+;	C Calling Convention
+SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
+                                                    ; SDCCCALL=1    New C calling convention (REGs)
 
 ;----------------------------------------------------------
 ;	Code segment (.area _CODE) start address
@@ -39,3 +53,11 @@ PARAM_HANDLING_ROUTINE	0
 ;	If you don't know what you are doing,
 ;	LEAVE IT AT 0 OR COMMENTED for automatic setting.
 ;DATA_LOC				0
+
+;----------------------------------------------------------
+;	Heap Size
+;		0 -> No heap space (default)
+;		other value -> Some heap space
+;	If you aren't using dynamic memory allocation,
+;	LEAVE IT AT 0.
+HEAP_SIZE				0

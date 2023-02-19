@@ -64,10 +64,13 @@
     <None Include="applicationsettings.s" />
     <None Include="Make\make.sh" />
     <None Include="Make\symbol.py" />
+    <None Include="mdointerface.s" />
     <None Include="msxdosapp.s" />
     <None Include="Make\make.bat" />
     <None Include="MSX\BIOS\msxbios.s" />
+    <None Include="MSX\MSX-DOS\mdostructures.s" />
     <None Include="MSX\MSX-DOS\msxdoscrt0.s" />
+    <None Include="MSX\MSX-DOS\mdoservices.s" />
     <None Include="targetconfig.s" />
   </ItemGroup>
   <ItemGroup>

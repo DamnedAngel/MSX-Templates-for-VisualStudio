@@ -31,6 +31,7 @@ STR_COMPARE = 0
 
 ;----------------------------------------------------------
 ;	ROM Header
+;----------------------------------------------------------
 	.db		#0x41				; ROM ID
 	.db		#0x42				; ROM ID
 	.dw		#init				; Program start
@@ -50,8 +51,12 @@ STR_COMPARE = 0
 	.dw		#0x0000				; Reserved
 
 ;----------------------------------------------------------
-;	Step 1: Initialize heap pointer
+;	Program start
+;----------------------------------------------------------
 init::
+
+;----------------------------------------------------------
+;	Step 1: Initialize heap pointer
 	ld		hl, #_HEAP_start
 	ld		(#_heap_top), hl
 

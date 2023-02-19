@@ -70,6 +70,15 @@
     <None Include="Make\symbol.py">
       <Filter>Make</Filter>
     </None>
+    <None Include="MSX\MSX-DOS\mdoservices.s">
+      <Filter>ASM Source Files\MSX\MSX-DOS</Filter>
+    </None>
+    <None Include="MSX\MSX-DOS\mdostructures.s">
+      <Filter>ASM Source Files\MSX\MSX-DOS</Filter>
+    </None>
+    <None Include="mdointerface.s">
+      <Filter>ASM Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msxdosapp.c">

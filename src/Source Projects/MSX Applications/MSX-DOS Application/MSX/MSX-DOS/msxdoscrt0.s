@@ -10,6 +10,9 @@
 	.include "MSX/BIOS/msxbios.s"
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
+.if OVERLAY_SUPPORT
+    .include "MSX/MSX-DOS/mdoservices.s"
+.endif
 
 	.globl	_main
 
@@ -155,11 +158,12 @@ cont:
 ;----------------------------------------------------------
 ;	Step 4: Program termination.
 ;	Termination code for DOS 2 was returned on L.         
+programEnd:
     ld      c,#0x62	    ; DOS 2 function for program termination (_TERM)
 .if __SDCCCALL
-    ld      b,a
+    ld      b,a         ; termination code
 .else
-    ld      b,l
+    ld      b,l         ; termination code
 .endif
     call    5			; On DOS 2 this terminates; on DOS 1 this returns...
     ld      c,#0x0
@@ -170,6 +174,9 @@ cont:
 ;----------------------------------------------------------
 ;	Segments order
 ;----------------------------------------------------------
+    .area _MDONAME
+    .area _MDOHOOKS
+    .area _MDOSERVICES
     .area _CODE
     .area _HOME
     .area _GSINIT
@@ -178,6 +185,23 @@ cont:
     .area _DATA
     .area _INITIALIZED
     .area _HEAP
+    .area _AFTERHEAP
+
+;   ==================================
+;   ========== MDO SEGMENTS ==========
+;   ==================================
+
+.if OVERLAY_SUPPORT
+;----------------------------------------------------------
+;	MDO hooks
+	.area	_MDOHOOKS
+mdoHooks:
+
+;----------------------------------------------------------
+;	MDO Services
+	.area	_MDOSERVICES
+    MDO_SERVICES
+.endif
 
 ;   =====================================
 ;   ========== GSINIT SEGMENTS ==========
@@ -210,3 +234,4 @@ _heap_top::
 ;   ==================================
     .area	_HEAP
 _HEAP_start::
+    .ds #HEAP_SIZE
