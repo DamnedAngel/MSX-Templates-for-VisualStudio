@@ -65,6 +65,7 @@
     <None Include="Make\make.sh" />
     <None Include="Make\symbol.py" />
     <None Include="Make\make.bat" />
+    <None Include="mdointerface.s" />
     <None Include="msxdosovl.s" />
     <None Include="MSX\BIOS\msxbios.s" />
     <None Include="MSX\MDO\msxdosovlcrt0.s" />

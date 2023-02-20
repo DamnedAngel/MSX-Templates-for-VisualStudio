@@ -23,17 +23,10 @@ PARAM_HANDLING_ROUTINE	0
 
 ;----------------------------------------------------------
 ;	MDO (overlay) settings
-;   All MDO options will be ignored if OVERLAY_SUPPORT is _OFF
 ;	If your application is composed of a single executable file
 ;   or if you don't know what you're doing,
 ;	LEAVE OVERLAY_SUPPORT _OFF!
-OVERLAY_SUPPORT         _ON                         ; _ON: include support for overlay modules; _OFF: Don't include
-MDO_NAME		        APPLICATION
-
-;----------------------------------------------------------
-;	MDO Forward Hooks
-FW_HOOK                 routine1
-FW_HOOK                 routine2
+OVERLAY_SUPPORT         _OFF                        ; _ON: include support for overlay modules; _OFF: Don't include
 
 ;----------------------------------------------------------
 ;	C Calling Convention

@@ -193,6 +193,11 @@ programEnd:
 
 .if OVERLAY_SUPPORT
 ;----------------------------------------------------------
+;	MDO name
+	.area	_MDONAME
+mdoName:
+
+;----------------------------------------------------------
 ;	MDO hooks
 	.area	_MDOHOOKS
 mdoHooks:

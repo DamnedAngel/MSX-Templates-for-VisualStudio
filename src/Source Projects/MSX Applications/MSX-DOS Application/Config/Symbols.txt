@@ -8,8 +8,9 @@
 ;   <symbol match regex>
 ;   <symbol match regex> <substring search regex>  <substring replace string>
 ;----------------------------------------------------------
+[a-zA-Z0-9]*.hook
+_abendMDO
+s__AFTERHEAP s__A PARENT_A
 
 ;[a-zA-Z0-9]*init
 ;_main _m m
-[a-zA-Z0-9]*.hook
-mdoAbend

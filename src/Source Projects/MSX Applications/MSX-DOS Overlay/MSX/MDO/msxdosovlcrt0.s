@@ -7,7 +7,7 @@
 	.include "MSX/BIOS/msxbios.s"
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
-    INCLUDE_MDO_PARENT_SYMBOL_FILE
+;    INCLUDE_MDO_PARENT_SYMBOL_FILE
 
 	.globl	_initialize
 	.globl  _finalize
@@ -18,14 +18,11 @@
 	.globl  s__INITIALIZER
 .endif
 
-MDO_START_ADDRESS=0x8000
-mdoAbend=0x0150
-
 ;   ====================================
 ;   ========== HEADER SEGMENT ==========
 ;   ====================================
 	.area   _HEADER (ABS,CON)
-	.org    MDO_START_ADDRESS    ; Must not collide with parents areas
+	.org    #fileStart
 
 ;----------------------------------------------------------
 ;	MDO Header
@@ -35,30 +32,15 @@ mdoAbend=0x0150
 	.dw		#onLoad				; Initialization routine
 	.dw		#onRelease			; Finalization routine
 	.dw		#mdoName			; MDO Name
-	.dw		#fwHooks			; Forward Hooks
+	.dw		#mdoHooks			; Forward Hooks
 	.dw		#0x0000				; Reserved
 	.dw		#0x0000				; Reserved
 	.dw		#0x0000				; Reserved
-
-;----------------------------------------------------------
-;	MDO name
-;----------------------------------------------------------
-mdoName:
-    MDO_NAME
-
-;----------------------------------------------------------
-;	Forward hooks
-;----------------------------------------------------------
-fwHooks:
-    MDO_FW_HOOKS
 
 ;----------------------------------------------------------
 ;	Initialization routine
 ;----------------------------------------------------------
 onLoad::
-;----------------------------------------------------------
-;	Step 1: Install Backward hooks
-    MDO_BW_HOOKS_INSTALLER
 
 ;----------------------------------------------------------
 ;	Step 2: Initialize globals
@@ -79,20 +61,15 @@ onRelease::
 ;	Step 1: Call custom finalization routine
     call    _finalize
     
-;----------------------------------------------------------
-;	Step 2: Uninstall Parent's dependecy hooks
-    MDO_BW_HOOKS_UNINSTALLER
-
     ret
-
 
 ;----------------------------------------------------------
 ;	Segments order
 ;----------------------------------------------------------
     .area _MDONAME
     .area _MDOHOOKS
-    .area _MDOHOOKIMPLEMENTATION
-    .area _MDOHOOKIMPLEMENTATIONFINAL
+    .area _MDOHOOKIMPLEMENTATIONS
+    .area _MDOHOOKIMPLEMENTATIONSFINAL
     .area _CODE
     .area _HOME
     .area _GSINIT
@@ -107,7 +84,11 @@ onRelease::
 ;   ========== MDO SEGMENTS ==========
 ;   ==================================
 
-.if OVERLAY_SUPPORT
+;----------------------------------------------------------
+;	MDO name
+	.area	_MDONAME
+mdoName:
+
 ;----------------------------------------------------------
 ;	MDO hooks
 	.area	_MDOHOOKS
@@ -115,16 +96,12 @@ mdoHooks:
 
 ;----------------------------------------------------------
 ;	MDO Hook Implementation
-	.area	_MDOHOOKIMPLEMENTATION
+	.area	_MDOHOOKIMPLEMENTATIONS
 mdoHookIMplementation::
 
-;----------------------------------------------------------
-;	MDO Hook Implementation Final
-	.area	_MDOHOOKIMPLEMENTATIONFINAL
+	.area	_MDOHOOKIMPLEMENTATIONSFINAL
 mdoHookImplementationFinal::
     .dw     0
-
-.endif
 
 ;   =====================================
 ;   ========== GSINIT SEGMENTS ==========
@@ -158,3 +135,4 @@ _heap_top::
     .area	_HEAP
 _HEAP_start::
     .ds #HEAP_SIZE
+

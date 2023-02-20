@@ -70,6 +70,9 @@
     <None Include="msxdosovl.s">
       <Filter>ASM Source Files</Filter>
     </None>
+    <None Include="mdointerface.s">
+      <Filter>ASM Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Config\ApplicationSettings.txt">

@@ -57,24 +57,28 @@ void print(char* msg) {
 }
 
 // ----------------------------------------------------------
-//	This is the main function for your C MSX APP!
-//
-//	Your fun starts here!!!
-//	Replace the code below with your art.
-//	Note: Only use argv and argc if you enabled
-//	CMDLINE_PARAMETERS on TargetConfig_XXXXX.txt
+//	This is the initialization main function for your C MDO!
 void initialize (void) {
 #if __SDCCCALL
-	print("Hello MSX from overlayed C (sdcccall(REGs))!\r\n\0");
+	print("MDO in C (sdcccall(REGs)) initialized!\r\n\0");
 #else
-	print("Hello MSX from overlayed C (sdcccall(STACK))!\r\n\0");
+	print("MDO in C (sdcccall(STACK)) initialized!\r\n\0");
 #endif // __SDCCCALL
 }
 
+// ----------------------------------------------------------
+//	This is the initialization main function for your C MDO!
 void finalize(void) {
-#if __SDCCCALL
-	print("Hello MSX from overlayed C (sdcccall(REGs))!\r\n\0");
-#else
-	print("Hello MSX from overlayed C (sdcccall(STACK))!\r\n\0");
-#endif // __SDCCCALL
+	print("MDO finalized!\r\n\0");
+}
+
+// ----------------------------------------------------------
+//	These are examples of dinamically linked function
+//  which may be called by parent module
+void hello(void) {
+	print("Hello MSX from dinamically linked function!\r\n\0");
+}
+
+void goodbye(void) {
+	print("Goodbye MSX from dinamically linked function!\r\n\0");
 }

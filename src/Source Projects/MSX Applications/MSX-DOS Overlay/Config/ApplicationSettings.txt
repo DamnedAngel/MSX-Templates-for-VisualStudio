@@ -14,18 +14,9 @@ GLOBALS_INITIALIZER		_ON             			; _ON: include routine to initialize glo
 
 ;----------------------------------------------------------
 ;	MDO settings
-MDO_NAME		        OVERLAY1
-MDO_PARENT_SYMBOL_FILE	../MSX-DOS Application/[Profile]/objs/MSXAPP.s
+MDO_PARENT_OBJ_PATH     ../MSX-DOS Application/[PROFILE]/objs
+FILESTART               PARENT_AFTERHEAP
 
-;----------------------------------------------------------
-;	Backward Hooks
-BW_HOOK    routine1     routine1
-BW_HOOK    routine2     routine2
-
-;----------------------------------------------------------
-;	Forward Hooks
-FW_HOOK    routine3
-FW_HOOK    routine4
                                                     
 ;----------------------------------------------------------
 ;	C Calling Convention
@@ -36,7 +27,7 @@ SDCCCALL                1                           ; SDCCCALL=0    Old C callin
 ;	Code segment (.area _CODE) start address
 ;	If you don't know what you are doing,
 ;	LEAVE IT COMMENTED for automatic setting.
-;CODE_LOC				0x1000
+;CODE_LOC				0x8100
 
 ;----------------------------------------------------------
 ;	Data segment (.area _DATA) start address

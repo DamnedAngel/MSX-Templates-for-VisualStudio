@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	ApplicationSources.txt - by Danilo Angelo, 2020
+;	ApplicationSources.txt - by Danilo Angelo, 2020 - 2023
 ;
 ;	List of all specific application C and ASM sources
 ;	These will always be processed by any build actions
@@ -23,7 +23,6 @@ msxdosapp.c
 ;	Additional source files
 ;	Add below additional source files for your application
 ;	using relative paths from the project folder
-
 mdointerface.s			; uncomment to support MDO overlays
 
 ;yourSourceCodeHere.s

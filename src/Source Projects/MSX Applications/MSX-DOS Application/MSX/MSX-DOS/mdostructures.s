@@ -8,19 +8,20 @@
 
 .macro MDO_NAME	name
 	.area _MDONAME
-_mdoName::
 	.ascii		name
+	.db			0
 .endm
 
 .macro MDO_HOOK		routine
-	.area _MDOHOOK
+	.area _MDOHOOKS
 	 routine:				
 	 routine'.hook::			
 	    jp		_abendMDO
 .endm
 
 .macro MDO_HOOK_IMPLEMENTATION		hookname, routine
-	.area _MDOHOOKIMPLEMENTATION
+	.area _MDOHOOKIMPLEMENTATIONS
 	.dw			hookname'.hook
+	.globl		routine
 	.dw			routine
 .endm
