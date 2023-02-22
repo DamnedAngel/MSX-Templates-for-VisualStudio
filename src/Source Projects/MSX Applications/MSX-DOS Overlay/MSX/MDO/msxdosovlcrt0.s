@@ -68,8 +68,10 @@ onRelease::
 ;----------------------------------------------------------
     .area _MDONAME
     .area _MDOHOOKS
+    .area _MDOCHILDREN
     .area _MDOHOOKIMPLEMENTATIONS
     .area _MDOHOOKIMPLEMENTATIONSFINAL
+
     .area _CODE
     .area _HOME
     .area _GSINIT
@@ -78,7 +80,7 @@ onRelease::
     .area _DATA
     .area _INITIALIZED
     .area _HEAP
-    .area _NEXTMODULE
+    .area _AFTERHEAP
 
 ;   ==================================
 ;   ========== MDO SEGMENTS ==========
@@ -93,6 +95,11 @@ mdoName:
 ;	MDO hooks
 	.area	_MDOHOOKS
 mdoHooks:
+
+;----------------------------------------------------------
+;	MDO child
+	.area	_MDOCHILDREN
+mdoChilds:
 
 ;----------------------------------------------------------
 ;	MDO Hook Implementation

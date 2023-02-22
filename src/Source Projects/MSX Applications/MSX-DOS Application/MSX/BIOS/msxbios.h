@@ -1,6 +1,7 @@
 //----------------------------------------------------------
-//		msxbios.h - by Danilo Angelo 2020
-//		Adapted from http ://www.konamiman.com/msx/msx2th/th-ap.txt
+//		msxbios.h - by Danilo Angelo 2020-2023
+//		Adapted from https://www.konamiman.com/msx/msx2th/th-ap.txt
+// 		230221: added BDOS system calls, from http://www.msxtop.msxall.com/Docs/MSXTopSecret2Continuo.pdf
 //
 //		Standard MSX variables and routines addresses
 //----------------------------------------------------------
@@ -585,5 +586,110 @@
 #define BIOS_FCALL      0xffca
 #define BIOS_DISINT     0xffcf
 #define BIOS_ENAINT     0xffd4
+
+// --- bdos calls ---
+#define BDOS_SYSCAL		0x0005
+
+// I/O
+#define BDOS_CONIN		0x01
+#define BDOS_CONOUT		0x02
+#define BDOS_AUXIN		0x03
+#define BDOS_AUXOUT		0x04
+#define BDOS_LSTOUT		0x05
+#define BDOS_DIRIO		0x06
+#define BDOS_DIRIN		0x07
+#define BDOS_INNOE		0x08
+#define BDOS_STROUT		0x09
+#define BDOS_BUFIN		0x0a
+#define BDOS_CONST		0x0b
+
+// system
+#define BDOS_TERM0		0x00
+#define BDOS_CPMVER		0x0c
+#define BDOS_DSKRST		0x0d
+#define BDOS_SELDSK		0x0e
+#define BDOS_LOGIN		0x18
+#define BDOS_CURDRV		0x19
+#define BDOS_SETDTA		0x1a
+#define BDOS_ALLOC		0x1b
+#define BDOS_GDATE		0x2a
+#define BDOS_SDATE		0x2b
+#define BDOS_GTIME		0x2c
+#define BDOS_STIME		0x2d
+#define BDOS_VERIFY		0x2e
+
+// sectors
+#define BDOS_RDABS		0x2f
+#define BDOS_WRABS		0x30
+
+// fcb
+#define BDOS_FOPEN		0x0f
+#define BDOS_FCLOSE		0x10
+#define BDOS_SFIRST		0x11
+#define BDOS_SNEXT		0x12
+#define BDOS_FDEL		0x13
+#define BDOS_RDSEQ		0x14
+#define BDOS_WRSEQ		0x15
+#define BDOS_FMAKE		0x16
+#define BDOS_FREN		0x17
+#define BDOS_RDRND		0x21
+#define BDOS_WRRND		0x22
+#define BDOS_FSIZE		0x23
+#define BDOS_SETRND		0x24
+#define BDOS_WRBLK		0x26
+#define BDOS_RDBLK		0x27
+#define BDOS_WRZER		0x28
+
+// msxdos2
+#define BDOS_DPARM		0x31
+#define BDOS_FFIRST		0x40
+#define BDOS_FNEXT		0x41
+#define BDOS_FNEW		0x42
+#define BDOS_OPEN		0x43
+#define BDOS_CREATE		0x44
+#define BDOS_CLOSE		0x45
+#define BDOS_ENSURE		0x46
+#define BDOS_DUP		0x47
+#define BDOS_READ		0x48
+#define BDOS_WRITE		0x49
+#define BDOS_SEEK		0x4a
+#define BDOS_IOCTL		0x4b
+#define BDOS_HTEST		0x4c
+#define BDOS_DELETE		0x4d
+#define BDOS_RENAME		0x4e
+#define BDOS_MOVE		0x4f
+#define BDOS_ATTR		0x50
+#define BDOS_FTIME		0x51
+#define BDOS_HDELET		0x52
+#define BDOS_HRENAM		0x53
+#define BDOS_HMOVE		0x54
+#define BDOS_HATTR		0x55
+#define BDOS_HFTIME		0x56
+#define BDOS_GETDTA		0x57
+#define BDOS_GETVFY		0x58
+#define BDOS_GETCD		0x59
+#define BDOS_CHDIR		0x5a
+#define BDOS_PARSE		0x5b
+#define BDOS_PFILE		0x5c
+#define BDOS_CHKCHR		0x5d
+#define BDOS_WPATH		0x5e
+#define BDOS_FLUSH		0x5f
+#define BDOS_FORK		0x60
+#define BDOS_JOIN		0x61
+#define BDOS_TERM		0x62
+#define BDOS_DEFAB		0x63
+#define BDOS_DEFER		0x64
+#define BDOS_ERROR		0x65
+#define BDOS_EXPLN		0x66
+#define BDOS_FORMAT		0x67
+#define BDOS_RAMD		0x68
+#define BDOS_BUFFER		0x69
+#define BDOS_ASSIGN		0x6a
+#define BDOS_GENV		0x6b
+#define BDOS_SENV		0x6c
+#define BDOS_FENV		0x6d
+#define BDOS_DSKCHK		0x6e
+#define BDOS_DOSVER		0x6f
+#define BDOS_REDIR		0x70
 
 #endif  // __MSXBIOS_H__

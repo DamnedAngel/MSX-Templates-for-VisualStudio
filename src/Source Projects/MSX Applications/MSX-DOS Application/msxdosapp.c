@@ -9,6 +9,11 @@
 #include "targetconfig.h"
 #include "applicationsettings.h"
 
+#ifdef OVERLAY_SUPPORT
+#include "MSX/MSX-DOS/mdoservices.h"
+extern unsigned char OVERLAY_ONE;
+#endif
+
 // ----------------------------------------------------------
 //	This is an example of embedding asm code into C.
 //	This is only for the demo app.
@@ -69,6 +74,7 @@ unsigned char main(char** argv, int argc) {
 #else
 	print("Hello MSX from C (sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
+
 #ifdef CMDLINE_PARAMETERS
 	print("Parameters:\r\n\0");
 	for (int i = 0; i < argc; i++) {
@@ -76,6 +82,15 @@ unsigned char main(char** argv, int argc) {
 		_print("\r\n\0");
 	}
 #endif
+
+#ifdef OVERLAY_SUPPORT
+	if (mdoLoad(&OVERLAY_ONE)) {
+		print("Error loading MDO.\r\n\0");
+	} else {
+		print("MDO loaded successfully.\r\n\0");
+	}
+#endif
+
 	return 0;
 }
 

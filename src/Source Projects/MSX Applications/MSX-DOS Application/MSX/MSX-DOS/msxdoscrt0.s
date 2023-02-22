@@ -176,7 +176,9 @@ programEnd:
 ;----------------------------------------------------------
     .area _MDONAME
     .area _MDOHOOKS
+    .area _MDOCHILDREN
     .area _MDOSERVICES
+
     .area _CODE
     .area _HOME
     .area _GSINIT
@@ -201,6 +203,11 @@ mdoName:
 ;	MDO hooks
 	.area	_MDOHOOKS
 mdoHooks:
+
+;----------------------------------------------------------
+;	MDO child
+	.area	_MDOCHILDREN
+mdoChilds:
 
 ;----------------------------------------------------------
 ;	MDO Services

@@ -4,24 +4,33 @@
 ;		Overlay structures for MSX-DOS applications.
 ;----------------------------------------------------------
 
-.globl	_abendMDO
+.globl	_mdoAbend
 
 .macro MDO_NAME	name
 	.area _MDONAME
-	.ascii		name
-	.db			0
+	.asciz		"name"
 .endm
 
-.macro MDO_HOOK		routine
+.macro MDO_HOOK		hookname
 	.area _MDOHOOKS
-	 routine:				
-	 routine'.hook::			
-	    jp		_abendMDO
+	 hookname:				
+	 _'hookname'_hook::			
+	    jp		_mdoAbend
 .endm
 
 .macro MDO_HOOK_IMPLEMENTATION		hookname, routine
 	.area _MDOHOOKIMPLEMENTATIONS
-	.dw			hookname'.hook
+;	.dw			_'hookname'_hook
 	.globl		routine
 	.dw			routine
+.endm
+
+.macro MDO_CHILD	mdoname, filename, extension, address
+	.area _MDOCHILDREN
+	_'mdoname'::
+	mdoname'_status:	.db		#0
+	mdoname'_filename:	.ascii	"filename"
+	mdoname'_extension:	.ascii	"extension"
+	mdoname'_address:	.dw		address
+	mdoname'_name:		.asciz	"mdoname"
 .endm

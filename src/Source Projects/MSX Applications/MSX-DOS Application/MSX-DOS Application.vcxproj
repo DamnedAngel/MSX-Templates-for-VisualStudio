@@ -58,6 +58,7 @@
   <ItemGroup>
     <ClInclude Include="applicationsettings.h" />
     <ClInclude Include="MSX\BIOS\msxbios.h" />
+    <ClInclude Include="MSX\MSX-DOS\mdoservices.h" />
     <ClInclude Include="targetconfig.h" />
   </ItemGroup>
   <ItemGroup>

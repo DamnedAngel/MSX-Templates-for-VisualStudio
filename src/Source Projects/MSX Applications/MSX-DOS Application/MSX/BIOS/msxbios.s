@@ -1,6 +1,7 @@
 ;----------------------------------------------------------
-;		msxbios.s - by Danilo Angelo 2020
+;		msxbios.s - by Danilo Angelo 2020-2023
 ;		Adapted from http://www.konamiman.com/msx/msx2th/th-ap.txt
+;		230221: added BDOS system calls, from http://www.msxtop.msxall.com/Docs/MSXTopSecret2Continuo.pdf
 ;
 ;		Standard MSX variables and routines addresses
 ;----------------------------------------------------------
@@ -581,3 +582,107 @@ BIOS_FCALL   .equ 0xffca
 BIOS_DISINT  .equ 0xffcf
 BIOS_ENAINT  .equ 0xffd4
 
+; --- bdos calls ---
+BDOS_SYSCAL  .equ 0x0005
+
+; I/O
+BDOS_CONIN   .equ 0x01
+BDOS_CONOUT  .equ 0x02
+BDOS_AUXIN   .equ 0x03
+BDOS_AUXOUT  .equ 0x04
+BDOS_LSTOUT  .equ 0x05
+BDOS_DIRIO   .equ 0x06
+BDOS_DIRIN   .equ 0x07
+BDOS_INNOE   .equ 0x08
+BDOS_STROUT  .equ 0x09
+BDOS_BUFIN   .equ 0x0a
+BDOS_CONST   .equ 0x0b
+
+; system
+BDOS_TERM0   .equ 0x00
+BDOS_CPMVER  .equ 0x0c
+BDOS_DSKRST  .equ 0x0d
+BDOS_SELDSK  .equ 0x0e
+BDOS_LOGIN   .equ 0x18
+BDOS_CURDRV  .equ 0x19
+BDOS_SETDTA  .equ 0x1a
+BDOS_ALLOC   .equ 0x1b
+BDOS_GDATE   .equ 0x2a
+BDOS_SDATE   .equ 0x2b
+BDOS_GTIME   .equ 0x2c
+BDOS_STIME   .equ 0x2d
+BDOS_VERIFY  .equ 0x2e
+
+; sectors
+BDOS_RDABS   .equ 0x2f
+BDOS_WRABS   .equ 0x30
+
+; fcb
+BDOS_FOPEN   .equ 0x0f
+BDOS_FCLOSE  .equ 0x10
+BDOS_SFIRST  .equ 0x11
+BDOS_SNEXT   .equ 0x12
+BDOS_FDEL    .equ 0x13
+BDOS_RDSEQ   .equ 0x14
+BDOS_WRSEQ   .equ 0x15
+BDOS_FMAKE   .equ 0x16
+BDOS_FREN    .equ 0x17
+BDOS_RDRND   .equ 0x21
+BDOS_WRRND   .equ 0x22
+BDOS_FSIZE   .equ 0x23
+BDOS_SETRND  .equ 0x24
+BDOS_WRBLK   .equ 0x26
+BDOS_RDBLK   .equ 0x27
+BDOS_WRZER   .equ 0x28
+
+; msxdos2
+BDOS_DPARM   .equ 0x31
+BDOS_FFIRST  .equ 0x40
+BDOS_FNEXT   .equ 0x41
+BDOS_FNEW    .equ 0x42
+BDOS_OPEN    .equ 0x43
+BDOS_CREATE  .equ 0x44
+BDOS_CLOSE   .equ 0x45
+BDOS_ENSURE  .equ 0x46
+BDOS_DUP     .equ 0x47
+BDOS_READ    .equ 0x48
+BDOS_WRITE   .equ 0x49
+BDOS_SEEK    .equ 0x4a
+BDOS_IOCTL   .equ 0x4b
+BDOS_HTEST   .equ 0x4c
+BDOS_DELETE  .equ 0x4d
+BDOS_RENAME  .equ 0x4e
+BDOS_MOVE    .equ 0x4f
+BDOS_ATTR    .equ 0x50
+BDOS_FTIME   .equ 0x51
+BDOS_HDELET  .equ 0x52
+BDOS_HRENAM  .equ 0x53
+BDOS_HMOVE   .equ 0x54
+BDOS_HATTR   .equ 0x55
+BDOS_HFTIME  .equ 0x56
+BDOS_GETDTA  .equ 0x57
+BDOS_GETVFY  .equ 0x58
+BDOS_GETCD   .equ 0x59
+BDOS_CHDIR   .equ 0x5a
+BDOS_PARSE   .equ 0x5b
+BDOS_PFILE   .equ 0x5c
+BDOS_CHKCHR  .equ 0x5d
+BDOS_WPATH   .equ 0x5e
+BDOS_FLUSH   .equ 0x5f
+BDOS_FORK    .equ 0x60
+BDOS_JOIN    .equ 0x61
+BDOS_TERM    .equ 0x62
+BDOS_DEFAB   .equ 0x63
+BDOS_DEFER   .equ 0x64
+BDOS_ERROR   .equ 0x65
+BDOS_EXPLN   .equ 0x66
+BDOS_FORMAT  .equ 0x67
+BDOS_RAMD    .equ 0x68
+BDOS_BUFFER  .equ 0x69
+BDOS_ASSIGN  .equ 0x6a
+BDOS_GENV    .equ 0x6b
+BDOS_SENV    .equ 0x6c
+BDOS_FENV    .equ 0x6d
+BDOS_DSKCHK  .equ 0x6e
+BDOS_DOSVER  .equ 0x6f
+BDOS_REDIR   .equ 0x70
