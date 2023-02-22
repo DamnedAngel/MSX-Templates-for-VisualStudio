@@ -174,11 +174,14 @@ programEnd:
 ;----------------------------------------------------------
 ;	Segments order
 ;----------------------------------------------------------
+ .if OVERLAY_SUPPORT
     .area _MDONAME
     .area _MDOHOOKS
+    .area _MDOCHILDLIST
+    .area _MDOCHILDLISTFINAL
     .area _MDOCHILDREN
     .area _MDOSERVICES
-
+.endif
     .area _CODE
     .area _HOME
     .area _GSINIT
@@ -205,9 +208,18 @@ mdoName:
 mdoHooks:
 
 ;----------------------------------------------------------
-;	MDO child
+;	MDO child list
+	.area	_MDOCHILDLIST
+mdoChildList::
+
+    .area _MDOCHILDLISTFINAL
+mdoChildListFinal::
+    .dw     #0
+
+;----------------------------------------------------------
+;	MDO children
 	.area	_MDOCHILDREN
-mdoChilds:
+mdoChildren:
 
 ;----------------------------------------------------------
 ;	MDO Services

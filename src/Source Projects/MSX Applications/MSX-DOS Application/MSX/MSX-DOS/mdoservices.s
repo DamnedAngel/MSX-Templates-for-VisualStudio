@@ -10,6 +10,8 @@ mdostatus_loaded			.equ	#0b00000001
 
 .macro MDO_SERVICES
 
+mdohandler:					.dw		0
+
 _mdoFCB::
 _mdoFCB_drive_no::			.blkb	1		
 _mdoFCB_name::				.blkb	8
@@ -48,11 +50,6 @@ _mdoLoad::
 	ld		l, a
 .endif
 
-	; check if mdo is already loaded
-	ld		a, (hl)
-	and		a, #mdostatus_loaded
-	jr nz,	mdoLoad_finalize
-
 	di
 
 	; reset fcb
@@ -63,6 +60,12 @@ _mdoLoad::
 	ld		(hl), #0
 	ldir
 	exx
+	
+	; check if mdo is already loaded
+	ld		a, (hl)
+	and		a, #mdostatus_loaded
+	jr nz,	mdoLoad_finalize
+	ld		(#mdohandler), hl
 
 	; fill fcb
 	inc		hl					
@@ -80,8 +83,8 @@ _mdoLoad::
 	pop		hl
 	jr		mdoLoad_finalize
 
-mdoLoad_setdta:
 	; set mdo address in DTA
+mdoLoad_setdta:
 	pop		hl					; mdo_address
 	ld		e, (hl)
 	inc		hl
@@ -106,6 +109,7 @@ mdoLoad_setdta:
 	ld		a, #0xfe
 	jr		mdoLoad_finalize
 
+	; assert MDO identification
 mdoLoad_testmdoheader:
 	ld		a, (hl)				; loaded mdo signature
 	cp		#'M'
@@ -114,37 +118,51 @@ mdoLoad_testmdoheader:
 	ld		a, (hl)
 	cp		#'O'
 	jr nz,	mdoLoad_signatureerror
-	ld		bc, #5
-	add		hl, bc
+
+	; assert MDO identification
+	inc		hl
 	ld		c, (hl)
 	inc		hl
 	ld		h, (hL)
 	ld		l, c				; loaded mdo name
-
 mdoLoad_testmdonameloop:
 	ld		a, (de)
 	or		a
-	jr z,	mdoLoad_closefile
+	jr z,	mdoLoad_setstatusloaded
 	cp		(hl)
 	jr nz,	mdoLoad_nameerror
 	inc		hl
 	inc		de
 	jr		mdoLoad_testmdonameloop
 
-mdoLoad_signatureerror:
-	ld		a, #2				; mdo file signature error
-	jr		mdoLoad_closefile
-
-mdoLoad_nameerror:
-	ld		a, #3				; mdo name error
-
+	; update mdo status to loaded
+mdoLoad_setstatusloaded:
+	ld		hl, (#mdohandler)	; start of MDO handler 
+	ld		(hl), #1
+	
+	; close fcb
 mdoLoad_closefile:
+	push	af
 	ld		c, #BDOS_FCLOSE
 	ld		de, #_mdoFCB
-	push	af
 	call	BDOS_SYSCAL
+
+	; call MDO's custom onLoad routine
+	ld		hl, (#BDOS_DTA)		; start of MDO file
+	ld		de, #12
+	add		hl, de				; onLoad
+	ld		e, (hl)
+	inc		hl
+	ld		d, (hl)
+	ld		hl, #mdoLoad_returnfromcustom
+	push	hl
+	push	de
+	ret
+
+mdoLoad_returnfromcustom:
 	pop		af
 
+	; end
 mdoLoad_finalize:
 .if eq __SDCCCALL
 	ld		l, a
@@ -152,6 +170,25 @@ mdoLoad_finalize:
 	ei
 	ret
 
+mdoLoad_signatureerror:
+	ld		a, #2				; mdo file signature error
+	jr		mdoLoad_closefile
+
+mdoLoad_nameerror:
+	ld		a, #3				; mdo name error
+	jr		mdoLoad_closefile
+
+;----------------------------------------------------------
+;	Load Child MDO
+;	input: Pointer MDO_CHILD structure
+;	output:
+;		0x00: success
+;		0x01: mdo already loaded
+;		0x02: mdo file signature error
+;		0x03: mdo name error
+;		0xfe: file read error
+;		0xff: file open error
+;----------------------------------------------------------
 _mdoRelease::
 	ret
 

@@ -193,6 +193,8 @@ goto :orchestration
 		if ".%%A"=="._HEADER0" set /A VALUE=0x%%B
 		if ".%%A"=="._MDONAME" set /A VALUE=0x%%B
 		if ".%%A"=="._MDOHOOKS" set /A VALUE=0x%%B
+		if ".%%A"=="._MDOCHILDLIST" set /A VALUE=0x%%B
+		if ".%%A"=="._MDOCHILDLISTFINAL" set /A VALUE=0x%%B
 		if ".%%A"=="._MDOCHILDREN" set /A VALUE=0x%%B
 		if ".%%A"=="._MDOHOOKIMPLEMENTATIONS" set /A VALUE=0x%%B
 		if ".%%A"=="._MDOHOOKIMPLEMENTATIONSFINAL" set /A VALUE=0x%%B

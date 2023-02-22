@@ -11,6 +11,8 @@
 
 	.globl	_initialize
 	.globl  _finalize
+    .globl  _activate
+    .globl  _deactivate
     
 .if GLOBALS_INITIALIZER
 	.globl  l__INITIALIZER
@@ -29,48 +31,25 @@
 ;----------------------------------------------------------
 	.db		'M'					; MDO ID
 	.db		'O'					; MDO ID
-	.dw		#onLoad				; Initialization routine
-	.dw		#onRelease			; Finalization routine
 	.dw		#mdoName			; MDO Name
+	.dw		#onLoad				; Initialization routine
+	.dw		#_finalize			; Finalization routine
+	.dw		#_activate			; Activation (linkage) routine
+	.dw		#_deactivate		; Deactivation (de-linkage) routine
 	.dw		#mdoHooks			; Forward Hooks
 	.dw		#0x0000				; Reserved
-	.dw		#0x0000				; Reserved
-	.dw		#0x0000				; Reserved
-
-;----------------------------------------------------------
-;	Initialization routine
-;----------------------------------------------------------
-onLoad::
-
-;----------------------------------------------------------
-;	Step 2: Initialize globals
-.if GLOBALS_INITIALIZER
-	call    gsinit
-.endif
-
-;----------------------------------------------------------
-;	Step 3: Call custom initialization routine
-    jp      _initialize
-
-
-;----------------------------------------------------------
-;	Finalization routine
-;----------------------------------------------------------
-onRelease::
-;----------------------------------------------------------
-;	Step 1: Call custom finalization routine
-    call    _finalize
-    
-    ret
 
 ;----------------------------------------------------------
 ;	Segments order
 ;----------------------------------------------------------
     .area _MDONAME
     .area _MDOHOOKS
+    .area _MDOCHILDLIST
+    .area _MDOCHILDLISTFINAL
     .area _MDOCHILDREN
     .area _MDOHOOKIMPLEMENTATIONS
     .area _MDOHOOKIMPLEMENTATIONSFINAL
+    .area _MDOSERVICES
 
     .area _CODE
     .area _HOME
@@ -97,9 +76,18 @@ mdoName:
 mdoHooks:
 
 ;----------------------------------------------------------
+;	MDO child list
+	.area	_MDOCHILDLIST
+mdoChildList::
+
+    .area _MDOCHILDLISTFINAL
+mdoChildListFinal::
+    .dw     #0
+
+;----------------------------------------------------------
 ;	MDO child
 	.area	_MDOCHILDREN
-mdoChilds:
+mdoChildren:
 
 ;----------------------------------------------------------
 ;	MDO Hook Implementation
@@ -109,6 +97,19 @@ mdoHookIMplementation::
 	.area	_MDOHOOKIMPLEMENTATIONSFINAL
 mdoHookImplementationFinal::
     .dw     0
+
+;----------------------------------------------------------
+;	MDO services
+	.area	_MDOSERVICES
+
+;----------------------------------------------------------
+;	Initialization routine
+;----------------------------------------------------------
+onLoad::
+.if GLOBALS_INITIALIZER
+	call    gsinit
+.endif
+    jp      _initialize
 
 ;   =====================================
 ;   ========== GSINIT SEGMENTS ==========

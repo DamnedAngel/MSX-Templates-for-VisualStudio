@@ -590,6 +590,9 @@
 // --- bdos calls ---
 #define BDOS_SYSCAL		0x0005
 
+#define BDOS_DTA		0xf23d	// MSX TOP SECRET states this as 0xf23c
+								// but by my experiences it's 0xf23d
+
 // I/O
 #define BDOS_CONIN		0x01
 #define BDOS_CONOUT		0x02

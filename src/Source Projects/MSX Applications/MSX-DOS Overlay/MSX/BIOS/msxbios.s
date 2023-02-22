@@ -585,6 +585,9 @@ BIOS_ENAINT  .equ 0xffd4
 ; --- bdos calls ---
 BDOS_SYSCAL  .equ 0x0005
 
+BDOS_DTA     .equ 0xf23d		; MSX TOP SECRET states this as 0xf23c
+								; but by my experiences it's 0xf23d
+
 ; I/O
 BDOS_CONIN   .equ 0x01
 BDOS_CONOUT  .equ 0x02

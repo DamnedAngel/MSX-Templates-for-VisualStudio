@@ -26,6 +26,9 @@
 .endm
 
 .macro MDO_CHILD	mdoname, filename, extension, address
+	.area _MDOCHILDLIST
+	.dw			_'mdoname
+
 	.area _MDOCHILDREN
 	_'mdoname'::
 	mdoname'_status:	.db		#0

@@ -57,7 +57,8 @@ void print(char* msg) {
 }
 
 // ----------------------------------------------------------
-//	This is the initialization main function for your C MDO!
+//	This is the custom initialization function for your C MDO.
+//	Invoked when the MDO is loaded.
 void initialize (void) {
 #if __SDCCCALL
 	print("MDO in C (sdcccall(REGs)) initialized!\r\n\0");
@@ -67,9 +68,24 @@ void initialize (void) {
 }
 
 // ----------------------------------------------------------
-//	This is the initialization main function for your C MDO!
+//	This is the custom finalization function for your C MDO!
+//	Invoked when the MDO is unloaded.
 void finalize(void) {
 	print("MDO finalized!\r\n\0");
+}
+
+// ----------------------------------------------------------
+//	This is the custom activation function for your C MDO!
+//	Invoked when the MDO is linked.
+void activate(void) {
+	print("MDO activate!\r\n\0");
+}
+
+// ----------------------------------------------------------
+//	This is the custom deactivation function for your C MDO!
+//	Invoked when the MDO is inlinked.
+void deactivate(void) {
+	print("MDO deactivated!\r\n\0");
 }
 
 // ----------------------------------------------------------
