@@ -27,7 +27,7 @@ OVERLAY_SUPPORT         _ON                         ; _ON: include support for o
 
 ;----------------------------------------------------------
 ;	C Calling Convention
-SDCCCALL                0                           ; SDCCCALL=0    Old C calling convention (STACK)
+SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
                                                     ; SDCCCALL=1    New C calling convention (REGs)
 
 ;----------------------------------------------------------

@@ -12,6 +12,8 @@
 #ifdef OVERLAY_SUPPORT
 #include "MSX/MSX-DOS/mdoservices.h"
 extern unsigned char OVERLAY_ONE;
+void mdoChildHello_hook(void);
+void mdoChildGoodbye_hook(void);
 #endif
 
 // ----------------------------------------------------------
@@ -83,12 +85,40 @@ unsigned char main(char** argv, int argc) {
 	}
 #endif
 
+// Example of Overlay support.
+// Remove it from your application if you're not using overlays.
 #ifdef OVERLAY_SUPPORT
-	if (mdoLoad(&OVERLAY_ONE)) {
+	unsigned char r = mdoLoad(&OVERLAY_ONE);
+	if (r) {
 		print("Error loading MDO.\r\n\0");
-	} else {
-		print("MDO loaded successfully.\r\n\0");
+		return r;
 	}
+	print("MDO loaded successfully.\r\n\0");
+
+	r = mdoLink(&OVERLAY_ONE);
+	if (r) {
+		print("Error linking MDO.\r\n\0");
+		return r;
+	}
+	print("MDO linked successfully.\r\n\0");
+	
+	mdoChildHello_hook();
+
+	mdoChildGoodbye_hook(); 
+		
+	r = mdoUnlink(&OVERLAY_ONE);
+	if (r) {
+		print("Error unlinking MDO.\r\n\0");
+		return r;
+	}
+	print("MDO unlinked successfully.\r\n\0");
+
+	r=mdoRelease(&OVERLAY_ONE);
+	if (r) {
+		print("Error releasing MDO.\r\n\0");
+		return r;
+	}
+	print("MDO released successfully.\r\n\0");
 #endif
 
 	return 0;

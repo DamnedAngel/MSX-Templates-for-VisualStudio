@@ -8,7 +8,7 @@
 ;   <symbol match regex>
 ;   <symbol match regex> <substring search regex>  <substring replace string>
 ;----------------------------------------------------------
-[a-zA-Z0-9]*.hook
+_[a-zA-Z0-9]*_hook
 _mdoAbend
 s__AFTERHEAP s__A PARENT_A
 

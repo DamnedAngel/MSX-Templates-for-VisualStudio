@@ -29,15 +29,16 @@
 ;----------------------------------------------------------
 ;	MDO Header
 ;----------------------------------------------------------
-	.db		'M'					; MDO ID
-	.db		'O'					; MDO ID
-	.dw		#mdoName			; MDO Name
-	.dw		#onLoad				; Initialization routine
-	.dw		#_finalize			; Finalization routine
-	.dw		#_activate			; Activation (linkage) routine
-	.dw		#_deactivate		; Deactivation (de-linkage) routine
-	.dw		#mdoHooks			; Forward Hooks
-	.dw		#0x0000				; Reserved
+	.db		'M'					    ; MDO ID
+	.db		'O'					    ; MDO ID
+	.dw		#mdoName			    ; MDO Name
+	.dw		#mdoHooks			    ; Forward Hooks
+	.dw		#mdoHookImplementations	; Reserved
+    .dw		#onLoad				    ; Initialization routine
+	.dw		#_finalize			    ; Finalization routine
+	.dw		#_activate			    ; Activation (linkage) routine
+	.dw		#_deactivate		    ; Deactivation (de-linkage) routine
+
 
 ;----------------------------------------------------------
 ;	Segments order
@@ -92,10 +93,10 @@ mdoChildren:
 ;----------------------------------------------------------
 ;	MDO Hook Implementation
 	.area	_MDOHOOKIMPLEMENTATIONS
-mdoHookIMplementation::
+mdoHookImplementations::
 
 	.area	_MDOHOOKIMPLEMENTATIONSFINAL
-mdoHookImplementationFinal::
+mdoHookImplementationsFinal::
     .dw     0
 
 ;----------------------------------------------------------

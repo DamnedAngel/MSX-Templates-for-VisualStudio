@@ -78,7 +78,7 @@ void finalize(void) {
 //	This is the custom activation function for your C MDO!
 //	Invoked when the MDO is linked.
 void activate(void) {
-	print("MDO activate!\r\n\0");
+	print("MDO activated!\r\n\0");
 }
 
 // ----------------------------------------------------------

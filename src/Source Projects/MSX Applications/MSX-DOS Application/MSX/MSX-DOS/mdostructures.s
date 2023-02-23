@@ -20,7 +20,8 @@
 
 .macro MDO_HOOK_IMPLEMENTATION		hookname, routine
 	.area _MDOHOOKIMPLEMENTATIONS
-;	.dw			_'hookname'_hook
+	.globl		_'hookname'_hook
+	.dw			_'hookname'_hook
 	.globl		routine
 	.dw			routine
 .endm
