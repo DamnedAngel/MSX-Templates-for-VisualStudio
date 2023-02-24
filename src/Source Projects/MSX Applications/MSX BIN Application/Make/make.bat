@@ -1,7 +1,7 @@
 @echo off
 
 REM -----------------------------------------------------------------------------------
-set OPEN1=MSX SDCC Make Script Copyright � 2020-2023 Danilo Angelo, 2021 Pedro Medeiros
+set OPEN1=MSX SDCC Make Script Copyright © 2020-2023 Danilo Angelo, 2021 Pedro Medeiros
 set OPEN2=version 00.06.00 - Codename Rubens
 REM -----------------------------------------------------------------------------------
 
