@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-# -----------------------------------------------------------------------------------
-OPEN1="MSX SDCC Make Script Copyright © 2020-2023 Danilo Angelo, 2021 Pedro Medeiros"
-OPEN2="version 00.05.02 - Codename Rubens"
-# -----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------
+OPEN1="MSX SDCC Make Script Copyright © 2020-2023 Danilo Angelo, 2021-2023 Pedro Medeiros"
+OPEN2="version 00.06.00 - Codename Rubens"
+# ----------------------------------------------------------------------------------------
 
 IFS=$' \t\r\n'
 SHELL_SCRIPT_EXTENSION='sh'
@@ -11,6 +11,7 @@ SHELL_SCRIPT_EXTENSION='sh'
 # retrieve current environment directory
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." >/dev/null 2>&1 && pwd)"
 MSX_BUILD_DATETIME=$(date)
+SHELL_SCRIPT_EXTENSION=sh
 
 MSX_FILE_NAME=MSXAPP
 PROFILE=$1
@@ -26,9 +27,13 @@ INCDIRS=
 SDCC_CALL=1
 BIN_SIZE=
 FILE_START=0x0100
+HEADER_SIZE_DEC=0
 CODE_LOC=
 DATA_LOC=0
 PARAM_HANDLING_ROUTINE=0
+
+MDO_PARENT_OBJ_PATH=
+MDO_PARENT_AFTERHEAP=
 
 DBG_MUTE=0
 DBG_ERROR=10
@@ -73,7 +78,7 @@ replace_variables () {
 
 debug () {
     dbg=$1 && shift
-    [[ "$dbg" -le "$BUILD_DEBUG" ]] && echo $@
+    [[ "$dbg" -le "$BUILD_DEBUG" ]] && echo $@ >&2
 }
 
 _exec () {
@@ -104,11 +109,11 @@ exec_action () {
     shift
     shift
     if [[ -n $1 ]]; then
-		debug $DBG_STEPS -------------------------------------------------------------------------------
-		debug $DBG_STEPS Executing $n1 $n2 action...
+        debug $DBG_STEPS -------------------------------------------------------------------------------
+        debug $DBG_STEPS Executing $n1 $n2 action...
         _exec $DBG_CALL3 $@
-		debug $DBG_STEPS Done executing $n1 $n2 action.
-	fi
+        debug $DBG_STEPS Done executing $n1 $n2 action.
+    fi
 }
 
 #
@@ -116,26 +121,26 @@ exec_action () {
 #
 
 configure_target() {
-    echo '//------------------------------------------------'   >  targetconfig.h
-    echo '// targetconfig.h created automatically by make.sh'   >> targetconfig.h
-    echo "// on $MSX_BUILD_DATETIME"                            >> targetconfig.h
-    echo '//'                                                   >> targetconfig.h
-    echo '// DO NOT BOTHER EDITING THIS.'                       >> targetconfig.h
-    echo '// ALL CHANGES WILL BE LOST.'                         >> targetconfig.h
-    echo '//------------------------------------------------'   >> targetconfig.h
-    echo                                                        >> targetconfig.h
-    echo '#ifndef  __TARGETCONFIG_H__'                          >> targetconfig.h
-    echo '#define  __TARGETCONFIG_H__'                          >> targetconfig.h
-    echo                                                        >> targetconfig.h
+    echo '//------------------------------------------------'           >  targetconfig.h
+    echo '// targetconfig.h created automatically by make.sh'           >> targetconfig.h
+    echo "// on $MSX_BUILD_DATETIME"                                    >> targetconfig.h
+    echo '//'                                                           >> targetconfig.h
+    echo '// DO NOT BOTHER EDITING THIS.'                               >> targetconfig.h
+    echo '// ALL CHANGES WILL BE LOST.'                                 >> targetconfig.h
+    echo '//------------------------------------------------'           >> targetconfig.h
+    echo                                                                >> targetconfig.h
+    echo '#ifndef  __TARGETCONFIG_H__'                                  >> targetconfig.h
+    echo '#define  __TARGETCONFIG_H__'                                  >> targetconfig.h
+    echo                                                                >> targetconfig.h
 
-    echo ';-------------------------------------------------'   >  targetconfig.s
-    echo '; targetconfig.s created automatically by make.sh'    >> targetconfig.s
-    echo "; on $MSX_BUILD_DATETIME"                             >> targetconfig.s
-    echo ';'                                                    >> targetconfig.s
-    echo '; DO NOT BOTHER EDITING THIS.'                        >> targetconfig.s
-    echo '; ALL CHANGES WILL BE LOST.'                          >> targetconfig.s
-    echo ';-------------------------------------------------'   >> targetconfig.s
-    echo                                                        >> targetconfig.s
+    echo ';-------------------------------------------------'           >  targetconfig.s
+    echo '; targetconfig.s created automatically by make.sh'            >> targetconfig.s
+    echo "; on $MSX_BUILD_DATETIME"                                     >> targetconfig.s
+    echo ';'                                                            >> targetconfig.s
+    echo '; DO NOT BOTHER EDITING THIS.'                                >> targetconfig.s
+    echo '; ALL CHANGES WILL BE LOST.'                                  >> targetconfig.s
+    echo ';-------------------------------------------------'           >> targetconfig.s
+    echo                                                                >> targetconfig.s
 
     shopt -s nocasematch # caseless matching
 
@@ -144,7 +149,7 @@ configure_target() {
         exit 1
     fi
 
-    while read -r HEAD REST; do
+    while read -r HEAD REST || [ -n "$HEAD" ]; do
         REST=${REST/;*/} # remove comment
         REST="${REST%"${REST##*[![:space:]]}"}" # remove trailing spaces
         if [[ -n $HEAD && ${HEAD:0:1} != ';' ]]; then
@@ -152,14 +157,14 @@ configure_target() {
                 TARGET_SECTION=$HEAD
             elif [[ $TARGET_SECTION == '.APPLICATION' ]]; then
                 if [[ $REST == '_off' ]]; then
-                    echo "//#define $HEAD"                  >> targetconfig.h
-                    echo $HEAD = 0                          >> targetconfig.s
+                    echo "//#define $HEAD"                              >> targetconfig.h
+                    echo $HEAD = 0                                      >> targetconfig.s
                 elif [[ $REST == '_on' || -z $REST ]]; then
-                    echo "#define $HEAD"                    >> targetconfig.h
-                    echo $HEAD = 1                          >> targetconfig.s
+                    echo "#define $HEAD"                                >> targetconfig.h
+                    echo $HEAD = 1                                      >> targetconfig.s
                 else
-                    echo "#define $HEAD $REST"              >> targetconfig.h
-                    echo $HEAD = $REST                      >> targetconfig.s
+                    echo "#define $HEAD $REST"                          >> targetconfig.h
+                    echo $HEAD = $REST                                  >> targetconfig.s
                 fi
             else # .BUILD & .FILESYSTEM
                 REST=$(replace_variables "$REST")
@@ -168,15 +173,15 @@ configure_target() {
         fi
     done < "$MSX_CFG_PATH/TargetConfig_$PROFILE.txt"
 
-    echo                                                        >> targetconfig.h
-    echo '#endif //  __TARGETCONFIG_H__'                        >> targetconfig.h
+    echo                                                                >> targetconfig.h
+    echo '#endif //  __TARGETCONFIG_H__'                                >> targetconfig.h
 }
 
 configure_verbose_parameters() {
     if [[ "$DBG_TOOLSDETAIL" -le "$BUILD_DEBUG" ]]; then
         SDCC_DETAIL="-V --verbose" 
         SYMBOL_DETAIL="-v"
-        HEX2BIN_DETAIL="-v"
+        HEX2BIN_DETAIL=""
     else
         SDCC_DETAIL=""
         SYMBOL_DETAIL=""
@@ -192,7 +197,7 @@ configure_build_events() {
         exit 1
     fi
 
-    while read -r HEAD REST; do
+    while read -r HEAD REST || [ -n "$HEAD" ]; do
         REST=${REST/;*/} # remove comment
         REST="${REST%"${REST##*[![:space:]]}"}" # remove trailing spaces
         if [[ -n $HEAD && ${HEAD:0:1} != ';' ]]; then
@@ -265,6 +270,31 @@ create_dir_struct() {
     fi
 }
 
+getHeaderSize() {
+    FILE_LIST=("$@")
+    RESULT=0
+    for FILE in ${FILE_LIST[@]}; do
+        debug $DBG_OUTPUT "Analysing \"$FILE\"..."
+        while read -r F1 F2 F3 F4 F5 || [ -n "$F1" ]; do
+            VALUE=0
+            if [[ $F2 == '_HEADER0' ]]; then VALUE=$((16#$F4)); fi
+            if [[ $F2 == '_MDONAME' ]]; then VALUE=$((16#$F4)); fi
+            if [[ $F2 == '_MDOHOOKS' ]]; then VALUE=$((16#$F4)); fi
+            if [[ $F2 == '_MDOCHILDLIST' ]]; then VALUE=$((16#$F4)); fi
+            if [[ $F2 == '_MDOCHILDLISTFINAL' ]]; then VALUE=$((16#$F4)); fi
+            if [[ $F2 == '_MDOCHILDREN' ]]; then VALUE=$((16#$F4)); fi
+            if [[ $F2 == '_MDOHOOKIMPLEMENTATIONS' ]]; then VALUE=$((16#$F4)); fi
+            if [[ $F2 == '_MDOHOOKIMPLEMENTATIONSFINAL' ]]; then VALUE=$((16#$F4)); fi
+            if [[ $F2 == '_MDOSERVICES' ]]; then VALUE=$((16#$F4)); fi
+            if [[ $VALUE > 0 ]]; then
+                RESULT=$(($RESULT + $VALUE))
+                debug $DBG_STEPS Found $VALUE bytes in $F2 [$RESULT]
+            fi
+        done < "$FILE"
+    done
+    echo "$RESULT"
+}
+
 house_cleaning() {
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Making a small housecleaning.
@@ -279,47 +309,50 @@ house_cleaning() {
 application_settings() {
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Building application settings file...
-    echo '//-------------------------------------------------'  >  applicationsettings.h
-    echo '// applicationsettings.h created automatically'       >> applicationsettings.h
-    echo '// by make.sh'                                        >> applicationsettings.h
-    echo "// on $MSX_BUILD_DATETIME"                            >> applicationsettings.h
-    echo '//'                                                   >> applicationsettings.h
-    echo '// DO NOT BOTHER EDITING THIS.'                       >> applicationsettings.h
-    echo '// ALL CHANGES WILL BE LOST.'                         >> applicationsettings.h
-    echo '//-------------------------------------------------'  >> applicationsettings.h
-    echo                                                        >> applicationsettings.h
-	echo '#ifndef  __APPLICATIONSETTINGS_H__'					>> applicationsettings.h
-	echo '#define  __APPLICATIONSETTINGS_H__'					>> applicationsettings.h
-	echo														>> applicationsettings.h
-    
-    echo ';-------------------------------------------------'   >  applicationsettings.s
-    echo '; applicationsettings.s created automatically'        >> applicationsettings.s
-    echo '; by make.sh'                                         >> applicationsettings.s
-    echo "; on $MSX_BUILD_DATETIME"                             >> applicationsettings.s
-    echo ';'                                                    >> applicationsettings.s
-    echo '; DO NOT BOTHER EDITING THIS.'                        >> applicationsettings.s
-    echo '; ALL CHANGES WILL BE LOST.'                          >> applicationsettings.s
-    echo ';-------------------------------------------------'   >> applicationsettings.s
-    echo                                                        >> applicationsettings.s
+    echo '//-------------------------------------------------'          >  applicationsettings.h
+    echo '// applicationsettings.h created automatically'               >> applicationsettings.h
+    echo '// by make.sh'                                                >> applicationsettings.h
+    echo "// on $MSX_BUILD_DATETIME"                                    >> applicationsettings.h
+    echo '//'                                                           >> applicationsettings.h
+    echo '// DO NOT BOTHER EDITING THIS.'                               >> applicationsettings.h
+    echo '// ALL CHANGES WILL BE LOST.'                                 >> applicationsettings.h
+    echo '//-------------------------------------------------'          >> applicationsettings.h
+    echo                                                                >> applicationsettings.h
+    echo '#ifndef  __APPLICATIONSETTINGS_H__'                           >> applicationsettings.h
+    echo '#define  __APPLICATIONSETTINGS_H__'                           >> applicationsettings.h
+    echo                                                                >> applicationsettings.h
 
-    while read -r HEAD REST
-    do
+    echo ';-------------------------------------------------'           >  applicationsettings.s
+    echo '; applicationsettings.s created automatically'                >> applicationsettings.s
+    echo '; by make.sh'                                                 >> applicationsettings.s
+    echo "; on $MSX_BUILD_DATETIME"                                     >> applicationsettings.s
+    echo ';'                                                            >> applicationsettings.s
+    echo '; DO NOT BOTHER EDITING THIS.'                                >> applicationsettings.s
+    echo '; ALL CHANGES WILL BE LOST.'                                  >> applicationsettings.s
+    echo ';-------------------------------------------------'           >> applicationsettings.s
+    echo                                                                >> applicationsettings.s
+
+    while read -r HEAD REST || [ -n "$HEAD" ]; do
         REST=${REST/;*/} # remove comment
         REST="${REST%"${REST##*[![:space:]]}"}" # remove trailing spaces
         if [[ -n $HEAD && ${HEAD:0:1} != ';' ]]; then
             if [[ $HEAD == 'PROJECT_TYPE' ]]; then
                 PROJECT_TYPE=$REST
             elif [[ $HEAD == 'FILESTART' ]]; then
-                echo fileStart .equ $REST                       >> applicationsettings.s
-                FILE_START=$REST
+                if [[ $REST == 'PARENT_AFTERHEAP' ]]; then
+                    FILE_START=$MDO_PARENT_AFTERHEAP
+                else
+                    FILE_START=$REST
+                fi
+                echo fileStart .equ $FILE_START                         >> applicationsettings.s
             elif [[ $HEAD == 'SDCCCALL' ]]; then
-                echo __SDCCCALL = $REST                         >> applicationsettings.s
+                echo __SDCCCALL = $REST                                 >> applicationsettings.s
                 SDCC_CALL=$REST
             elif [[ $HEAD == 'GLOBALS_INITIALIZER' ]]; then
                 if [[ $REST == '_OFF' ]]; then
-                    echo GLOBALS_INITIALIZER = 0                >> applicationsettings.s
+                    echo GLOBALS_INITIALIZER = 0                        >> applicationsettings.s
                 else
-                    echo GLOBALS_INITIALIZER = 1                >> applicationsettings.s
+                    echo GLOBALS_INITIALIZER = 1                        >> applicationsettings.s
                 fi
             elif [[ $HEAD == 'ROM_SIZE' ]]; then
                 if [[ $REST == '16k' ]]; then
@@ -327,52 +360,56 @@ application_settings() {
                 else
                     BIN_SIZE=8000
                 fi
+            elif [[ $HEAD == 'MDO_PARENT_OBJ_PATH' ]]; then
+                REST=$(replace_variables "$REST")
+                MDO_PARENT_OBJ_PATH=$REST
+                MDO_PARENT_AFTERHEAP=$(cat "$MDO_PARENT_OBJ_PATH/PARENT_AFTERHEAP")
             elif [[ $HEAD == 'CODE_LOC' ]]; then
                 CODE_LOC=$REST
             elif [[ $HEAD == 'DATA_LOC' ]]; then
                 DATA_LOC=$REST
             elif [[ $HEAD == 'PARAM_HANDLING_ROUTINE' ]]; then
-                echo PARAM_HANDLING_ROUTINE = $REST             >> applicationsettings.s
+                echo PARAM_HANDLING_ROUTINE = $REST                     >> applicationsettings.s
             elif [[ $HEAD == 'SYMBOL' ]]; then
                 if [[ ! -f $MSX_OBJ_PATH/bin_usrcalls.tmp ]]; then
-                    echo                                        >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
+                    echo                                                >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
                 fi
-                echo .globl $REST                               >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
-                echo .dw $REST                                  >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
+                echo .globl $REST                                       >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
+                echo .dw $REST                                          >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
             elif [[ $HEAD == 'ADDRESS' ]]; then
                 if [[ ! -f $MSX_OBJ_PATH/bin_usrcalls.tmp ]]; then
-                    echo                                        >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
+                    echo                                                >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
                 fi
-                echo .dw $REST                                  >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
+                echo .dw $REST                                          >> "$MSX_OBJ_PATH"/bin_usrcalls.tmp
             elif [[ $HEAD == 'CALL_STATEMENT' ]]; then
                 if [[ ! -f $MSX_OBJ_PATH/rom_callexpansionindex.tmp ]]; then
-                    echo callStatementIndex::                   >> "$MSX_OBJ_PATH"/rom_callexpansionindex.tmp
+                    echo callStatementIndex::                           >> "$MSX_OBJ_PATH"/rom_callexpansionindex.tmp
                 fi
-                echo .dw        callStatement_$REST             >> "$MSX_OBJ_PATH"/rom_callexpansionindex.tmp
-                echo .globl     _onCall$REST                    >> "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
-                echo callStatement_$REST::                      >> "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
-                echo ".ascii    '$REST\\0'"                     >> "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
-                echo .dw        _onCall$REST                    >> "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
+                echo .dw        callStatement_$REST                     >> "$MSX_OBJ_PATH"/rom_callexpansionindex.tmp
+                echo .globl     _onCall$REST                            >> "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
+                echo callStatement_$REST::                              >> "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
+                echo ".ascii    '$REST\\0'"                             >> "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
+                echo .dw        _onCall$REST                            >> "$MSX_OBJ_PATH"/rom_callexpansionhandler.tmp
             elif [[ $HEAD == 'DEVICE' ]]; then
                 if [[ ! -f $MSX_OBJ_PATH/rom_deviceexpansionindex.tmp ]]; then
-                    echo deviceIndex::                          >> "$MSX_OBJ_PATH"/rom_deviceexpansionindex.tmp
+                    echo deviceIndex::                                  >> "$MSX_OBJ_PATH"/rom_deviceexpansionindex.tmp
                 fi
-                echo .dw        device_$REST                    >> "$MSX_OBJ_PATH"/rom_deviceexpansionindex.tmp
-                echo .globl     _onDevice${REST}_IO             >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
-                echo .globl     _onDevice${REST}_getId          >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
-                echo device_$REST::                             >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
-                echo ".ascii     '$REST\\0'"                    >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
-                echo .dw        _onDevice${REST}_IO             >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
-                echo .dw        _onDevice${REST}_getId          >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+                echo .dw        device_$REST                            >> "$MSX_OBJ_PATH"/rom_deviceexpansionindex.tmp
+                echo .globl     _onDevice${REST}_IO                     >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+                echo .globl     _onDevice${REST}_getId                  >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+                echo device_$REST::                                     >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+                echo ".ascii     '$REST\\0'"                            >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+                echo .dw        _onDevice${REST}_IO                     >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
+                echo .dw        _onDevice${REST}_getId                  >> "$MSX_OBJ_PATH"/rom_deviceexpansionhandler.tmp
             else
                 if [[ $REST == '_off' ]]; then
-                    echo "//#define $HEAD"                      >> applicationsettings.h
-                    echo $HEAD = 0                              >> applicationsettings.s
+                    echo "//#define $HEAD"                              >> applicationsettings.h
+                    echo $HEAD = 0                                      >> applicationsettings.s
                 elif [[ $REST == '_on' || -z $REST ]]; then
-                    echo "#define $HEAD"                      >> applicationsettings.h
-                    echo $HEAD = 1                              >> applicationsettings.s
+                    echo "#define $HEAD"                                >> applicationsettings.h
+                    echo $HEAD = 1                                      >> applicationsettings.s
                 else
-                    echo $HEAD = $REST                          >> applicationsettings.s
+                    echo $HEAD = $REST                                  >> applicationsettings.s
                 fi
             fi
         fi
@@ -380,43 +417,43 @@ application_settings() {
 
     if [[ $PROJECT_TYPE == 'BIN' ]]; then
         debug $DBG_STEPS Adding specific BIN settings...
-        echo .macro MCR_USRCALLSINDEX                           >> applicationsettings.s
+        echo .macro MCR_USRCALLSINDEX                                   >> applicationsettings.s
         if [[ -f $MSX_OBJ_PATH/bin_usrcalls.tmp ]]; then
-            echo                                                >> applicationsettings.s
-            echo _BASIC_USR_INDEX::                             >> applicationsettings.s
-            cat "$MSX_OBJ_PATH/bin_usrcalls.tmp"                >> applicationsettings.s
+            echo                                                        >> applicationsettings.s
+            echo _BASIC_USR_INDEX::                                     >> applicationsettings.s
+            cat "$MSX_OBJ_PATH/bin_usrcalls.tmp"                        >> applicationsettings.s
             rm "$MSX_OBJ_PATH/bin_usrcalls.tmp"
         fi
-        echo .endm                                              >> applicationsettings.s
+        echo .endm                                                      >> applicationsettings.s
     fi
 
     if [[ $PROJECT_TYPE == 'ROM' ]]; then
         debug $DBG_STEPS Adding specific ROM settings...
-        echo                                                    >> applicationsettings.s
-        echo .macro MCR_CALLEXPANSIONINDEX                      >> applicationsettings.s
+        echo                                                            >> applicationsettings.s
+        echo .macro MCR_CALLEXPANSIONINDEX                              >> applicationsettings.s
         if [[ -f $MSX_OBJ_PATH/rom_callexpansionindex.tmp ]]; then
-            cat "$MSX_OBJ_PATH/rom_callexpansionindex.tmp"      >> applicationsettings.s
-            echo '.dw       #0'                                 >> applicationsettings.s
-            cat "$MSX_OBJ_PATH/rom_callexpansionhandler.tmp"    >> applicationsettings.s
+            cat "$MSX_OBJ_PATH/rom_callexpansionindex.tmp"              >> applicationsettings.s
+            echo '.dw       #0'                                         >> applicationsettings.s
+            cat "$MSX_OBJ_PATH/rom_callexpansionhandler.tmp"            >> applicationsettings.s
             rm "$MSX_OBJ_PATH/rom_callexpansionindex.tmp"
             rm "$MSX_OBJ_PATH/rom_callexpansionhandler.tmp"
         fi
-        echo .endm                                              >> applicationsettings.s
+        echo .endm                                                      >> applicationsettings.s
 
-        echo                                                    >> applicationsettings.s
-        echo .macro MCR_DEVICEEXPANSIONINDEX                    >> applicationsettings.s
+        echo                                                            >> applicationsettings.s
+        echo .macro MCR_DEVICEEXPANSIONINDEX                            >> applicationsettings.s
         if [[ -f $MSX_OBJ_PATH/rom_deviceexpansionindex.tmp ]]; then
-            cat "$MSX_OBJ_PATH/rom_deviceexpansionindex.tmp"    >> applicationsettings.s
-            echo '.dw       #0'                                 >> applicationsettings.s
-            cat "$MSX_OBJ_PATH/rom_deviceexpansionhandler.tmp"  >> applicationsettings.s
+            cat "$MSX_OBJ_PATH/rom_deviceexpansionindex.tmp"            >> applicationsettings.s
+            echo '.dw       #0'                                         >> applicationsettings.s
+            cat "$MSX_OBJ_PATH/rom_deviceexpansionhandler.tmp"          >> applicationsettings.s
             rm "$MSX_OBJ_PATH/rom_deviceexpansionindex.tmp"
             rm "$MSX_OBJ_PATH/rom_deviceexpansionhandler.tmp"
         fi
-        echo .endm                                              >> applicationsettings.s
+        echo .endm                                                      >> applicationsettings.s
     fi
 
-	echo														>> applicationsettings.h
-	echo '#endif //  __APPLICATIONSETTINGS_H__'					>> applicationsettings.h
+    echo                                                                >> applicationsettings.h
+    echo '#endif //  __APPLICATIONSETTINGS_H__'                         >> applicationsettings.h
 
     debug $DBG_STEPS Done building application settings file.
 }
@@ -434,7 +471,7 @@ collect_include_dirs() {
     debug $DBG_STEPS Collecting include directories...
 
     let I=0
-    while read -r INCDIR; do
+    while read -r INCDIR || [ -n "$INCDIR" ]; do
         if [[ -n $INCDIR && ${INCDIR:0:1} != ';' ]]; then
             INCDIR=$(path_replace "$INCDIR" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
             INCDIR=$(path_replace "$INCDIR" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
@@ -449,7 +486,7 @@ collect_include_dirs() {
 build_lib() {
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Building libraries...
-    while read -r LIBFILE; do
+    while read -r LIBFILE || [ -n "$LIBFILE" ]; do
         if [[ -n $LIBFILE && ${LIBFILE:0:1} != ';' ]]; then
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
@@ -471,22 +508,22 @@ compile () {
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Building application modules...
     
-    let I=0
-    while read -r APPFILE; do
+    while read -r APPFILE || [ -n "$APPFILE" ]; do
+        APPFILE=${APPFILE/;*/} # remove comment
+        APPFILE="${APPFILE%"${APPFILE##*[![:space:]]}"}" # remove trailing spaces
         if [[ -n $APPFILE && ${APPFILE:0:1} != ';' ]]; then
             APPFILE=$(path_replace "$APPFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
             APPFILE=$(path_replace "$APPFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
             FILEEXT=$(basename "${APPFILE/*./}")
             RELFILE="$MSX_OBJ_PATH"/$(basename "$APPFILE" ".$FILEEXT").rel
             if [[ ".$FILEEXT" == '.c' ]]; then
-                debug $DBG_DETAIL "Processing C file $(basename "$APPFILE")... "
+                debug $DBG_DETAIL "Processing C file \"$(basename "$APPFILE")\"... "
                 _exec $DBG_CALL2 sdcc --sdcccall $SDCC_CALL $SDCC_DETAIL $COMPILER_EXTRA_DIRECTIVES -mz80 -c ${INCDIRS[*]} -o "'$RELFILE'" "'$APPFILE'"
             else
-                debug $DBG_DETAIL "Processing ASM file $(basename "$APPFILE")... "
+                debug $DBG_DETAIL "Processing ASM file \"$(basename "$APPFILE")\"... "
                 _exec $DBG_CALL2 sdasz80 $ASSEMBLER_EXTRA_DIRECTIVES -o "'$RELFILE'" "'$APPFILE'"
             fi
-            OBJLIST[$I]="'$RELFILE'"
-            I+=1
+            OBJLIST+=("$RELFILE")
         fi
     done < "$MSX_CFG_PATH/ApplicationSources.txt"
     debug $DBG_STEPS Done building application modules.
@@ -494,23 +531,26 @@ compile () {
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Collecting libraries...
 
-    while read -r LIBFILE; do
-        if [[ -n $LIBFILE && ${LIBFILE:0:1} != ';' ]]; then
-            LIBFILE=$(path_replace "$LIBFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
-            LIBFILE=$(path_replace "$LIBFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
-            RELFILE="$MSX_OBJ_PATH"/$(basename "${LIBFILE%.*}").rel
-            OBJLIST[$I]="'$RELFILE'"
-            I+=1
+    while read -r RELFILE || [ -n "$RELFILE" ]; do
+        RELFILE=${RELFILE/;*/} # remove comment
+        RELFILE="${RELFILE%"${RELFILE##*[![:space:]]}"}" # remove trailing spaces
+        if [[ -n $RELFILE && ${RELFILE:0:1} != ';' ]]; then
+            RELFILE=$(path_replace "$RELFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
+            RELFILE=$(path_replace "$RELFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
+            RELFILE="$MSX_OBJ_PATH"/$(basename "${RELFILE%.*}").rel
+            debug $DBG_STEPS "Adding \'$RELFILE\'"
+            OBJLIST+=("$RELFILE")
             debug $DBG_DETAIL Collected $(basename "$RELFILE")
         fi
     done < "$MSX_CFG_PATH/LibrarySources.txt"
     
-    while read -r LIBFILE; do
+    while read -r LIBFILE || [ -n "$LIBFILE" ]; do
+        LIBFILE=${LIBFILE/;*/} # remove comment
         if [[ -n $LIBFILE && ${LIBFILE:0:1} != ';' ]]; then
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_LIB_PATH]' "$MSX_LIB_PATH")
             LIBFILE=$(path_replace "$LIBFILE" '[MSX_OBJ_PATH]' "$MSX_OBJ_PATH")
-            OBJLIST[$I]="'$LIBFILE'"
-            I+=1
+            debug $DBG_STEPS "Adding \'$LIBFILE\' to OBJLIST"
+            OBJLIST+=("$LIBFILE")
             debug $DBG_DETAIL Collected $(basename "$LIBFILE")
         fi
     done < "$MSX_CFG_PATH/Libraries.txt"
@@ -519,20 +559,13 @@ compile () {
     if [[ -z $CODE_LOC ]]; then
         debug $DBG_STEPS -------------------------------------------------------------------------------
         debug $DBG_STEPS Determining CODE-LOC...
-        for FILE in "$MSX_OBJ_PATH"/msx*crt0.rel; do
-            debug $DBG_OUTPUT Analysing \"$FILE\"...
-            while read -r F1 F2 F3 F4 F5; do
-                if [[ $F2 == '_HEADER0' ]]; then
-                    HEADER_SIZE_DEC=$((0x${F4}))
-                    CODE_LOC_DEC=$(($FILE_START + $HEADER_SIZE_DEC))
-                fi
-            done < "$FILE"
-        done
-
-		HEADER_SIZE=$(printf '0x%04x' "$HEADER_SIZE_DEC")
-		CODE_LOC=$(printf '0x%04x' "$CODE_LOC_DEC")
+        FILE_START_DEC=$((16#${FILE_START:2}))
+        HEADER_SIZE_DEC=$(getHeaderSize ${OBJLIST[@]})
+        CODE_LOC_DEC=$(($FILE_START_DEC + $HEADER_SIZE_DEC))
+        HEADER_SIZE=$(printf '0x%04x' "$HEADER_SIZE_DEC")
         debug $DBG_OUTPUT FILE_START is $FILE_START.
-        debug $DBG_OUTPUT _HEADER segment size is $HEADER_SIZE.
+        debug $DBG_OUTPUT _HEADER and _MDO segments add up to $HEADER_SIZE [$HEADER_SIZE_DEC] bytes.
+        CODE_LOC=$(printf '0x%04x' "$CODE_LOC_DEC")
         debug $DBG_OUTPUT CODE-LOC determined to be $CODE_LOC.
     fi
     debug $DBG_STEPS Done determining CODE-LOC.
@@ -560,13 +593,14 @@ build_msx_bin () {
 
     debug $DBG_STEPS -------------------------------------------------------------------------------
     debug $DBG_STEPS Building symbol file...
-    _exec $DBG_CALL3 python Make/symbol.py "$MSX_OBJ_PATH/" "$MSX_FILE_NAME" $SYMBOL_DETAIL
+    debug python Make/symbol.py "$PROJECT_TYPE" "$MSX_OBJ_PATH/" "$MSX_FILE_NAME" $SYMBOL_DETAIL
+    _exec $DBG_CALL3 python Make/symbol.py "$PROJECT_TYPE" "$MSX_OBJ_PATH/" "$MSX_FILE_NAME" $SYMBOL_DETAIL
     debug $DBG_STEPS Done building symbol file.
 }
 
 finish () {
     debug $DBG_STEPS -------------------------------------------------------------------------------
-    debug $DBG_STEPS All set. Happy MSX\'ing!    
+    debug $DBG_STEPS All set for $PROJECT_TYPE project. Happy MSX\'ing!
     exit 0
 }
 

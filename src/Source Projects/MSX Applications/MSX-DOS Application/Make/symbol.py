@@ -49,7 +49,7 @@ f3 = open(path.join(sys.argv[2], sys.argv[3]) + '.s', 'w')
 f4 = open(path.join(sys.argv[2], sys.argv[3]) + '.h', 'w')
 f4.write('#pragma once\n')
 if mdo:
-	f5 = open(sys.argv[2]+'PARENT_AFTERHEAP', 'w')
+	f5 = open(path.join(sys.argv[2], 'PARENT_AFTERHEAP'), 'w')
 
 
 with open(path.join(sys.argv[2], sys.argv[3]) + '.map', 'r') as f1:
