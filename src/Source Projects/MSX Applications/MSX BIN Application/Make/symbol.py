@@ -45,10 +45,10 @@ f1.close()
 # Write symbol files
 ###################################
 f2 = open(path.join(sys.argv[2], sys.argv[3]) + '_.sym', 'w')
-f3 = open(path.join(sys.argv[2], sys.argv[3]) + '.s', 'w')
-f4 = open(path.join(sys.argv[2], sys.argv[3]) + '.h', 'w')
-f4.write('#pragma once\n')
 if mdo:
+	f3 = open(path.join(sys.argv[2], 'parentinterface') + '.s', 'w')
+	f4 = open(path.join(sys.argv[2], 'parentinterface') + '.h', 'w')
+	f4.write('#pragma once\n')
 	f5 = open(path.join(sys.argv[2], 'PARENT_AFTERHEAP'), 'w')
 
 
@@ -64,22 +64,23 @@ with open(path.join(sys.argv[2], sys.argv[3]) + '.map', 'r') as f1:
 				# OpenMSX Symbol file
 				f2.write(words[1] + ': equ ' + words[0] + 'H\n')
 				# MDO PARENT_AFTERHEAP
-				if (mdo and (words[1] == 's__AFTERHEAP')):
-					f5.write("0x" + value)
-				for pattern in patterns:
-					if re.match(pattern[0], words[1]):
-						symbol = re.sub(pattern[1], pattern[2], words[1])
-						# ASM Symbol file
-						f3.write(symbol + ' 			.equ 0x' + value + '\n')
-						# Header Symbol file
-						f4.write("#define " + symbol + '			0x' + value + '\n')
-						if verbose:
-							print ('Exported symbol ' + symbol + '(' + words[1] + ') = 0x' + value + '.')
+				if (mdo):
+					if (words[1] == 's__AFTERHEAP'):
+						f5.write("0x" + value)
+					for pattern in patterns:
+						if re.match(pattern[0], words[1]):
+							symbol = re.sub(pattern[1], pattern[2], words[1])
+							# ASM Symbol file
+							f3.write(symbol + ' 			.equ 0x' + value + '\n')
+							# Header Symbol file
+							f4.write("#define " + symbol + '			0x' + value + '\n')
+							if verbose:
+								print ('Exported symbol ' + symbol + '(' + words[1] + ') = 0x' + value + '.')
 f1.close()
 f2.close()
-f3.close()
-f4.close()
 if mdo:
+	f3.close()
+	f4.close()
 	f5.close()
 
 exit()

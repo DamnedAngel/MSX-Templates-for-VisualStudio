@@ -7,7 +7,6 @@
 	.include "MSX/BIOS/msxbios.s"
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
-;    INCLUDE_MDO_PARENT_SYMBOL_FILE
 
 	.globl	_initialize
 	.globl  _finalize
@@ -39,6 +38,14 @@
 	.dw		#_activate			    ; Activation (linkage) routine
 	.dw		#_deactivate		    ; Deactivation (de-linkage) routine
 
+;----------------------------------------------------------
+;	Initialization routine
+;----------------------------------------------------------
+onLoad::
+.if GLOBALS_INITIALIZER
+	call    gsinit
+.endif
+    jp      _initialize
 
 ;----------------------------------------------------------
 ;	Segments order
@@ -103,14 +110,7 @@ mdoHookImplementationsFinal::
 ;	MDO services
 	.area	_MDOSERVICES
 
-;----------------------------------------------------------
-;	Initialization routine
-;----------------------------------------------------------
-onLoad::
-.if GLOBALS_INITIALIZER
-	call    gsinit
-.endif
-    jp      _initialize
+.include "mdointerface.s"
 
 ;   =====================================
 ;   ========== GSINIT SEGMENTS ==========

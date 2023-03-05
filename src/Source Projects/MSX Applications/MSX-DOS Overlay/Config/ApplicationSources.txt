@@ -23,7 +23,5 @@ msxdosovl.c
 ;	Additional source files
 ;	Add below additional source files for your application
 ;	using relative paths from the project folder
-mdointerface.s			; uncomment to support MDO overlays
-
 ;yourSourceCodeHere.s
 ;yourSourceCodeHere.c

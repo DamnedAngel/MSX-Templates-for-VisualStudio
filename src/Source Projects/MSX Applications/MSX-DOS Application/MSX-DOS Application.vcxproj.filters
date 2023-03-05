@@ -50,6 +50,9 @@
     <ClInclude Include="MSX\MSX-DOS\mdoservices.h">
       <Filter>Header Files\MSX\MSX-DOS</Filter>
     </ClInclude>
+    <ClInclude Include="mdointerface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="MSX\BIOS\msxbios.s">
@@ -117,6 +120,9 @@
       <Filter>Project Config</Filter>
     </Text>
     <Text Include="Config\BuildEvents.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\MDOSettings.txt">
       <Filter>Project Config</Filter>
     </Text>
   </ItemGroup>

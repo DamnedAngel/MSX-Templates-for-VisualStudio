@@ -1,3 +1,4 @@
+
 @echo off
 
 REM -----------------------------------------------------------------------------------
@@ -31,6 +32,7 @@ set CODE_LOC=
 set DATA_LOC=0
 set PARAM_HANDLING_ROUTINE=0
 
+set MDO_SUPPORT=0
 set MDO_PARENT_OBJ_PATH=
 set MDO_PARENT_AFTERHEAP=
 
@@ -61,8 +63,8 @@ goto :orchestration
 	exit /B
 
 :replace_variables
-	set VALUE=%1
-	set VALUE=!VALUE:"=!
+	set VALUE=%*
+rem	set VALUE=!VALUE:"=!
 	if ".!VALUE!" neq "." (
 		call :replace_string [PROFILE]					!PROFILE!
 		call :replace_string [MSX_FILE_NAME]			!MSX_FILE_NAME!
@@ -129,8 +131,10 @@ goto :orchestration
 :exec_action
 	set n1=%1
 	set n2=%2
-	for /f "tokens=1,2,* delims= " %%a in ("%*") do set ACTION=%%c
-	if "%ACTION%" neq "" (
+	shift
+	shift
+	for /f "tokens=1,2* delims= " %%a in ("%*") do set ACTION=%%c
+	if defined ACTION (
 		call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 		call :debug %DBG_STEPS% Executing %n1% %n2% action...
 		call :exec %DBG_CALL3% %ACTION%
@@ -269,7 +273,7 @@ goto :orchestration
 						)
 					) else ( 
 						rem .BUILD & .FILESYSTEM
-						call :replace_variables "%%C"
+						call :replace_variables %%C
 						set %%A=!VALUE!
 					)
 				)
@@ -294,11 +298,11 @@ goto :orchestration
 	exit /B
 
 :configure_build_events
-	for /F "tokens=1,*" %%A in  (%MSX_CFG_PATH%\BuildEvents.txt) do  (
+	for /F "tokens=1*" %%A in  (%MSX_CFG_PATH%\BuildEvents.txt) do  (
 		set TAG=%%A
 		set TAG1=!TAG:~0,1!
 		if NOT "!TAG1!" == ";" (
-			call :replace_variables "%%B"
+			call :replace_variables %%B
 			set %%A=!VALUE!
 		)
 	)
@@ -325,27 +329,27 @@ goto :orchestration
 :build_events_settings
     call :debug %DBG_EXTROVERT% -------------------------------------------------------------------------------
     call :debug %DBG_EXTROVERT% Build events settings...
-	if /I "%BUILD_START_ACTION%"=="" (
+	if not defined BUILD_START_ACTION (
 		call :debug %DBG_EXTROVERT% Build start action: [NONE]
 	) else (
 		call :debug %DBG_EXTROVERT% Build start action: %BUILD_START_ACTION%
 	)
-	if /I "%BEFORE_COMPILE_ACTION%"=="" (
+	if not defined BEFORE_COMPILE_ACTION (
 		call :debug %DBG_EXTROVERT% Before compile action: [NONE]
 	) else (
 		call :debug %DBG_EXTROVERT% Before compile action: %BEFORE_COMPILE_ACTION%
 	)
-	if /I "%AFTER_COMPILE_ACTION%"=="" (
+	if not defined AFTER_COMPILE_ACTION (
 		call :debug %DBG_EXTROVERT% After compile action: [NONE]
 	) else (
 		call :debug %DBG_EXTROVERT% After compile action: %AFTER_COMPILE_ACTION%
 	)
-	if /I "%AFTER_BINARY_ACTION%"=="" (
+	if not defined AFTER_BINARY_ACTION (
 		call :debug %DBG_EXTROVERT% After binary generation action: [NONE]
 	) else (
 		call :debug %DBG_EXTROVERT% After binary generation action: %AFTER_BINARY_ACTION%
 	)
-	if /I "%BUILD_END_ACTION%"=="" (
+	if  not defined BUILD_END_ACTION (
 		call :debug %DBG_EXTROVERT% Build end action: [NONE]
 	) else (
 		call :debug %DBG_EXTROVERT% Build end action: %BUILD_END_ACTION%
@@ -391,18 +395,16 @@ goto :orchestration
 
 	for /F "tokens=1,2*" %%A in  (%MSX_CFG_PATH%\ApplicationSettings.txt) do  (
 		set TAG=%%A
-		call :replace_variables "%%B"
+		call :replace_variables %%B
 		set %%B=!VALUE!
 		if NOT "!TAG:~0,1!"==";" (
 			if /I ".!TAG!"==".PROJECT_TYPE" (
 				set PROJECT_TYPE=%%B
-			) else if /I ".!TAG!"==".FILESTART" (
-				if /I ".%%B"==".PARENT_AFTERHEAP" (
-					set FILE_START=!MDO_PARENT_AFTERHEAP!
-				) else (
-					set FILE_START=%%B
+				if /I ".!PROJECT_TYPE"==".MDO" (
+					set MDO_SUPPORT=1
 				)
-				echo #7 - !FILE_START!
+			) else if /I ".!TAG!"==".FILESTART" (
+				set FILE_START=%%B
 				echo fileStart .equ !FILE_START!					>> applicationsettings.s
 			) else if /I ".!TAG!"==".SDCCCALL" (
 				echo __SDCCCALL = %%B								>> applicationsettings.s
@@ -419,10 +421,6 @@ goto :orchestration
 				) else (
 					set BIN_SIZE=8000
 				)
-			) else if /I ".!TAG!"==".MDO_PARENT_OBJ_PATH" (
-				call :replace_variables "%%B %%C"
-				set MDO_PARENT_OBJ_PATH=!VALUE!
-				set /p MDO_PARENT_AFTERHEAP=<"!MDO_PARENT_OBJ_PATH!/PARENT_AFTERHEAP"
 			) else if /I ".!TAG!"==".CODE_LOC" (
 				set CODE_LOC=%%B
 			) else if /I ".!TAG!"==".DATA_LOC" (
@@ -467,6 +465,9 @@ goto :orchestration
 				) else if /I "%%B"=="_on" (
 					echo #define %%A								>> applicationsettings.h
 					echo %%A = 1									>> applicationsettings.s
+					if /I "%%A"=="MDO_SUPPORT" (
+						set MDO_SUPPORT=1
+					)
 				) else if /I "%%B"=="" (
 					echo #define %%A								>> applicationsettings.h
 					echo %%A = 1									>> applicationsettings.s
@@ -519,6 +520,93 @@ goto :orchestration
     call :debug %DBG_STEPS% Done building application settings file.
 	exit /B
 
+:mdo_settings
+	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
+	call :debug %DBG_STEPS% Building MDO interface file...
+	echo //-------------------------------------------------		>  mdointerface.h
+	echo // mdointerface.h created automatically					>> mdointerface.h
+	echo // by make.bat												>> mdointerface.h
+	echo // on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%					>> mdointerface.h
+	echo //															>> mdointerface.h
+	echo // DO NOT BOTHER EDITING THIS.								>> mdointerface.h
+	echo // ALL CHANGES WILL BE LOST.								>> mdointerface.h
+	echo //-------------------------------------------------		>> mdointerface.h
+	echo.															>> mdointerface.h
+	echo #ifndef  __MDOINTERFACE_H__								>> mdointerface.h
+	echo #define  __MDOINTERFACE_H__								>> mdointerface.h
+	echo.															>> mdointerface.h
+	echo #ifdef MDO_SUPPORT											>> mdointerface.h
+	echo.															>> mdointerface.h
+
+	echo ;-------------------------------------------------			>  mdointerface.s
+	echo ; mdointerface.s created automatically						>> mdointerface.s
+	echo ; by make.bat												>> mdointerface.s
+	echo ; on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%					>> mdointerface.s
+	echo ;															>> mdointerface.s
+	echo ; DO NOT BOTHER EDITING THIS.								>> mdointerface.s
+	echo ; ALL CHANGES WILL BE LOST.								>> mdointerface.s
+	echo ;-------------------------------------------------			>> mdointerface.s
+	echo .include "applicationsettings.s"							>> mdointerface.s
+	echo .globl s__AFTERHEAP										>> mdointerface.s
+	echo.															>> mdointerface.s
+	echo .if MDO_SUPPORT											>> mdointerface.s
+	echo.															>> mdointerface.s
+
+	for /F "tokens=1,2*" %%A in  (%MSX_CFG_PATH%\MDOSettings.txt) do (
+		set TAG=%%A
+		if /I ".%%C"=="." (
+			call :replace_variables %%B
+		) else (
+			call :replace_variables %%B %%C
+		)
+
+		if NOT "!TAG:~0,1!"==";" (
+			if /I ".!TAG!"==".MDO_APPLICATION_PROJECT_PATH" (
+				set MDO_APP_PROJECT_PATH=!VALUE!
+				set MDO_APP_MDO_PATH=!MDO_APP_PROJECT_PATH!/MSX/MSX-DOS
+				echo .include "!MDO_APP_MDO_PATH!/mdostructures.s"	>> mdointerface.s
+				echo #include "!MDO_APP_MDO_PATH!/mdoservices.h"	>> mdointerface.h
+			) else if /I ".!TAG!"==".MDO_PARENT_PROJECT_PATH" (
+				set MDO_PARENT_PROJECT_PATH=!VALUE!
+				set /p MDO_PARENT_AFTERHEAP=<"!MDO_PARENT_PROJECT_PATH!/!PROFILE!/objs/PARENT_AFTERHEAP"
+				set MDO_PARENT_INTERFACE=!MDO_PARENT_PROJECT_PATH!/!PROFILE!/objs/parentinterface.s
+				echo .include "!MDO_PARENT_INTERFACE!"				>> mdointerface.s
+			) else if /I ".!TAG!"==".FILESTART" (
+				if /I ".%%B"==".PARENT_AFTERHEAP" (
+					set FILE_START=!MDO_PARENT_AFTERHEAP!
+				) else (
+					set FILE_START=%%B
+				)
+				echo fileStart .equ !FILE_START!					>> applicationsettings.s
+			) else if /I ".!TAG!"==".MDO_HOOK" (
+				set HOOK_TEMPLATE=%%B %%C
+				for /F "tokens=1,2* delims=|" %%D in ("!HOOK_TEMPLATE!") do (
+					echo	%%A	%%E									>> mdointerface.s
+					echo	extern %%D %%E_hook %%F;						>> mdointerface.h
+				)
+			) else if /I ".!TAG!"==".MDO_CHILD" (
+				echo	%%A	%%B %%C									>> mdointerface.s
+				echo	extern unsigned char %%B;					>> mdointerface.h
+			) else (
+				echo	%%A	%%B	%%C									>> mdointerface.s
+			)
+
+		)
+	)
+
+	echo.															>> mdointerface.s
+	echo .endif	; MDO_SUPPORT										>> mdointerface.s
+	echo.															>> mdointerface.s
+	
+	echo.															>> mdointerface.h
+	echo #endif	// MDO_SUPPORT										>> mdointerface.h
+	echo.															>> mdointerface.h
+	echo #endif	// __MDOINTERFACE_H__								>> mdointerface.h
+	echo.	
+
+    call :debug %DBG_STEPS% Done building MDO interface file.
+	exit /B
+
 :clean 
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
 	call :debug %DBG_STEPS% Cleaning...
@@ -548,7 +636,7 @@ goto :orchestration
 	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\LibrarySources.txt) do (
 		set LIBFILE=%%A
 		if NOT "%LIBFILE:~0,1%"==";" (
-			call :replace_variables "!LIBFILE!"
+			call :replace_variables !LIBFILE!
 			set LIBFILE=!VALUE!
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			if /I "%%~xA"==".c" (
@@ -670,6 +758,7 @@ call :exec_action build start %BUILD_START_ACTION%
 call :create_dir_struct
 call :house_cleaning
 call :application_settings
+if !MDO_SUPPORT!==1 call :mdo_settings
 
 if /I not "%2"=="clean" GOTO :orchestration_cont1
 call :clean

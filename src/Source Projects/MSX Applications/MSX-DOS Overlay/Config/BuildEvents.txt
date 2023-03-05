@@ -14,7 +14,7 @@ BUILD_START_ACTION
 ;	Not executed if build clean without all
 BEFORE_COMPILE_ACTION
 AFTER_COMPILE_ACTION
-AFTER_BINARY_ACTION
+AFTER_BINARY_ACTION	copy ".\[PROFILE]\bin\*.mdo" "..\MSX-DOS Application\[PROFILE]\bin"
 
 ;----------------------------------------------------------
 ; Always executed in build end

@@ -9,11 +9,8 @@
 #include "targetconfig.h"
 #include "applicationsettings.h"
 
-#ifdef OVERLAY_SUPPORT
-#include "MSX/MSX-DOS/mdoservices.h"
-extern unsigned char OVERLAY_ONE;
-void mdoChildHello_hook(void);
-void mdoChildGoodbye_hook(void);
+#ifdef MDO_SUPPORT
+#include "mdointerface.h"
 #endif
 
 // ----------------------------------------------------------
@@ -87,7 +84,7 @@ unsigned char main(char** argv, int argc) {
 
 // Example of Overlay support.
 // Remove it from your application if you're not using overlays.
-#ifdef OVERLAY_SUPPORT
+#ifdef MDO_SUPPORT
 	unsigned char r = mdoLoad(&OVERLAY_ONE);
 	if (r) {
 		print("Error loading MDO.\r\n\0");

@@ -57,6 +57,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="applicationsettings.h" />
+    <ClInclude Include="mdointerface.h" />
     <ClInclude Include="MSX\BIOS\msxbios.h" />
     <ClInclude Include="MSX\MSX-DOS\mdoservices.h" />
     <ClInclude Include="targetconfig.h" />
@@ -84,6 +85,7 @@
     <Text Include="Config\IncludeDirectories.txt" />
     <Text Include="Config\Libraries.txt" />
     <Text Include="Config\LibrarySources.txt" />
+    <Text Include="Config\MDOSettings.txt" />
     <Text Include="Config\Symbols.txt" />
     <Text Include="Config\TargetConfig_Debug.txt" />
     <Text Include="Config\TargetConfig_Release.txt" />

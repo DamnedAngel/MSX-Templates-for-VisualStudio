@@ -10,7 +10,7 @@
 	.include "MSX/BIOS/msxbios.s"
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
-.if OVERLAY_SUPPORT
+.if MDO_SUPPORT
     .include "MSX/MSX-DOS/mdoservices.s"
 .endif
 
@@ -174,7 +174,7 @@ programEnd:
 ;----------------------------------------------------------
 ;	Segments order
 ;----------------------------------------------------------
- .if OVERLAY_SUPPORT
+ .if MDO_SUPPORT
     .area _MDONAME
     .area _MDOHOOKS
     .area _MDOCHILDLIST
@@ -196,7 +196,7 @@ programEnd:
 ;   ========== MDO SEGMENTS ==========
 ;   ==================================
 
-.if OVERLAY_SUPPORT
+.if MDO_SUPPORT
 ;----------------------------------------------------------
 ;	MDO name
 	.area	_MDONAME
@@ -225,6 +225,8 @@ mdoChildren:
 ;	MDO Services
 	.area	_MDOSERVICES
     MDO_SERVICES
+
+.include "mdointerface.s"
 .endif
 
 ;   =====================================

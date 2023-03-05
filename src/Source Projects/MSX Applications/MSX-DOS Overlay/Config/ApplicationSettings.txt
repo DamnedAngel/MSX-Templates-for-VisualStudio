@@ -11,13 +11,8 @@ PROJECT_TYPE			MDO
 ;----------------------------------------------------------
 ;	crt0 features
 GLOBALS_INITIALIZER		_ON             			; _ON: include routine to initialize global variables; _OFF: Don't include
+MDO_SUPPORT             _ON                         ; This project IS an MDO. Always leave _ON.
 
-;----------------------------------------------------------
-;	MDO settings
-MDO_PARENT_OBJ_PATH     ../MSX-DOS Application/[PROFILE]/objs
-FILESTART               PARENT_AFTERHEAP
-
-                                                    
 ;----------------------------------------------------------
 ;	C Calling Convention
 SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
