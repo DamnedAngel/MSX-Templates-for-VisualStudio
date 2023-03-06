@@ -60,6 +60,47 @@ void print(char* msg) {
 	return;
 }
 
+//	----------------------------------------------------------
+//	This is an example how to use MDOs (overlay modules)
+//	Remove it from your application if you're not using overlays.
+#ifdef MDO_SUPPORT
+unsigned char useMDO() {
+	unsigned char r = mdoLoad(&OVERLAY_ONE);
+	if (r) {
+		print("Error loading MDO.\r\n\0");
+		return r;
+	}
+	print("MDO loaded successfully.\r\n\0");
+
+	r = mdoLink(&OVERLAY_ONE);
+	if (r) {
+		print("Error linking MDO.\r\n\0");
+		return r;
+	}
+	print("MDO linked successfully.\r\n\0");
+
+	mdoChildHello_hook();
+
+	mdoChildGoodbye_hook();
+
+	r = mdoUnlink(&OVERLAY_ONE);
+	if (r) {
+		print("Error unlinking MDO.\r\n\0");
+		return r;
+	}
+	print("MDO unlinked successfully.\r\n\0");
+
+	r = mdoRelease(&OVERLAY_ONE);
+	if (r) {
+		print("Error releasing MDO.\r\n\0");
+		return r;
+	}
+	print("MDO released successfully.\r\n\0");
+
+	return 0;
+}
+#endif
+
 // ----------------------------------------------------------
 //	This is the main function for your C MSX APP!
 //
@@ -82,44 +123,10 @@ unsigned char main(char** argv, int argc) {
 	}
 #endif
 
-// Example of Overlay support.
-// Remove it from your application if you're not using overlays.
 #ifdef MDO_SUPPORT
-	unsigned char r = mdoLoad(&OVERLAY_ONE);
-	if (r) {
-		print("Error loading MDO.\r\n\0");
-		return r;
-	}
-	print("MDO loaded successfully.\r\n\0");
-
-	r = mdoLink(&OVERLAY_ONE);
-	if (r) {
-		print("Error linking MDO.\r\n\0");
-		return r;
-	}
-	print("MDO linked successfully.\r\n\0");
-	
-	mdoChildHello_hook();
-
-	mdoChildGoodbye_hook(); 
-		
-	r = mdoUnlink(&OVERLAY_ONE);
-	if (r) {
-		print("Error unlinking MDO.\r\n\0");
-		return r;
-	}
-	print("MDO unlinked successfully.\r\n\0");
-
-	r=mdoRelease(&OVERLAY_ONE);
-	if (r) {
-		print("Error releasing MDO.\r\n\0");
-		return r;
-	}
-	print("MDO released successfully.\r\n\0");
+	return useMDO();
+#else
+	return 0;
 #endif
 
-	return 0;
 }
-
-
-

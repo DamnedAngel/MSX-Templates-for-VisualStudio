@@ -83,7 +83,7 @@ void activate(void) {
 
 // ----------------------------------------------------------
 //	This is the custom deactivation function for your C MDO!
-//	Invoked when the MDO is inlinked.
+//	Invoked when the MDO is unlinked.
 void deactivate(void) {
 	print("MDO deactivated!\r\n\0");
 }

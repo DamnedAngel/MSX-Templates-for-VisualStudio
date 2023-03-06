@@ -30,7 +30,7 @@ _main::
 	pop		hl
 	xor		a
 	cp		e
-	jr z,	_mainEnding
+	jr z,	_mainContinue
 	ld		b,e
 .else
 	ld      ix, #0			; retrieve param address from stack
@@ -39,7 +39,7 @@ _main::
 	ld		h, 3(ix)
     ld      a, 4(ix)
 	or		a
-	jr z,	_mainEnding
+	jr z,	_mainContinue
 	ld		b,a
 .endif
 
@@ -56,14 +56,28 @@ _paramLoop:
 	djnz	_paramLoop
 .endif
 	
+;   Use MDO
+_mainContinue:
+.if MDO_SUPPORT
+;	ld		hl, #OVERLAY_ONE
+.else
+	ld		a, #0
+.endif
+
 ;   Return to MSX-DOS
 _mainEnding:
-.if __SDCCCALL
-	ld		a,#0
-.else
-	ld		l,#0
+.ifeq __SDCCCALL=0
+	ld		l,a
 .endif
+
 	ret
+
+.if MDO_SUPPORT
+;	----------------------------------------------------------
+;	This is an example how to use MDOs (overlay modules)
+;	Remove it from your application if you're not using overlays.
+useMDO:
+.endif
 
 ; ----------------------------------------------------------
 ;   Once you replaced the commands in the _main routine
