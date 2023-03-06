@@ -50,6 +50,8 @@ onLoad::
 ;----------------------------------------------------------
 ;	Segments order
 ;----------------------------------------------------------
+    .area _CODE
+
     .area _MDONAME
     .area _MDOHOOKS
     .area _MDOCHILDLIST
@@ -59,7 +61,6 @@ onLoad::
     .area _MDOHOOKIMPLEMENTATIONSFINAL
     .area _MDOSERVICES
 
-    .area _CODE
     .area _HOME
     .area _GSINIT
     .area _GSFINAL

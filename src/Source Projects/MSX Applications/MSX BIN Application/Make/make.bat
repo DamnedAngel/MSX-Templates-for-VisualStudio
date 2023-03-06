@@ -25,6 +25,7 @@ set OBJLIST=
 set INCDIRS=
 
 set SDCC_CALL=1
+set CODE_AFTER_MDO=0
 set BIN_SIZE=
 set FILE_START=0x0100
 set DEC_HEADER_SIZE=0
@@ -195,18 +196,20 @@ rem	set VALUE=!VALUE:"=!
 		set VALUE=0
 
 		if ".%%A"=="._HEADER0" set /A VALUE=0x%%B
-		if ".%%A"=="._MDONAME" set /A VALUE=0x%%B
-		if ".%%A"=="._MDOHOOKS" set /A VALUE=0x%%B
-		if ".%%A"=="._MDOCHILDLIST" set /A VALUE=0x%%B
-		if ".%%A"=="._MDOCHILDLISTFINAL" set /A VALUE=0x%%B
-		if ".%%A"=="._MDOCHILDREN" set /A VALUE=0x%%B
-		if ".%%A"=="._MDOHOOKIMPLEMENTATIONS" set /A VALUE=0x%%B
-		if ".%%A"=="._MDOHOOKIMPLEMENTATIONSFINAL" set /A VALUE=0x%%B
-		if ".%%A"=="._MDOSERVICES" set /A VALUE=0x%%B
+		if CODE_AFTER_MDO==1 (
+			if ".%%A"=="._MDONAME" set /A VALUE=0x%%B
+			if ".%%A"=="._MDOHOOKS" set /A VALUE=0x%%B
+			if ".%%A"=="._MDOCHILDLIST" set /A VALUE=0x%%B
+			if ".%%A"=="._MDOCHILDLISTFINAL" set /A VALUE=0x%%B
+			if ".%%A"=="._MDOCHILDREN" set /A VALUE=0x%%B
+			if ".%%A"=="._MDOHOOKIMPLEMENTATIONS" set /A VALUE=0x%%B
+			if ".%%A"=="._MDOHOOKIMPLEMENTATIONSFINAL" set /A VALUE=0x%%B
+			if ".%%A"=="._MDOSERVICES" set /A VALUE=0x%%B
+		)
 
 		if !VALUE! gtr 0 (
 			set /A DEC_HEADER_SIZE=!DEC_HEADER_SIZE!+!VALUE!
-			call :debug %DBG_EXTROVERT% Found !VALUE! bytes in %%A [!DEC_HEADER_SIZE!]
+			call :debug %DBG_EXTROVERT% Found !VALUE! bytes in %%A ^(!DEC_HEADER_SIZE!^)
 		)
 	)
 	shift
@@ -546,10 +549,7 @@ rem	set VALUE=!VALUE:"=!
 	echo ; DO NOT BOTHER EDITING THIS.								>> mdointerface.s
 	echo ; ALL CHANGES WILL BE LOST.								>> mdointerface.s
 	echo ;-------------------------------------------------			>> mdointerface.s
-	echo .include "applicationsettings.s"							>> mdointerface.s
 	echo .globl s__AFTERHEAP										>> mdointerface.s
-	echo.															>> mdointerface.s
-	echo .if MDO_SUPPORT											>> mdointerface.s
 	echo.															>> mdointerface.s
 
 	for /F "tokens=1,2*" %%A in  (%MSX_CFG_PATH%\MDOSettings.txt) do (
@@ -594,10 +594,6 @@ rem	set VALUE=!VALUE:"=!
 		)
 	)
 
-	echo.															>> mdointerface.s
-	echo .endif	; MDO_SUPPORT										>> mdointerface.s
-	echo.															>> mdointerface.s
-	
 	echo.															>> mdointerface.h
 	echo #endif	// MDO_SUPPORT										>> mdointerface.h
 	echo.															>> mdointerface.h
@@ -706,8 +702,13 @@ rem	set VALUE=!VALUE:"=!
 		set CODE_LOC=0x!=exitcode!
 
 		call :debug %DBG_OUTPUT% FILE_START is !FILE_START!.
-		call :debug %DBG_OUTPUT% _HEADER and _MDO segments add up to !HEADER_SIZE! [!DEC_HEADER_SIZE!] bytes.
+		if CODE_AFTER_MDO==1 (
+			call :debug %DBG_OUTPUT% _HEADER and _MDO segments add up to !HEADER_SIZE! ^(!DEC_HEADER_SIZE!^) bytes.
+		) ELSE (
+			call :debug %DBG_OUTPUT% _HEADER contains !HEADER_SIZE! ^(!DEC_HEADER_SIZE!^) bytes.
+		)
 		call :debug %DBG_OUTPUT% CODE-LOC determined to be !CODE_LOC!.
+
 	)
 
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------

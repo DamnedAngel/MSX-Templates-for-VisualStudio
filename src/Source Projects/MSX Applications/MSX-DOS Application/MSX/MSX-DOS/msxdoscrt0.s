@@ -174,6 +174,8 @@ programEnd:
 ;----------------------------------------------------------
 ;	Segments order
 ;----------------------------------------------------------
+    .area _CODE
+
  .if MDO_SUPPORT
     .area _MDONAME
     .area _MDOHOOKS
@@ -182,7 +184,7 @@ programEnd:
     .area _MDOCHILDREN
     .area _MDOSERVICES
 .endif
-    .area _CODE
+
     .area _HOME
     .area _GSINIT
     .area _GSFINAL
