@@ -1,7 +1,7 @@
 //-------------------------------------------------		
 // mdointerface.h created automatically					
 // by make.bat												
-// on  7:29:59.76 , Mon 03/06/2023 					
+// on 20:11:21.04 , Sun 03/12/2023 					
 //															
 // DO NOT BOTHER EDITING THIS.								
 // ALL CHANGES WILL BE LOST.								
@@ -12,8 +12,13 @@
 															
 #ifdef MDO_SUPPORT											
 															
-#include "../MSX-DOS Application/MSX/MSX-DOS/mdoservices.h"	
+extern unsigned char mdoLoad(unsigned char*);				
+extern unsigned char mdoRelease(unsigned char*);			
+extern unsigned char mdoLink(unsigned char*);				
+extern unsigned char mdoUnlink(unsigned char*);			
+															
 															
 #endif	// MDO_SUPPORT										
 															
 #endif	// __MDOINTERFACE_H__								
+															

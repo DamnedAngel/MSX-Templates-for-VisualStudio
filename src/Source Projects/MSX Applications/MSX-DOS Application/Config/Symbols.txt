@@ -9,6 +9,10 @@
 ;   <symbol match regex> <substring search regex>  <substring replace string>
 ;----------------------------------------------------------
 _[a-zA-Z0-9]*_hook
+_mdoLoad
+_mdoRelease
+_mdoLink
+_mdoUnlink
 _mdoAbend
 s__AFTERHEAP s__A PARENT_A
 

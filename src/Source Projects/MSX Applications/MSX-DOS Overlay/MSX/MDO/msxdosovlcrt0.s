@@ -111,7 +111,7 @@ mdoHookImplementationsFinal::
 ;	MDO services
 	.area	_MDOSERVICES
 
-.include "mdointerface.s"
+.include "mdoimplementation.s"
 
 ;   =====================================
 ;   ========== GSINIT SEGMENTS ==========

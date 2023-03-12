@@ -197,6 +197,8 @@ rem	set VALUE=!VALUE:"=!
 
 		if ".%%A"=="._HEADER0" set /A VALUE=0x%%B
 		if CODE_AFTER_MDO==1 (
+			rem could not get SDCC to put _CODE after _MDO*,
+			rem so I parameterized this section.
 			if ".%%A"=="._MDONAME" set /A VALUE=0x%%B
 			if ".%%A"=="._MDOHOOKS" set /A VALUE=0x%%B
 			if ".%%A"=="._MDOCHILDLIST" set /A VALUE=0x%%B
@@ -525,7 +527,7 @@ rem	set VALUE=!VALUE:"=!
 
 :mdo_settings
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
-	call :debug %DBG_STEPS% Building MDO interface file...
+	call :debug %DBG_STEPS% Building MDO support file...
 	echo //-------------------------------------------------		>  mdointerface.h
 	echo // mdointerface.h created automatically					>> mdointerface.h
 	echo // by make.bat												>> mdointerface.h
@@ -540,6 +542,11 @@ rem	set VALUE=!VALUE:"=!
 	echo.															>> mdointerface.h
 	echo #ifdef MDO_SUPPORT											>> mdointerface.h
 	echo.															>> mdointerface.h
+	echo extern unsigned char mdoLoad(unsigned char*);				>> mdointerface.h
+	echo extern unsigned char mdoRelease(unsigned char*);			>> mdointerface.h
+	echo extern unsigned char mdoLink(unsigned char*);				>> mdointerface.h
+	echo extern unsigned char mdoUnlink(unsigned char*);			>> mdointerface.h
+	echo.															>> mdointerface.h
 
 	echo ;-------------------------------------------------			>  mdointerface.s
 	echo ; mdointerface.s created automatically						>> mdointerface.s
@@ -549,8 +556,23 @@ rem	set VALUE=!VALUE:"=!
 	echo ; DO NOT BOTHER EDITING THIS.								>> mdointerface.s
 	echo ; ALL CHANGES WILL BE LOST.								>> mdointerface.s
 	echo ;-------------------------------------------------			>> mdointerface.s
-	echo .globl s__AFTERHEAP										>> mdointerface.s
 	echo.															>> mdointerface.s
+	echo .globl _mdoLoad											>> mdointerface.s
+	echo .globl _mdoRelease											>> mdointerface.s
+	echo .globl _mdoLink											>> mdointerface.s
+	echo .globl _mdoUnlink											>> mdointerface.s
+	echo.															>> mdointerface.s
+	
+	echo ;-------------------------------------------------			>  mdoimplementation.s
+	echo ; mdoimplementation.s created automatically				>> mdoimplementation.s
+	echo ; by make.bat												>> mdoimplementation.s
+	echo ; on %MSX_BUILD_TIME%, %MSX_BUILD_DATE%					>> mdoimplementation.s
+	echo ;															>> mdoimplementation.s
+	echo ; DO NOT BOTHER EDITING THIS.								>> mdoimplementation.s
+	echo ; ALL CHANGES WILL BE LOST.								>> mdoimplementation.s
+	echo ;-------------------------------------------------			>> mdoimplementation.s
+	echo .globl s__AFTERHEAP										>> mdoimplementation.s
+	echo.															>> mdoimplementation.s
 
 	for /F "tokens=1,2*" %%A in  (%MSX_CFG_PATH%\MDOSettings.txt) do (
 		set TAG=%%A
@@ -564,13 +586,12 @@ rem	set VALUE=!VALUE:"=!
 			if /I ".!TAG!"==".MDO_APPLICATION_PROJECT_PATH" (
 				set MDO_APP_PROJECT_PATH=!VALUE!
 				set MDO_APP_MDO_PATH=!MDO_APP_PROJECT_PATH!/MSX/MSX-DOS
-				echo .include "!MDO_APP_MDO_PATH!/mdostructures.s"	>> mdointerface.s
-				echo #include "!MDO_APP_MDO_PATH!/mdoservices.h"	>> mdointerface.h
+				echo .include "!MDO_APP_MDO_PATH!/mdostructures.s"	>> mdoimplementation.s
 			) else if /I ".!TAG!"==".MDO_PARENT_PROJECT_PATH" (
 				set MDO_PARENT_PROJECT_PATH=!VALUE!
 				set /p MDO_PARENT_AFTERHEAP=<"!MDO_PARENT_PROJECT_PATH!/!PROFILE!/objs/PARENT_AFTERHEAP"
 				set MDO_PARENT_INTERFACE=!MDO_PARENT_PROJECT_PATH!/!PROFILE!/objs/parentinterface.s
-				echo .include "!MDO_PARENT_INTERFACE!"				>> mdointerface.s
+				echo .include "!MDO_PARENT_INTERFACE!"				>> mdoimplementation.s
 			) else if /I ".!TAG!"==".FILESTART" (
 				if /I ".%%B"==".PARENT_AFTERHEAP" (
 					set FILE_START=!MDO_PARENT_AFTERHEAP!
@@ -581,16 +602,17 @@ rem	set VALUE=!VALUE:"=!
 			) else if /I ".!TAG!"==".MDO_HOOK" (
 				set HOOK_TEMPLATE=%%B %%C
 				for /F "tokens=1,2* delims=|" %%D in ("!HOOK_TEMPLATE!") do (
-					echo	%%A	%%E									>> mdointerface.s
-					echo	extern %%D %%E_hook %%F;						>> mdointerface.h
+					echo	%%A	%%E									>> mdoimplementation.s
+					echo	extern %%D %%E_hook %%F;				>> mdointerface.h
+					echo	.globl _%%E_hook						>> mdointerface.s
 				)
 			) else if /I ".!TAG!"==".MDO_CHILD" (
-				echo	%%A	%%B %%C									>> mdointerface.s
+				echo	%%A	%%B %%C									>> mdoimplementation.s
 				echo	extern unsigned char %%B;					>> mdointerface.h
+				echo	.globl _%%B									>> mdointerface.s
 			) else (
-				echo	%%A	%%B	%%C									>> mdointerface.s
+				echo	%%A	%%B	%%C									>> mdoimplementation.s
 			)
-
 		)
 	)
 
@@ -598,9 +620,9 @@ rem	set VALUE=!VALUE:"=!
 	echo #endif	// MDO_SUPPORT										>> mdointerface.h
 	echo.															>> mdointerface.h
 	echo #endif	// __MDOINTERFACE_H__								>> mdointerface.h
-	echo.	
+	echo.															>> mdointerface.h
 
-    call :debug %DBG_STEPS% Done building MDO interface file.
+    call :debug %DBG_STEPS% Done building MDO support files.
 	exit /B
 
 :clean 

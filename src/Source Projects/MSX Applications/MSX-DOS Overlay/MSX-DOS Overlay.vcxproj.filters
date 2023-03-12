@@ -73,7 +73,7 @@
     <None Include="msxdosovl.s">
       <Filter>ASM Source Files</Filter>
     </None>
-    <None Include="mdointerface.s">
+    <None Include="mdoimplementation.s">
       <Filter>ASM Source Files</Filter>
     </None>
   </ItemGroup>

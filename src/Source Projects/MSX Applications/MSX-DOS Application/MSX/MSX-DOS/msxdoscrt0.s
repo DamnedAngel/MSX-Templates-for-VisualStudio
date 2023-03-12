@@ -157,14 +157,16 @@ cont:
 
 ;----------------------------------------------------------
 ;	Step 4: Program termination.
-;	Termination code for DOS 2 was returned on L.         
+;	Termination code for DOS 2 was returned:
+;   - on l for sdcccall(0);
+;   - on a for sdcccall(1).
 programEnd:
-    ld      c,#0x62	    ; DOS 2 function for program termination (_TERM)
 .if __SDCCCALL
     ld      b,a         ; termination code
 .else
     ld      b,l         ; termination code
 .endif
+    ld      c,#0x62	    ; DOS 2 function for program termination (_TERM)
     call    5			; On DOS 2 this terminates; on DOS 1 this returns...
     ld      c,#0x0
     jp      5			;...and then this one terminates
@@ -228,7 +230,7 @@ mdoChildren:
 	.area	_MDOSERVICES
     MDO_SERVICES
 
-.include "mdointerface.s"
+.include "mdoimplementation.s"
 .endif
 
 ;   =====================================

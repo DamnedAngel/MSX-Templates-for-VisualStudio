@@ -59,13 +59,13 @@
     <ClInclude Include="applicationsettings.h" />
     <ClInclude Include="mdointerface.h" />
     <ClInclude Include="MSX\BIOS\msxbios.h" />
-    <ClInclude Include="MSX\MSX-DOS\mdoservices.h" />
     <ClInclude Include="targetconfig.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="applicationsettings.s" />
     <None Include="Make\make.sh" />
     <None Include="Make\symbol.py" />
+    <None Include="mdoimplementation.s" />
     <None Include="mdointerface.s" />
     <None Include="msxdosapp.s" />
     <None Include="Make\make.bat" />

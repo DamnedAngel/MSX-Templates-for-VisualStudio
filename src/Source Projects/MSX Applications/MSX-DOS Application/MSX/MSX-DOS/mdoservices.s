@@ -5,7 +5,8 @@
 ;----------------------------------------------------------
 
 	.include "MSX/BIOS/msxbios.s"
-
+	.globl _onMDOAbend
+		 
 mdoStatus_loaded			.equ	#0b00000001
 mdoStatus_linked			.equ	#0b00000010
 
@@ -379,11 +380,7 @@ mdoUnlink_setStatusUnlinked:
 	jp		mdoService_finalize
 
 _mdoAbend::
-.if __SDCCCALL
-    ld      a, #0xff     ; termination code
-.else
-    ld      l, #0xff     ; termination code
-.endif
-    jp programEnd
+	call	_onMDOAbend
+    jp		programEnd
 
 .endm

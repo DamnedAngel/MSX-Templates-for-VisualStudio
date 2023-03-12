@@ -33,9 +33,6 @@
     <Filter Include="ASM Source Files\MSX\MSX-DOS">
       <UniqueIdentifier>{fb61106d-43ca-44a6-804d-3c9e63975b1a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\MSX\MSX-DOS">
-      <UniqueIdentifier>{19181468-d6f4-4c7b-baa4-e1799248dd8d}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetconfig.h">
@@ -46,9 +43,6 @@
     </ClInclude>
     <ClInclude Include="applicationsettings.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MSX\MSX-DOS\mdoservices.h">
-      <Filter>Header Files\MSX\MSX-DOS</Filter>
     </ClInclude>
     <ClInclude Include="mdointerface.h">
       <Filter>Header Files</Filter>
@@ -86,6 +80,9 @@
       <Filter>ASM Source Files\MSX\MSX-DOS</Filter>
     </None>
     <None Include="mdointerface.s">
+      <Filter>ASM Source Files</Filter>
+    </None>
+    <None Include="mdoimplementation.s">
       <Filter>ASM Source Files</Filter>
     </None>
   </ItemGroup>

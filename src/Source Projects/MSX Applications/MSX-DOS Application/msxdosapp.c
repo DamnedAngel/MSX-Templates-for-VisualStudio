@@ -60,10 +60,10 @@ void print(char* msg) {
 	return;
 }
 
+#ifdef MDO_SUPPORT
 //	----------------------------------------------------------
 //	This is an example how to use MDOs (overlay modules)
 //	Remove it from your application if you're not using overlays.
-#ifdef MDO_SUPPORT
 unsigned char useMDO() {
 	unsigned char r = mdoLoad(&OVERLAY_ONE);
 	if (r) {
@@ -79,9 +79,8 @@ unsigned char useMDO() {
 	}
 	print("MDO linked successfully.\r\n\0");
 
-	mdoChildHello_hook();
-
-	mdoChildGoodbye_hook();
+	mdoChildHello_hook();		// routine in MDO
+	mdoChildGoodbye_hook();		// routine in MDO
 
 	r = mdoUnlink(&OVERLAY_ONE);
 	if (r) {
@@ -98,6 +97,17 @@ unsigned char useMDO() {
 	print("MDO released successfully.\r\n\0");
 
 	return 0;
+}
+
+//	----------------------------------------------------------
+//	This is called when an MDO hook is called before it is
+//	linked to a child MDO.The application will terminate
+//	after the return of this routine.
+//	Customize here the finalization of you application.
+//  Remove it if you're not using MDOs.
+unsigned char onMDOAbend() {
+	print("Undefined hook called.\r\n\0");
+	return 0xa1;	// error code to be relayed to MSX-DOS.
 }
 #endif
 
@@ -124,7 +134,15 @@ unsigned char main(char** argv, int argc) {
 #endif
 
 #ifdef MDO_SUPPORT
-	return useMDO();
+//	useMDO returns errorcode, but in this
+//  example we will ignore it and return
+//	#0xa0 error code for all MDO errors.
+//  Remove it if you're not using MDOs.
+	if (useMDO()) {
+		return 0xa0;
+	} else {
+		return 0;
+	}
 #else
 	return 0;
 #endif
