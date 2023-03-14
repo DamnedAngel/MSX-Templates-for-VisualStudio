@@ -2,7 +2,7 @@
 
 # ----------------------------------------------------------------------------------------
 OPEN1="MSX SDCC Make Script Copyright © 2020-2023 Danilo Angelo, 2021-2023 Pedro Medeiros"
-OPEN2="version 00.06.00 - Codename Rubens"
+OPEN2="version 00.06.00 alpha 1 - Codename Sam"
 # ----------------------------------------------------------------------------------------
 
 IFS=$' \t\r\n'

@@ -3,7 +3,7 @@
 
 REM -----------------------------------------------------------------------------------
 set OPEN1=MSX SDCC Make Script Copyright © 2020-2023 Danilo Angelo, 2021 Pedro Medeiros
-set OPEN2=version 00.06.00 - Codename Rubens
+set OPEN2=version 00.06.00 alpha 1 - Codename Sam
 REM -----------------------------------------------------------------------------------
 
 set CURRENT_DIR=%CD%
