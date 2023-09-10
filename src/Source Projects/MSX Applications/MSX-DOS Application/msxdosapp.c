@@ -64,7 +64,7 @@ void print(char* msg) {
 //	----------------------------------------------------------
 //	This is an example how to use MDOs (overlay modules)
 //	Remove it from your application if you're not using overlays.
-unsigned char useMDO() {
+unsigned char useMDO(void) {
 	unsigned char r = mdoLoad(&OVERLAY_ONE);
 	if (r) {
 		print("Error loading MDO.\r\n\0");
@@ -105,7 +105,7 @@ unsigned char useMDO() {
 //	after the return of this routine.
 //	Customize here the finalization of you application.
 //  Remove it if you're not using MDOs.
-unsigned char onMDOAbend() {
+unsigned char onMDOAbend(void) {
 	print("Undefined hook called.\r\n\0");
 	return 0xa1;	// error code to be relayed to MSX-DOS.
 }
