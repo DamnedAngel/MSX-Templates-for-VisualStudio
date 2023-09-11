@@ -9,6 +9,10 @@
 #include "targetconfig.h"
 #include "applicationsettings.h"
 
+#ifdef MDO_SUPPORT
+#include "mdointerface.h"
+#endif
+
 // ----------------------------------------------------------
 //	This is an example of embedding asm code into C.
 //	This is only for the demo app.
@@ -56,6 +60,57 @@ void print(char* msg) {
 	return;
 }
 
+#ifdef MDO_SUPPORT
+//	----------------------------------------------------------
+//	This is an example how to use MDOs (overlay modules)
+//	Remove it from your application if you're not using overlays.
+unsigned char useMDO(void) {
+	unsigned char r = mdoLoad(&OVERLAY_ONE);
+	if (r) {
+		print("Error loading MDO.\r\n\0");
+		return r;
+	}
+	print("MDO loaded successfully.\r\n\0");
+
+	r = mdoLink(&OVERLAY_ONE);
+	if (r) {
+		print("Error linking MDO.\r\n\0");
+		return r;
+	}
+	print("MDO linked successfully.\r\n\0");
+
+	mdoChildHello_hook();		// routine in MDO
+	mdoChildGoodbye_hook();		// routine in MDO
+
+	r = mdoUnlink(&OVERLAY_ONE);
+	if (r) {
+		print("Error unlinking MDO.\r\n\0");
+		return r;
+	}
+	print("MDO unlinked successfully.\r\n\0");
+
+	r = mdoRelease(&OVERLAY_ONE);
+	if (r) {
+		print("Error releasing MDO.\r\n\0");
+		return r;
+	}
+	print("MDO released successfully.\r\n\0");
+
+	return 0;
+}
+
+//	----------------------------------------------------------
+//	This is called when an MDO hook is called before it is
+//	linked to a child MDO.The application will terminate
+//	after the return of this routine.
+//	Customize here the finalization of you application.
+//  Remove it if you're not using MDOs.
+unsigned char onMDOAbend(void) {
+	print("Undefined hook called.\r\n\0");
+	return 0xa1;	// error code to be relayed to MSX-DOS.
+}
+#endif
+
 // ----------------------------------------------------------
 //	This is the main function for your C MSX APP!
 //
@@ -69,6 +124,7 @@ unsigned char main(char** argv, int argc) {
 #else
 	print("Hello MSX from C (sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
+
 #ifdef CMDLINE_PARAMETERS
 	print("Parameters:\r\n\0");
 	for (int i = 0; i < argc; i++) {
@@ -76,8 +132,19 @@ unsigned char main(char** argv, int argc) {
 		_print("\r\n\0");
 	}
 #endif
+
+#ifdef MDO_SUPPORT
+//	useMDO returns errorcode, but in this
+//  example we will ignore it and return
+//	#0xa0 error code for all MDO errors.
+//  Remove it if you're not using MDOs.
+	if (useMDO()) {
+		return 0xa0;
+	} else {
+		return 0;
+	}
+#else
 	return 0;
+#endif
+
 }
-
-
-

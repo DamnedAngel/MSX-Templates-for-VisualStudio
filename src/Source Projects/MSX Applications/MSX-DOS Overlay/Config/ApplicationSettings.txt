@@ -1,0 +1,41 @@
+;----------------------------------------------------------
+;	ApplicationSettings.txt - by Danilo Angelo, 2023
+;
+;	MSX-DOS overlay project general configuration.
+;----------------------------------------------------------
+
+;----------------------------------------------------------
+;	Project Type
+PROJECT_TYPE			MDO
+
+;----------------------------------------------------------
+;	crt0 features
+GLOBALS_INITIALIZER		_ON             			; _ON: include routine to initialize global variables; _OFF: Don't include
+MDO_SUPPORT             _ON                         ; This project IS an MDO. Always leave _ON.
+
+;----------------------------------------------------------
+;	C Calling Convention
+SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
+                                                    ; SDCCCALL=1    New C calling convention (REGs)
+
+;----------------------------------------------------------
+;	Code segment (.area _CODE) start address
+;	If you don't know what you are doing,
+;	LEAVE IT COMMENTED for automatic setting.
+;CODE_LOC				0x8100
+
+;----------------------------------------------------------
+;	Data segment (.area _DATA) start address
+;		0 -> data segment immediately after code (default)
+;		other value -> data segment address
+;	If you don't know what you are doing,
+;	LEAVE IT AT 0 OR COMMENTED for automatic setting.
+;DATA_LOC				0
+
+;----------------------------------------------------------
+;	Heap Size
+;		0 -> No heap space (default)
+;		other value -> Some heap space
+;	If you aren't using dynamic memory allocation,
+;	LEAVE IT AT 0.
+HEAP_SIZE				0

@@ -57,6 +57,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="applicationsettings.h" />
+    <ClInclude Include="mdointerface.h" />
     <ClInclude Include="MSX\BIOS\msxbios.h" />
     <ClInclude Include="targetconfig.h" />
   </ItemGroup>
@@ -64,10 +65,14 @@
     <None Include="applicationsettings.s" />
     <None Include="Make\make.sh" />
     <None Include="Make\symbol.py" />
+    <None Include="mdoimplementation.s" />
+    <None Include="mdointerface.s" />
     <None Include="msxdosapp.s" />
     <None Include="Make\make.bat" />
     <None Include="MSX\BIOS\msxbios.s" />
+    <None Include="MSX\MSX-DOS\mdostructures.s" />
     <None Include="MSX\MSX-DOS\msxdoscrt0.s" />
+    <None Include="MSX\MSX-DOS\mdoservices.s" />
     <None Include="targetconfig.s" />
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +85,7 @@
     <Text Include="Config\IncludeDirectories.txt" />
     <Text Include="Config\Libraries.txt" />
     <Text Include="Config\LibrarySources.txt" />
+    <Text Include="Config\MDOSettings.txt" />
     <Text Include="Config\Symbols.txt" />
     <Text Include="Config\TargetConfig_Debug.txt" />
     <Text Include="Config\TargetConfig_Release.txt" />

@@ -10,6 +10,9 @@
 	.include "MSX/BIOS/msxbios.s"
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
+.if MDO_SUPPORT
+    .include "MSX/MSX-DOS/mdoservices.s"
+.endif
 
 	.globl	_main
 
@@ -154,13 +157,16 @@ cont:
 
 ;----------------------------------------------------------
 ;	Step 4: Program termination.
-;	Termination code for DOS 2 was returned on L.         
-    ld      c,#0x62	    ; DOS 2 function for program termination (_TERM)
+;	Termination code for DOS 2 was returned:
+;   - on l for sdcccall(0);
+;   - on a for sdcccall(1).
+programEnd:
 .if __SDCCCALL
-    ld      b,a
+    ld      b,a         ; termination code
 .else
-    ld      b,l
+    ld      b,l         ; termination code
 .endif
+    ld      c,#0x62	    ; DOS 2 function for program termination (_TERM)
     call    5			; On DOS 2 this terminates; on DOS 1 this returns...
     ld      c,#0x0
     jp      5			;...and then this one terminates
@@ -171,6 +177,16 @@ cont:
 ;	Segments order
 ;----------------------------------------------------------
     .area _CODE
+
+ .if MDO_SUPPORT
+    .area _MDONAME
+    .area _MDOHOOKS
+    .area _MDOCHILDLIST
+    .area _MDOCHILDLISTFINAL
+    .area _MDOCHILDREN
+    .area _MDOSERVICES
+.endif
+
     .area _HOME
     .area _GSINIT
     .area _GSFINAL
@@ -178,6 +194,44 @@ cont:
     .area _DATA
     .area _INITIALIZED
     .area _HEAP
+    .area _AFTERHEAP
+
+;   ==================================
+;   ========== MDO SEGMENTS ==========
+;   ==================================
+
+.if MDO_SUPPORT
+;----------------------------------------------------------
+;	MDO name
+	.area	_MDONAME
+mdoName:
+
+;----------------------------------------------------------
+;	MDO hooks
+	.area	_MDOHOOKS
+mdoHooks:
+
+;----------------------------------------------------------
+;	MDO child list
+	.area	_MDOCHILDLIST
+mdoChildList::
+
+    .area _MDOCHILDLISTFINAL
+mdoChildListFinal::
+    .dw     #0
+
+;----------------------------------------------------------
+;	MDO children
+	.area	_MDOCHILDREN
+mdoChildren:
+
+;----------------------------------------------------------
+;	MDO Services
+	.area	_MDOSERVICES
+    MDO_SERVICES
+
+.include "mdoimplementation.s"
+.endif
 
 ;   =====================================
 ;   ========== GSINIT SEGMENTS ==========
@@ -210,3 +264,4 @@ _heap_top::
 ;   ==================================
     .area	_HEAP
 _HEAP_start::
+    .ds #HEAP_SIZE

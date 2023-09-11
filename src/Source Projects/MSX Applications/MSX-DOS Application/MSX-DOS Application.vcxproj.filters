@@ -44,6 +44,9 @@
     <ClInclude Include="applicationsettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mdointerface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="MSX\BIOS\msxbios.s">
@@ -69,6 +72,18 @@
     </None>
     <None Include="Make\symbol.py">
       <Filter>Make</Filter>
+    </None>
+    <None Include="MSX\MSX-DOS\mdoservices.s">
+      <Filter>ASM Source Files\MSX\MSX-DOS</Filter>
+    </None>
+    <None Include="MSX\MSX-DOS\mdostructures.s">
+      <Filter>ASM Source Files\MSX\MSX-DOS</Filter>
+    </None>
+    <None Include="mdointerface.s">
+      <Filter>ASM Source Files</Filter>
+    </None>
+    <None Include="mdoimplementation.s">
+      <Filter>ASM Source Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +117,9 @@
       <Filter>Project Config</Filter>
     </Text>
     <Text Include="Config\BuildEvents.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\MDOSettings.txt">
       <Filter>Project Config</Filter>
     </Text>
   </ItemGroup>
