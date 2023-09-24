@@ -8,6 +8,7 @@
 ;----------------------------------------------------------
 ;	General structure of a MSX BIN application
 ;	Do NOT remove.
+;	This MUST be the first entry in this file.
 MSX\MDO\msxdosovlcrt0.s
 
 ;----------------------------------------------------------
@@ -16,12 +17,13 @@ MSX\MDO\msxdosovlcrt0.s
 ;	THIS IS YOUR PROGRAM!
 ;	Choose ONE and ONLY ONE of the lines below,
 ;	and leave the other commented!
-;msxdosovl.s
-msxdosovl.c
+msxdosovl.s
+;msxdosovl.c
 
 ;----------------------------------------------------------
 ;	Additional source files
 ;	Add below additional source files for your application
 ;	using relative paths from the project folder
+;print.s
 ;yourSourceCodeHere.s
 ;yourSourceCodeHere.c

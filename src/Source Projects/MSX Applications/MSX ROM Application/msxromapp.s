@@ -11,6 +11,9 @@
 
 	.area	_CODE
 
+	.globl	_print
+	.globl	_debug
+
 STRING_COMPARE = 0
 
 ; ----------------------------------------------------------

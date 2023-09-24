@@ -12,7 +12,7 @@ PROJECT_TYPE			DOS
 ;	crt0 features
 GLOBALS_INITIALIZER		_ON             			; _ON: include routine to initialize global variables; _OFF: Don't include
 CMDLINE_PARAMETERS		_ON 						; _ON: include routine to parse cmdline parameters; _OFF: Don't include
-MDO_SUPPORT             _ON                         ; _ON: include support for overlay modules; _OFF: Don't include
+MDO_SUPPORT             _OFF                        ; _ON: include support for overlay modules; _OFF: Don't include
 
 ;----------------------------------------------------------
 ;	Temporary MSX-DOS cmdline routine start
@@ -24,7 +24,7 @@ PARAM_HANDLING_ROUTINE	0
 
 ;----------------------------------------------------------
 ;	C Calling Convention
-SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
+SDCCCALL                0                           ; SDCCCALL=0    Old C calling convention (STACK)
                                                     ; SDCCCALL=1    New C calling convention (REGs)
 
 ;----------------------------------------------------------

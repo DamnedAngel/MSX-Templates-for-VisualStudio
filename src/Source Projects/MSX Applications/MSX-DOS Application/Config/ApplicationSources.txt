@@ -8,6 +8,7 @@
 ;----------------------------------------------------------
 ;	General structure of a MSX BIN application
 ;	Do NOT remove.
+;	This MUST be the first entry in this file.
 MSX\MSX-DOS\msxdoscrt0.s
 
 ;----------------------------------------------------------
@@ -23,6 +24,7 @@ msxdosapp.c
 ;	Additional source files
 ;	Add below additional source files for your application
 ;	using relative paths from the project folder
-
+print.s
+mdo.s
 ;yourSourceCodeHere.s
 ;yourSourceCodeHere.c

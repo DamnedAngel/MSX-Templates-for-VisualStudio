@@ -11,6 +11,9 @@
 
 	.area	_CODE
 
+	.globl	_print
+	.globl	_debug
+
 ; ----------------------------------------------------------
 ;	This is the main function for your ASM MSX APP!
 ;

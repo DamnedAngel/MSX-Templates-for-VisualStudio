@@ -6,7 +6,7 @@
 
 ;----------------------------------------------------------
 ;	MDO hierarchy
-;	This project IS the base application modulo. Always leave ".".
+;	This project IS the base application module. Always leave ".".
 MDO_APPLICATION_PROJECT_PATH	.
 
 ;----------------------------------------------------------
