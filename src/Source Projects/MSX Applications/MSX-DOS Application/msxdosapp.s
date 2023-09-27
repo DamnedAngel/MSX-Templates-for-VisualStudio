@@ -64,8 +64,8 @@ paramLoop::
 mainContinue:
 ;   Calls MDO example, id MDO_SUPPORT enabled
 .if MDO_SUPPORT
-	.globl	useMDO
-	call	useMDO
+	.globl	_useMDO
+	call	_useMDO
 .else
 	ld		a, #0
 .endif

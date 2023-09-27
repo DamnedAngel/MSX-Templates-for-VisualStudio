@@ -14,18 +14,20 @@
 ; This is an example how to use MDOs (overlay modules)
 ; Replace the code below to implement your own MDO.
 ;----------------------------------------------------------
-    .include "mdointerface.s"
+    .include "targetconfig.s"
+	.include "mdointerface.s"
 	.include "printinterface.s"
 
-	useMDO::
+	_useMDO::
+	print	msgUsage
+
 	; load MDO
 	ld		hl, #_OVERLAY_ONE
 	call	_mdoLoad
 	or		a
 	ld		hl, #msgloaderror
 	jr nz,	#useMDOerror
-	ld		hl, #msgloadsuccess
-	call	__print
+	dbg		msgloadsuccess
 
 	; link MDO
 	ld		hl, #_OVERLAY_ONE
@@ -33,8 +35,7 @@
 	or		a
 	ld		hl, #msglinkerror
 	jr nz,	#useMDOerror
-	ld		hl, #msglinksuccess
-	call	__print
+	dbg		msglinksuccess
 	
 	call	_mdoChildHello_hook			; routine in MDO
 	call	_mdoChildGoodbye_hook		; routine in MDO
@@ -45,8 +46,7 @@
 	or		a
 	ld		hl, #msgunlinkerror
 	jr nz,	#useMDOerror
-	ld		hl, #msgunlinksuccess
-	call	__print
+	dbg		msgunlinksuccess
 
 	; release MDO
 	ld		hl, #_OVERLAY_ONE
@@ -54,8 +54,7 @@
 	or		a
 	ld		hl, #msgreleaseerror
 	jr nz,	#useMDOerror
-	ld		hl, #msgreleasesuccess
-	call	__print
+	dbg		msgreleasesuccess
 
 	xor a
 	ret
@@ -89,6 +88,9 @@ _onMDOAbend::
 
 ; ----------------------------------------------------------
 ;	MDO related messages
+
+msgUsage::
+.asciz		"MDO usage example in ASM.\r\n"
 msgloaderror::
 .asciz		"Error loading MDO.\r\n"
 msgloadsuccess::

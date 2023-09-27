@@ -80,6 +80,7 @@
     <None Include="targetconfig.s" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="mdo.c" />
     <ClCompile Include="msxdosapp.c" />
   </ItemGroup>
   <ItemGroup>

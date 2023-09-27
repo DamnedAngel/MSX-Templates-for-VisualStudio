@@ -32,9 +32,6 @@
     <Filter Include="ASM Header Files\MSX\MDO">
       <UniqueIdentifier>{f710adc2-a2f9-40e9-aba5-4c661bac7901}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ASM Source Files\MSX\MDO">
-      <UniqueIdentifier>{f189dbdc-9591-4727-9d34-1f59ff358615}</UniqueIdentifier>
-    </Filter>
     <Filter Include="C Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
@@ -60,7 +57,7 @@
       <Filter>C Header Files</Filter>
     </ClInclude>
     <ClInclude Include="printinterface.h">
-      <Filter>C Header Files</Filter>
+      <Filter>C Header Files\MSX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -94,24 +91,27 @@
     <None Include="mdoimplementation.s">
       <Filter>ASM Source Files</Filter>
     </None>
-    <None Include="print.s">
-      <Filter>ASM Source Files</Filter>
-    </None>
     <None Include="MSX\MSX-DOS\mdoservices.s">
       <Filter>ASM Header Files\MSX\MDO</Filter>
     </None>
     <None Include="MSX\MSX-DOS\mdostructures.s">
       <Filter>ASM Header Files\MSX\MDO</Filter>
     </None>
-    <None Include="mdo.s">
-      <Filter>ASM Source Files\MSX\MDO</Filter>
+    <None Include="print.s">
+      <Filter>ASM Source Files\MSX</Filter>
     </None>
     <None Include="printinterface.s">
-      <Filter>ASM Header Files</Filter>
+      <Filter>ASM Header Files\MSX</Filter>
+    </None>
+    <None Include="mdo.s">
+      <Filter>ASM Source Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msxdosapp.c">
+      <Filter>C Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mdo.c">
       <Filter>C Source Files</Filter>
     </ClCompile>
   </ItemGroup>

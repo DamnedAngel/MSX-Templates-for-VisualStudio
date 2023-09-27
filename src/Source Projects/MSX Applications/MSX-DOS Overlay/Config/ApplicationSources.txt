@@ -17,8 +17,8 @@ MSX\MDO\msxdosovlcrt0.s
 ;	THIS IS YOUR PROGRAM!
 ;	Choose ONE and ONLY ONE of the lines below,
 ;	and leave the other commented!
-msxdosovl.s
-;msxdosovl.c
+;msxdosovl.s
+msxdosovl.c
 
 ;----------------------------------------------------------
 ;	Additional source files
