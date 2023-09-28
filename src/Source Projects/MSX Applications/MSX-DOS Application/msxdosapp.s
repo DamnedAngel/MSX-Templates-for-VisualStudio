@@ -67,14 +67,15 @@ mainContinue:
 	.globl	_useMDO
 	call	_useMDO
 .else
-	ld		a, #0
+.if __SDCCCALL
+	xor		a
+.else
+    ld      l, #0
+.endif
 .endif
 
 mainEnding:
 ;   Returns to MSX-DOS
-.ifeq __SDCCCALL=0
-	ld		l,a
-.endif
 	ret
 
 

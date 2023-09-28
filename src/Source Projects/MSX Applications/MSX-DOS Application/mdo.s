@@ -24,6 +24,9 @@
 	; load MDO
 	ld		hl, #_OVERLAY_ONE
 	call	_mdoLoad
+.if eq __SDCCCALL
+	ld		a, l
+.endif
 	or		a
 	ld		hl, #msgloaderror
 	jr nz,	#useMDOerror
@@ -32,6 +35,9 @@
 	; link MDO
 	ld		hl, #_OVERLAY_ONE
 	call	_mdoLink
+.if eq __SDCCCALL
+	ld		a, l
+.endif
 	or		a
 	ld		hl, #msglinkerror
 	jr nz,	#useMDOerror
@@ -43,6 +49,9 @@
 	; unlink MDO
 	ld		hl, #_OVERLAY_ONE
 	call	_mdoUnlink
+.if eq __SDCCCALL
+	ld		a, l
+.endif
 	or		a
 	ld		hl, #msgunlinkerror
 	jr nz,	#useMDOerror
@@ -52,11 +61,18 @@
 	ld		hl, #_OVERLAY_ONE
 	call	_mdoRelease
 	or		a
+.if eq __SDCCCALL
+	ld		a, l
+.endif
 	ld		hl, #msgreleaseerror
 	jr nz,	#useMDOerror
 	dbg		msgreleasesuccess
 
-	xor a
+.if __SDCCCALL
+	xor		a
+.else
+    ld      l, #0
+.endif
 	ret
 
 useMDOerror::
@@ -65,7 +81,11 @@ useMDOerror::
 ;	we will ignore it and return #0xa0
 ;	error code for all MDO errors.
 	call	__print
+.if __SDCCCALL
 	ld		a, #0xa0
+.else
+    ld      l, #0xa0
+.endif
 	ret
 
 ;	----------------------------------------------------------
