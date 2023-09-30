@@ -15,7 +15,12 @@
 //
 //	Your fun starts here!!!
 //	Replace the code below with your art.
-//	Note: Only use argv and argc if you enabled
+// 
+//  Note 1: You only need conditional code based
+//	on __SDCCCALL if youplan to support both
+//	calling convention.
+// 
+//	Note 2: Only use argv and argc if you enabled
 //	CMDLINE_PARAMETERS on TargetConfig_XXXXX.txt
 unsigned char main(char** argv, int argc) {
 #if __SDCCCALL
@@ -23,7 +28,7 @@ unsigned char main(char** argv, int argc) {
 #else
 	print("Hello MSX from C (sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
-	dbg ("Template by Danilo Angelo\r\n");		// only printed in debug mode
+	dbg("Template by Danilo Angelo\r\n\0");		// only printed in debug mode
 
 #ifdef CMDLINE_PARAMETERS
 	print("Parameters:\r\n\0");

@@ -10,7 +10,7 @@
 
 #include "targetconfig.h"
 
-extern void print (unsigned char*);
+extern void print(unsigned char*);
 
 #ifdef DEBUG
 extern unsigned char* msgdbg;

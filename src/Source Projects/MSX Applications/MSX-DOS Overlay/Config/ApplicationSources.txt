@@ -24,6 +24,5 @@ msxdosovl.c
 ;	Additional source files
 ;	Add below additional source files for your application
 ;	using relative paths from the project folder
-;print.s
 ;yourSourceCodeHere.s
 ;yourSourceCodeHere.c

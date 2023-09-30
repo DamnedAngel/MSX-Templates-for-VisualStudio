@@ -34,7 +34,7 @@ EXECGEN_EXTRA_DIRECTIVES
 ;   Macros & constants
 .APPLICATION
 DEBUG				        _ON					; _OFF: not defined ; _ON: defined; 1-n defined with debug level
- 
+
 
 ;----------------------------------------------------------
 ;	Filesystem settings

@@ -59,6 +59,7 @@
     <ClInclude Include="applicationsettings.h" />
     <ClInclude Include="mdointerface.h" />
     <ClInclude Include="MSX\BIOS\msxbios.h" />
+    <ClInclude Include="printinterface.h" />
     <ClInclude Include="targetconfig.h" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +71,7 @@
     <None Include="msxdosovl.s" />
     <None Include="MSX\BIOS\msxbios.s" />
     <None Include="MSX\MDO\msxdosovlcrt0.s" />
+    <None Include="printinterface.s" />
     <None Include="targetconfig.s" />
   </ItemGroup>
   <ItemGroup>

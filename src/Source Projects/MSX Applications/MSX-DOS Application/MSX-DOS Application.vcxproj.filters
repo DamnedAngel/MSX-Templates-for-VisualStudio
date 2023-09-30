@@ -57,7 +57,7 @@
       <Filter>C Header Files</Filter>
     </ClInclude>
     <ClInclude Include="printinterface.h">
-      <Filter>C Header Files\MSX</Filter>
+      <Filter>C Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -100,11 +100,11 @@
     <None Include="print.s">
       <Filter>ASM Source Files\MSX</Filter>
     </None>
-    <None Include="printinterface.s">
-      <Filter>ASM Header Files\MSX</Filter>
-    </None>
     <None Include="mdo.s">
       <Filter>ASM Source Files</Filter>
+    </None>
+    <None Include="printinterface.s">
+      <Filter>ASM Header Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

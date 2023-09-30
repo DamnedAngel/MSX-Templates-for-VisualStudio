@@ -18,3 +18,5 @@ s__AFTERHEAP s__A PARENT_A
 
 ;[a-zA-Z0-9]*init
 ;_main _m m
+_print
+__print

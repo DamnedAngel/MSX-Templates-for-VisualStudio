@@ -639,8 +639,8 @@ rem	set VALUE=!VALUE:"=!
 	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\IncludeDirectories.txt) do (
 		set INCDIR=%%A
 		if NOT "%INCDIR:~0,1%"==";" (
-			set INCDIR=!INCDIR:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
-			set INCDIR=!INCDIR:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
+			call :replace_variables !INCDIR!
+			set INCDIR=!VALUE!
 			set INCDIRS=!INCDIRS! -I"!INCDIR!"
 			call :debug %DBG_DETAIL% Collected !INCDIR!
 		)
@@ -662,7 +662,7 @@ rem	set VALUE=!VALUE:"=!
 				call :exec %DBG_CALL2% sdcc --sdcccall %SDCC_CALL% %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!LIBFILE!"
 			) else (
 				call :debug %DBG_DETAIL% Processing ASM file !LIBFILE!... 
-				call :exec %DBG_CALL2% sdasz80 %ASSEMBLER_EXTRA_DIRECTIVES% -o "!RELFILE!" "!LIBFILE!"
+				call :exec %DBG_CALL2% sdasz80 %ASSEMBLER_EXTRA_DIRECTIVES% %INCDIRS% -o "!RELFILE!" "!LIBFILE!"
 			)
 		)
 	)
@@ -675,15 +675,15 @@ rem	set VALUE=!VALUE:"=!
 	for /F "tokens=1" %%A in  (%MSX_CFG_PATH%\ApplicationSources.txt) do  (
 		set APPFILE=%%A
 		if NOT "%APPFILE:~0,1%"==";" (
-			set APPFILE=!APPFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
-			set APPFILE=!APPFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
+			call :replace_variables !APPFILE!
+			set APPFILE=!VALUE!
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			if /I "%%~xA"==".c" (
 				call :debug %DBG_DETAIL% Processing C file !APPFILE!... 
 				call :exec %DBG_CALL2% sdcc --sdcccall %SDCC_CALL% %SDCC_DETAIL% %COMPILER_EXTRA_DIRECTIVES% -mz80 -c %INCDIRS% -o "!RELFILE!" "!APPFILE!"
 			) else (
 				call :debug %DBG_DETAIL% Processing ASM file !APPFILE!... 
-				call :exec %DBG_CALL2% sdasz80 %ASSEMBLER_EXTRA_DIRECTIVES% -o "!RELFILE!" "!APPFILE!"
+				call :exec %DBG_CALL2% sdasz80 %ASSEMBLER_EXTRA_DIRECTIVES% %INCDIRS% -o "!RELFILE!" "!APPFILE!"
 			)
 			set OBJLIST=!OBJLIST! "!RELFILE!"
 		)
@@ -695,8 +695,8 @@ rem	set VALUE=!VALUE:"=!
 	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\LibrarySources.txt) do (
 		set LIBFILE=%%A
 		if NOT "%LIBFILE:~0,1%"==";" (
-			set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
-			set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
+rem			set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
+rem			set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
 			set RELFILE=%MSX_OBJ_PATH%\%%~nA.rel
 			set OBJLIST=!OBJLIST! "!RELFILE!"
 			call :debug %DBG_DETAIL% Collected !RELFILE!
@@ -705,8 +705,8 @@ rem	set VALUE=!VALUE:"=!
 	for /F "tokens=*" %%A in (%MSX_CFG_PATH%\Libraries.txt) do (
 		set LIBFILE=%%A
 		if NOT "%LIBFILE:~0,1%"==";" (
-			set LIBFILE=!LIBFILE:[MSX_LIB_PATH]=%MSX_LIB_PATH%!
-			set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
+			call :replace_variables !LIBFILE!
+			set LIBFILE=!VALUE!
 			set OBJLIST=!OBJLIST! "!LIBFILE!"
 			call :debug %DBG_DETAIL% Collected !LIBFILE!
 		)

@@ -17,6 +17,7 @@ MDO_SUPPORT             _ON                         ; This project IS an MDO. Al
 ;	C Calling Convention
 SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
                                                     ; SDCCCALL=1    New C calling convention (REGs)
+                                                    ; *USE THE SAME CONFIGURATION USED IN THE MSX-DOS APPLICATION!!!*
 
 ;----------------------------------------------------------
 ;	Code segment (.area _CODE) start address
