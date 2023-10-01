@@ -72,8 +72,7 @@ printchar::
 
 	.area	_DATA
 ; ----------------------------------------------------------
-;	Debug Message
-;	Another example of debug code in ASM.
+;	Debug Prefix
 .if DEBUG
 _msgdbg::
 .asciz		"[DEBUG]"
