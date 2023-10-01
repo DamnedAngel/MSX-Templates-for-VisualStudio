@@ -76,5 +76,5 @@ printchar::
 ;	Another example of debug code in ASM.
 .if DEBUG
 _msgdbg::
-.ascii		"[DEBUG]\0"
+.asciz		"[DEBUG]"
 .endif
