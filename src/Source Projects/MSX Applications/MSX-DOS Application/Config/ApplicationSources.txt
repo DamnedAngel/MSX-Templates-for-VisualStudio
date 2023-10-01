@@ -22,7 +22,7 @@ msxdosapp.c
 
 ;----------------------------------------------------------
 ;	MDO implementation example
-;	When MDO_SUPPORT in "_ON" on ApplicationSources.txt,
+;	When MDO_SUPPORT is "_ON" on ApplicationSettings.txt,
 ;	choose ONE and ONLY ONE of the examples below,
 ;	and leave the other commented!
 ;mdo.s

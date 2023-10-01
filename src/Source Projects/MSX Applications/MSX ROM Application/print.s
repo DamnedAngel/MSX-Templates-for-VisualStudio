@@ -70,7 +70,7 @@ printchar::
 	pop		iy
 	ret
 
-	.area	_DATA
+	.area	_ROMDATA
 ; ----------------------------------------------------------
 ;	Debug Message
 ;	Another example of debug code in ASM.

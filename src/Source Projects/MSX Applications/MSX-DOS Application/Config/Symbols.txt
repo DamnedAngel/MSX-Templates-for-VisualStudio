@@ -16,7 +16,7 @@ _mdoUnlink
 _mdoAbend
 s__AFTERHEAP s__A PARENT_A
 
-;[a-zA-Z0-9]*init
+;[a-zA-Z0-9]*_init
 ;_main _m m
 _print
 __print

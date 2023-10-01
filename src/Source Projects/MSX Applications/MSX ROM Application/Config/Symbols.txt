@@ -9,5 +9,5 @@
 ;   <symbol match regex> <substring search regex>  <substring replace string>
 ;----------------------------------------------------------
 
-[a-zA-Z0-9]*init
+[a-zA-Z0-9]*_init
 _main _m m

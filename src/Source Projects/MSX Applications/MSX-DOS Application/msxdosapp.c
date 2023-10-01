@@ -52,5 +52,5 @@ extern unsigned char useMDO(void);
 #else
 	return 0;
 #endif
-
 }
+

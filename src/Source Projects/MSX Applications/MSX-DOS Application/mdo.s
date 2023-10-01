@@ -3,6 +3,9 @@
 ;
 ;		MDO support in MSX-DOS program example
 ;		Assembly version
+;
+;       This file is only needed when using MDOs
+;       and may be ignored otherwise.
 ;----------------------------------------------------------
 
 	.include "applicationsettings.s"

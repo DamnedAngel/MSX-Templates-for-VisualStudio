@@ -34,7 +34,7 @@ STR_COMPARE = 0
 ;----------------------------------------------------------
 	.db		#0x41				; ROM ID
 	.db		#0x42				; ROM ID
-	.dw		#init				; Program start
+	.dw		#_init				; Program start
 .if CALL_EXPANSION
 	.dw		#_call_expansion	; BASIC's CALL instruction expansion routine
 .else
@@ -53,7 +53,7 @@ STR_COMPARE = 0
 ;----------------------------------------------------------
 ;	Program start
 ;----------------------------------------------------------
-init::
+_init::
 
 ;----------------------------------------------------------
 ;	Step 1: Initialize heap pointer

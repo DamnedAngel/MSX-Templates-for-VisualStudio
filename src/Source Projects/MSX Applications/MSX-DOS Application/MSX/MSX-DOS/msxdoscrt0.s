@@ -40,6 +40,7 @@ phrAddr	.equ _HEAP_start
 ;    and terminate each parameter with 0.
 ;    MSX-DOS places the command line length at 0x80 (one byte),
 ;    and the command line itself at 0x81 (up to 127 characters).
+_init::
 params::
 .if CMDLINE_PARAMETERS
     ;* Check if there are any parameters at all

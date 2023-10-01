@@ -57,20 +57,27 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="applicationsettings.h" />
+    <ClInclude Include="callhandler.c" />
     <ClInclude Include="MSX\BIOS\msxbios.h" />
+    <ClInclude Include="printinterface.h" />
     <ClInclude Include="targetconfig.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="applicationsettings.s" />
+    <None Include="callhandler.s" />
+    <None Include="devicehandler.s" />
     <None Include="Make\make.bat" />
     <None Include="Make\make.sh" />
     <None Include="Make\symbol.py" />
     <None Include="msxromapp.s" />
     <None Include="MSX\BIOS\msxbios.s" />
     <None Include="MSX\ROM\msxromcrt0.s" />
+    <None Include="print.s" />
+    <None Include="printinterface.s" />
     <None Include="targetconfig.s" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="devicehandler.c" />
     <ClCompile Include="msxromapp.c" />
   </ItemGroup>
   <ItemGroup>
