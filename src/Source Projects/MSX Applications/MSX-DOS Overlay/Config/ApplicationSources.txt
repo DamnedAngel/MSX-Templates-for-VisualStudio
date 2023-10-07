@@ -8,6 +8,7 @@
 ;----------------------------------------------------------
 ;	General structure of a MSX BIN application
 ;	Do NOT remove.
+;	This MUST be the first entry in this file.
 MSX\MDO\msxdosovlcrt0.s
 
 ;----------------------------------------------------------

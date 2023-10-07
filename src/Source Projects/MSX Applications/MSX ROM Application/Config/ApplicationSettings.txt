@@ -25,7 +25,7 @@ SDCCCALL                1                           ; SDCCCALL=0    Old C callin
 ROM_SIZE				16k							; 16k/32k
 FILESTART				0x4000						; Typically,    0x4000 for 32kb ROM or 16kb ROM with CALL/DEVICE expansions; or
                                                     ;               0x8000 for 16kb ROM
-CALL_EXPANSION			_ON							; _ON: expands BASIC's CALL instruction; _OFF: Don't expand
+CALL_EXPANSION			_ON 						; _ON: expands BASIC's CALL instruction; _OFF: Don't expand
 DEVICE_EXPANSION		_ON							; _ON: creates BASIC's device; _OFF: Don't create
 BASIC_PROGRAM			0							; 0 -> no BASIC program; other values: BASIC program address
 
@@ -36,19 +36,29 @@ BASIC_PROGRAM			0							; 0 -> no BASIC program; other values: BASIC program add
 ; Use this to extend the funcionality of
 ; BASIC's CALL command
 ;
-; BASIC usage example (for the standard app)
-; 10 CALL CMD1("PARAMETER 1 RECEIVED!"):PRINT "Oi."
-; 20 CALL CMD2:PRINT "Ola."
-; 30 CALL CMD1("PARAMETER 2 RECEIVED!")
-; 40 PRINT "Hi."
-; 50 CALL CMD2
-; 60 PRINT "Hello."
+; If you don't want to extend BASIC's CALL command,
+; set CALL_EXPANSION above to _OFF and
+; comment or erase the lines below.
 ;
+; BASIC usage example (for the standard app)
+; 10 PRINT "Calling CMD1 for the first time:"
+; 20 CALL CMD1("PARAMETER 1 RECEIVED!"):PRINT "Execution returned in the same line."
+; 30 PRINT "Calling CMD1 for the second time:"
+; 40 CALL CMD1("PARAMETER 2 RECEIVED!")
+; 50 PRINT "Running cartridge program:"
+; 60 CALL RUNCART:PRINT "Done."
 CALL_STATEMENT			CMD1
-CALL_STATEMENT			CMD2
+CALL_STATEMENT			RUNCART
 
 ;----------------------------------------------------------
 ;	BASIC device expansion
+;
+; NOT MANDATORY!
+; Use this to implement a new device in BASIC.
+;
+; If you don't want to implement a new device in BASIC,
+; set DEVICE_EXPANSION above to _OFF and
+; comment or erase the line below.
 ;
 DEVICE					DEV
 

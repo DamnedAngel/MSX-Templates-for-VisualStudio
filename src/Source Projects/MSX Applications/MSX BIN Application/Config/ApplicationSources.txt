@@ -8,6 +8,7 @@
 ;----------------------------------------------------------
 ;	General structure of a MSX BIN application
 ;	Do NOT remove.
+;	This MUST be the first entry in this file.
 MSX\BIN\msxbincrt0.s
 
 ;----------------------------------------------------------
@@ -20,9 +21,17 @@ MSX\BIN\msxbincrt0.s
 msxbinapp.c
 
 ;----------------------------------------------------------
+;	Example or routines to be called by
+;	BASIC's USR() function.
+;	Choose ONE and ONLY ONE of the files below,
+;	and leave the other commented!
+;usrroutines.s
+usrroutines.c
+
+;----------------------------------------------------------
 ;	Additional source files
 ;	Add below additional source files for your application
 ;	using relative paths from the project folder
-
+print.s
 ;yourSourceCodeHere.s
 ;yourSourceCodeHere.c

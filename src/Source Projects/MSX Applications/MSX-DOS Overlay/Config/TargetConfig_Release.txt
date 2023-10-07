@@ -23,7 +23,7 @@ BUILD_DEBUG			        100 				; DBG_MUTE=0
                                                 ; DBG_PARAMS=230
                                                 ; DBG_VERBOSE=255
 
-ASSEMBLER_EXTRA_DIRECTIVES
+ASSEMBLER_EXTRA_DIRECTIVES  -l
 COMPILER_EXTRA_DIRECTIVES
 LINKER_EXTRA_DIRECTIVES     --opt-code-size --disable-warning 196
 EXECGEN_EXTRA_DIRECTIVES
@@ -34,7 +34,7 @@ EXECGEN_EXTRA_DIRECTIVES
 ;   Macros & constants
 .APPLICATION
 DEBUG				        _OFF				; _OFF: not defined ; _ON: defined; 1-n defined with debug level
- 
+
 
 ;----------------------------------------------------------
 ;	Filesystem settings

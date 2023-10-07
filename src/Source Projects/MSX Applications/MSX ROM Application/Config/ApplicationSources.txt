@@ -8,6 +8,7 @@
 ;----------------------------------------------------------
 ;	General structure of a MSX BIN application
 ;	Do NOT remove.
+;	This MUST be the first entry in this file.
 MSX\ROM\msxromcrt0.s
 
 ;----------------------------------------------------------
@@ -20,9 +21,25 @@ MSX\ROM\msxromcrt0.s
 msxromapp.c
 
 ;----------------------------------------------------------
+;	BASIC's CALL handler implementation example
+;	When CALL_EXPANSION is "_ON" on
+;	ApplicationSettings.txt, choose ONE and ONLY ONE of
+;	the examples below, and leave the other commented!
+;callhandler.s
+callhandler.c
+
+;----------------------------------------------------------
+;	BASIC's DEVICE handler implementation example
+;	When DEVICE_EXPANSION is "_ON" on
+;	ApplicationSettings.txt, choose ONE and ONLY ONE of
+;	the examples below, and leave the other commented!
+;devicehandler.s
+devicehandler.c
+
+;----------------------------------------------------------
 ;	Additional source files
 ;	Add below additional source files for your application
 ;	using relative paths from the project folder
-
+print.s
 ;yourSourceCodeHere.s
 ;yourSourceCodeHere.c

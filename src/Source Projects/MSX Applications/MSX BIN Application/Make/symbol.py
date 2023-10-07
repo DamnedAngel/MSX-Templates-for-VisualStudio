@@ -71,7 +71,7 @@ with open(path.join(sys.argv[2], sys.argv[3]) + '.map', 'r') as f1:
 						if re.match(pattern[0], words[1]):
 							symbol = re.sub(pattern[1], pattern[2], words[1])
 							# ASM Symbol file
-							f3.write(symbol + ' 			.equ 0x' + value + '\n')
+							f3.write(symbol + ' 			.gblequ 0x' + value + '\n')
 							# Header Symbol file
 							f4.write("#define " + symbol + '			0x' + value + '\n')
 							if verbose:

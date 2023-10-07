@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Make">
       <UniqueIdentifier>{3ef91682-59b4-4500-8b1e-472a09b82231}</UniqueIdentifier>
     </Filter>
@@ -15,42 +11,58 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files\MSX">
-      <UniqueIdentifier>{74a0b57a-c1be-4402-85d0-168788c6be08}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\MSX\BIOS">
-      <UniqueIdentifier>{a28f4563-9c19-4eb8-8b3a-b326d570df42}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ASM Source Files">
       <UniqueIdentifier>{52835113-377d-4d52-ba1a-d14fcb244687}</UniqueIdentifier>
     </Filter>
     <Filter Include="ASM Source Files\MSX">
       <UniqueIdentifier>{5e121c30-2210-4202-8196-2d8ca96c05f0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ASM Source Files\MSX\BIOS">
-      <UniqueIdentifier>{9a550870-19f7-4aa4-9d94-69e2ce1f9403}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ASM Source Files\MSX\MSX-DOS">
       <UniqueIdentifier>{fb61106d-43ca-44a6-804d-3c9e63975b1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Header Files">
+      <UniqueIdentifier>{12fda4a1-4229-4b67-b100-0d7a25e46b7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Header Files\MSX">
+      <UniqueIdentifier>{f8c973e9-5327-4af0-9ee1-6ae8238ac555}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Header Files\MSX\BIOS">
+      <UniqueIdentifier>{9a550870-19f7-4aa4-9d94-69e2ce1f9403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Header Files\MSX\MDO">
+      <UniqueIdentifier>{f710adc2-a2f9-40e9-aba5-4c661bac7901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="C Header Files\MSX">
+      <UniqueIdentifier>{74a0b57a-c1be-4402-85d0-168788c6be08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C Header Files\MSX\BIOS">
+      <UniqueIdentifier>{a28f4563-9c19-4eb8-8b3a-b326d570df42}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetconfig.h">
-      <Filter>Header Files</Filter>
+      <Filter>C Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MSX\BIOS\msxbios.h">
-      <Filter>Header Files\MSX\BIOS</Filter>
+      <Filter>C Header Files\MSX\BIOS</Filter>
     </ClInclude>
     <ClInclude Include="applicationsettings.h">
-      <Filter>Header Files</Filter>
+      <Filter>C Header Files</Filter>
     </ClInclude>
     <ClInclude Include="mdointerface.h">
-      <Filter>Header Files</Filter>
+      <Filter>C Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="printinterface.h">
+      <Filter>C Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="MSX\BIOS\msxbios.s">
-      <Filter>ASM Source Files\MSX\BIOS</Filter>
+      <Filter>ASM Header Files\MSX\BIOS</Filter>
     </None>
     <None Include="targetconfig.s">
       <Filter>ASM Source Files</Filter>
@@ -73,21 +85,33 @@
     <None Include="Make\symbol.py">
       <Filter>Make</Filter>
     </None>
-    <None Include="MSX\MSX-DOS\mdoservices.s">
-      <Filter>ASM Source Files\MSX\MSX-DOS</Filter>
-    </None>
-    <None Include="MSX\MSX-DOS\mdostructures.s">
-      <Filter>ASM Source Files\MSX\MSX-DOS</Filter>
-    </None>
     <None Include="mdointerface.s">
       <Filter>ASM Source Files</Filter>
     </None>
     <None Include="mdoimplementation.s">
       <Filter>ASM Source Files</Filter>
     </None>
+    <None Include="MSX\MSX-DOS\mdoservices.s">
+      <Filter>ASM Header Files\MSX\MDO</Filter>
+    </None>
+    <None Include="MSX\MSX-DOS\mdostructures.s">
+      <Filter>ASM Header Files\MSX\MDO</Filter>
+    </None>
+    <None Include="print.s">
+      <Filter>ASM Source Files\MSX</Filter>
+    </None>
+    <None Include="mdo.s">
+      <Filter>ASM Source Files</Filter>
+    </None>
+    <None Include="printinterface.s">
+      <Filter>ASM Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msxdosapp.c">
+      <Filter>C Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mdo.c">
       <Filter>C Source Files</Filter>
     </ClCompile>
   </ItemGroup>
