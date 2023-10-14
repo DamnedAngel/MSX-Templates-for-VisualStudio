@@ -42,7 +42,7 @@ DEBUG				        _ON					; _OFF: not defined ; _ON: defined; 1-n defined with de
 .FILESYSTEM
 MSX_FILE_NAME		        MSXOVL1
 MSX_FILE_EXTENSION          MDO
-MSX_BIN_PATH		        [PROFILE]\bin
+MSX_BIN_PATH		        ..\MSX-DOS Application\[PROFILE]\bin
 MSX_OBJ_PATH		        [PROFILE]\objs
 MSX_DEV_PATH		        ..\..\..
 MSX_LIB_PATH		        [MSX_DEV_PATH]\libs

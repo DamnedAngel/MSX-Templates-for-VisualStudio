@@ -41,35 +41,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="targetconfig.h">
-      <Filter>C Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MSX\BIOS\msxbios.h">
       <Filter>C Header Files\MSX\BIOS</Filter>
-    </ClInclude>
-    <ClInclude Include="applicationsettings.h">
-      <Filter>C Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mdointerface.h">
-      <Filter>C Header Files</Filter>
     </ClInclude>
     <ClInclude Include="printinterface.h">
       <Filter>C Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="targetconfig.s">
-      <Filter>ASM Source Files</Filter>
-    </None>
-    <None Include="Make\make.bat">
-      <Filter>Make</Filter>
-    </None>
-    <None Include="applicationsettings.s">
-      <Filter>ASM Source Files</Filter>
-    </None>
-    <None Include="Make\make.sh">
-      <Filter>Make</Filter>
-    </None>
     <None Include="Make\symbol.py">
       <Filter>Make</Filter>
     </None>
@@ -79,14 +58,14 @@
     <None Include="msxdosovl.s">
       <Filter>ASM Source Files</Filter>
     </None>
-    <None Include="mdoimplementation.s">
-      <Filter>ASM Source Files</Filter>
-    </None>
     <None Include="MSX\BIOS\msxbios.s">
       <Filter>ASM Header Files\MSX\BIOS</Filter>
     </None>
     <None Include="printinterface.s">
       <Filter>ASM Header Files</Filter>
+    </None>
+    <None Include="Make\make.py">
+      <Filter>Make</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

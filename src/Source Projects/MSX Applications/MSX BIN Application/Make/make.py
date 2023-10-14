@@ -79,6 +79,7 @@ def execAction (phase):
         if not commandLine == '':
             debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
             debug(VAR['DBG_STEPS'], 'Executing {} action...'.format(phase))
+            print (commandLine)
             execute(VAR['DBG_CALL3'], commandLine)
             debug(VAR['DBG_STEPS'], 'Done executing {} action.'.format(phase))
     return

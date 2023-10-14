@@ -1,4 +1,5 @@
 
+
 @echo off
 
 REM -----------------------------------------------------------------------------------
@@ -321,8 +322,8 @@ rem	set VALUE=!VALUE:"=!
 	exit /B
 
 :filesystem_settings
-    call :debug %DBG_SETTING% -------------------------------------------------------------------------------
-    call :debug %DBG_SETTING% Filesystem settings...
+    call :debug %DBG_EXTROVERT% -------------------------------------------------------------------------------
+    call :debug %DBG_EXTROVERT% Filesystem settings...
     call :debug %DBG_SETTING% Current dir: %CURRENT_DIR%
     call :debug %DBG_SETTING% Target file: .\%MSX_FILE_NAME%.%MSX_FILE_EXTENSION%
     call :debug %DBG_SETTING% Object path: .\%MSX_OBJ_PATH%
@@ -335,29 +336,29 @@ rem	set VALUE=!VALUE:"=!
     call :debug %DBG_EXTROVERT% -------------------------------------------------------------------------------
     call :debug %DBG_EXTROVERT% Build events settings...
 	if not defined BUILD_START_ACTION (
-		call :debug %DBG_EXTROVERT% Build start action: [NONE]
+		call :debug %DBG_SETTING% Build start action: [NONE]
 	) else (
-		call :debug %DBG_EXTROVERT% Build start action: %BUILD_START_ACTION%
+		call :debug %DBG_SETTING% Build start action: %BUILD_START_ACTION%
 	)
 	if not defined BEFORE_COMPILE_ACTION (
-		call :debug %DBG_EXTROVERT% Before compile action: [NONE]
+		call :debug %DBG_SETTING% Before compile action: [NONE]
 	) else (
-		call :debug %DBG_EXTROVERT% Before compile action: %BEFORE_COMPILE_ACTION%
+		call :debug %DBG_SETTING% Before compile action: %BEFORE_COMPILE_ACTION%
 	)
 	if not defined AFTER_COMPILE_ACTION (
-		call :debug %DBG_EXTROVERT% After compile action: [NONE]
+		call :debug %DBG_SETTING% After compile action: [NONE]
 	) else (
-		call :debug %DBG_EXTROVERT% After compile action: %AFTER_COMPILE_ACTION%
+		call :debug %DBG_SETTING% After compile action: %AFTER_COMPILE_ACTION%
 	)
 	if not defined AFTER_BINARY_ACTION (
-		call :debug %DBG_EXTROVERT% After binary generation action: [NONE]
+		call :debug %DBG_SETTING% After binary generation action: [NONE]
 	) else (
-		call :debug %DBG_EXTROVERT% After binary generation action: %AFTER_BINARY_ACTION%
+		call :debug %DBG_SETTING% After binary generation action: %AFTER_BINARY_ACTION%
 	)
 	if  not defined BUILD_END_ACTION (
-		call :debug %DBG_EXTROVERT% Build end action: [NONE]
+		call :debug %DBG_SETTING% Build end action: [NONE]
 	) else (
-		call :debug %DBG_EXTROVERT% Build end action: %BUILD_END_ACTION%
+		call :debug %DBG_SETTING% Build end action: %BUILD_END_ACTION%
 	)
     exit /B
 
@@ -734,9 +735,9 @@ rem			set LIBFILE=!LIBFILE:[MSX_OBJ_PATH]=%MSX_OBJ_PATH%!
 	)
 
 	call :debug %DBG_STEPS% -------------------------------------------------------------------------------
-	call :debug %DBG_STEPS% Compiling...
+	call :debug %DBG_STEPS% Linking...
 	call :exec %DBG_CALL1% sdcc %SDCC_DETAIL% %LINKER_EXTRA_DIRECTIVES% --code-loc %CODE_LOC% --data-loc %DATA_LOC% -mz80 --no-std-crt0 %OBJLIST% %INCDIRS% -o "%MSX_OBJ_PATH%\%MSX_FILE_NAME%.IHX"
-	call :debug %DBG_STEPS% Done compiling.
+	call :debug %DBG_STEPS% Done Linking.
 	exit /B
 
 :build_msx_bin
