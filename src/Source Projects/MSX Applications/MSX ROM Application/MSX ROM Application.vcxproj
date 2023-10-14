@@ -67,6 +67,7 @@
     <None Include="callhandler.s" />
     <None Include="devicehandler.s" />
     <None Include="Make\make.bat" />
+    <None Include="Make\make.py" />
     <None Include="Make\make.sh" />
     <None Include="Make\symbol.py" />
     <None Include="msxromapp.s" />

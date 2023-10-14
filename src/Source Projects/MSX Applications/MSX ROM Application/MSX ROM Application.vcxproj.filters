@@ -94,6 +94,9 @@
     <None Include="devicehandler.s">
       <Filter>ASM Source Files</Filter>
     </None>
+    <None Include="Make\make.py">
+      <Filter>Make</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="msxromapp.c">
