@@ -51,14 +51,13 @@ _goodbye::
     print	_goodbyemsg
 	ret
 
+		.area	_DATA
+
 ; ----------------------------------------------------------
 ;   Once you replaced the commands in the _main routine
 ;   above with your own program, you should delete the
 ;   lines below. They are for demonstration purposes only.
 ; ----------------------------------------------------------
-
-
-		.area	_DATA
 
 ; ----------------------------------------------------------
 ;	Messages

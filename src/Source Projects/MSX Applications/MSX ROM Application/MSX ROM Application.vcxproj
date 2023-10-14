@@ -40,41 +40,36 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>Make\make $(Configuration)</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>python Make\make.py $(Configuration)</NMakeBuildCommandLine>
     <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
-    <NMakeCleanCommandLine>Make\make $(Configuration) clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>Make\make $(Configuration) clean all</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>python Make\make.py $(Configuration) clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>python Make\make.py $(Configuration) clean all</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>Make\make $(Configuration)</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>python Make\make.py $(Configuration)</NMakeBuildCommandLine>
     <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
-    <NMakeCleanCommandLine>Make\make $(Configuration) clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>Make\make $(Configuration) clean all</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>python Make\make.py $(Configuration) clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>python Make\make.py $(Configuration) clean all</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="applicationsettings.h" />
     <ClInclude Include="callhandler.c" />
     <ClInclude Include="MSX\BIOS\msxbios.h" />
     <ClInclude Include="printinterface.h" />
-    <ClInclude Include="targetconfig.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="applicationsettings.s" />
     <None Include="callhandler.s" />
     <None Include="devicehandler.s" />
-    <None Include="Make\make.bat" />
-    <None Include="Make\make.sh" />
+    <None Include="Make\make.py" />
     <None Include="Make\symbol.py" />
     <None Include="msxromapp.s" />
     <None Include="MSX\BIOS\msxbios.s" />
     <None Include="MSX\ROM\msxromcrt0.s" />
     <None Include="print.s" />
     <None Include="printinterface.s" />
-    <None Include="targetconfig.s" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="devicehandler.c" />
