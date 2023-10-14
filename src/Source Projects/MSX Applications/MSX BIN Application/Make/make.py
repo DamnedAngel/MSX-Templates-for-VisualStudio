@@ -79,7 +79,6 @@ def execAction (phase):
         if not commandLine == '':
             debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
             debug(VAR['DBG_STEPS'], 'Executing {} action...'.format(phase))
-            print (commandLine)
             execute(VAR['DBG_CALL3'], commandLine)
             debug(VAR['DBG_STEPS'], 'Done executing {} action.'.format(phase))
     return
@@ -812,7 +811,7 @@ def compileLibs():
             if len(line1) > 0:
                 if not line1[0] == ';':
                     parts = line1.split(';')
-                    sourceFile = resolveString(parts[0].strip())
+                    sourceFile = fixPath(resolveString(parts[0].strip()))
                     fName = os.path.splitext(os.path.basename(sourceFile))[0] 
                     fExt = sourceFile.split(".")[-1]
                     relFile = fixPath(os.path.join(VAR['MSX_OBJ_PATH'], '{}.rel'.format(fName)))
@@ -843,7 +842,7 @@ def compileProject():
             if len(line1) > 0:
                 if not line1[0] == ';':
                     parts = line1.split(';')
-                    sourceFile = resolveString(parts[0].strip())
+                    sourceFile = fixPath(resolveString(parts[0].strip()))
                     fName = os.path.splitext(os.path.basename(sourceFile))[0] 
                     fExt = sourceFile.split(".")[-1]
                     relFile = fixPath(os.path.join(VAR['MSX_OBJ_PATH'], '{}.rel'.format(fName)))
@@ -910,8 +909,10 @@ def buildBinary():
 def buildSymbolFile():
     debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
     debug(VAR['DBG_STEPS'], 'Building symbol file...')
+    
+    exe = fixPath("Make\symbol.py")
 
-    execute (VAR['DBG_CALL3'], f'python "Make\symbol.py" {VAR["PROJECT_TYPE"]} "{VAR["MSX_OBJ_PATH"]}\" "{VAR["MSX_FILE_NAME"]}" {VAR["SYMBOL_DETAIL"]}')
+    execute (VAR['DBG_CALL3'], f'python "{exe}" {VAR["PROJECT_TYPE"]} "{VAR["MSX_OBJ_PATH"]}\" "{VAR["MSX_FILE_NAME"]}" {VAR["SYMBOL_DETAIL"]}')
 
     debug(VAR['DBG_STEPS'], 'Done building symbol file.')
     return

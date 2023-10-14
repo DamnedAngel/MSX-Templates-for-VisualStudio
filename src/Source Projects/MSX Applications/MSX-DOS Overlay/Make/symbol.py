@@ -2,7 +2,6 @@ import string
 import sys
 import re
 from os import path
-from tkinter import PROJECTING
 
 argc = len(sys.argv)
 
