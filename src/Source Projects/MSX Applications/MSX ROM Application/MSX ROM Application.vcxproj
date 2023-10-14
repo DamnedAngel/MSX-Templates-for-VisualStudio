@@ -40,17 +40,17 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>Make\make $(Configuration)</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>python Make\make.py $(Configuration)</NMakeBuildCommandLine>
     <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
-    <NMakeCleanCommandLine>Make\make $(Configuration) clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>Make\make $(Configuration) clean all</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>python Make\make.py $(Configuration) clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>python Make\make.py $(Configuration) clean all</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>Make\make $(Configuration)</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>python Make\make.py $(Configuration)</NMakeBuildCommandLine>
     <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
-    <NMakeCleanCommandLine>Make\make $(Configuration) clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>Make\make $(Configuration) clean all</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>python Make\make.py $(Configuration) clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>python Make\make.py $(Configuration) clean all</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <ItemDefinitionGroup>

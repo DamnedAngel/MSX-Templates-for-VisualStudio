@@ -36,6 +36,10 @@ def fixPath (path) -> str:
     result = path.replace(separator, os.sep)
     return result
 
+## FIX DOUBLE LINE-FEED
+def fixLF (string) -> str:
+    result = re.sub('\x0d*\x0a', '\n', string)
+    return result
 
 ## DEBUG
 def debug(debugLevel, message):
@@ -58,11 +62,10 @@ def execute(debugLevel, commandLine):
     if execution.returncode > 0:
         debug (VAR['DBG_ERROR'], '### Error {} executing'.format(execution.returncode))
         debug (VAR['DBG_ERROR'], '### {}'.format(commandLine))
-        debug (VAR['DBG_ERROR'], '### error message: {}'.format(execution.stderr.decode()))
+        debug (VAR['DBG_ERROR'], '### error message: {}'.format(fixLF(execution.stderr.decode())))
         raise Exception(execution.returncode)
-
-    if debugLevel <= VAR['BUILD_DEBUG']:
-        print (execution.stdout.decode())
+    elif debugLevel <= VAR['BUILD_DEBUG']:
+        print (fixLF(execution.stdout.decode()))
 
     return
       
@@ -122,7 +125,7 @@ def getHeaderSize() -> int:
     result = 0
     global OBJLIST
     for relFile in OBJLIST:
-        debug (VAR['DBG_OUTPUT'], 'Analyzing "{}"...'.format(relFile))
+        debug (VAR['DBG_DETAIL'], 'Analyzing "{}"...'.format(relFile))
         if relFile[-4:].lower() == '.rel':
             debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(relFile))
             with open(relFile, 'r') as f1:
@@ -239,19 +242,19 @@ def configureTarget():
                         if value == '':
                             if targetSection == '.APPLICATION':
                                 tc_h = tc_h + '#define  {}\n'.format(key)
-                                tc_s = tc_s + '#{} = 1\n'.format(key)
+                                tc_s = tc_s + '{} = 1\n'.format(key)
                         else:
                             if targetSection == '.APPLICATION':
                                 upperValue = value.upper()
                                 if upperValue == '_OFF':
                                     tc_h = tc_h + '//#define  {}\n'.format(key)
-                                    tc_s = tc_s + '#{} = 0\n'.format(key)
+                                    tc_s = tc_s + '{} = 0\n'.format(key)
                                 elif upperValue == '_ON':
                                     tc_h = tc_h + '#define  {}\n'.format(key)
-                                    tc_s = tc_s + '#{} = 1\n'.format(key)
+                                    tc_s = tc_s + '{} = 1\n'.format(key)
                                 else:
                                     tc_h = tc_h + '#define  {}  {}\n'.format(key, value)
-                                    tc_s = tc_s + '#{} = {}\n'.format(key, value)
+                                    tc_s = tc_s + '{} = {}\n'.format(key, value)
     f1.close()
     
     debug(VAR['DBG_VERBOSE'], 'Finalizing targetconfig.h.')
@@ -930,13 +933,23 @@ INCDIRS = []
 QUOTED_INCDIRS = []
 VAR = {}
 
-VAR['ARG1'] = sys.argv[1]
-VAR['ARG2'] = sys.argv[2].lower()
-VAR['ARG3'] = sys.argv[3].lower()
-VAR['PROFILE'] = VAR['ARG1']
-makeClean = VAR['ARG2']=='clean'
-makeAll = (VAR['ARG2']=='all') or (VAR['ARG3']=='all')
-makeFinished = False
+
+if len(sys.argv) < 2:
+    print ('Missing argument.')
+    exit(0)
+
+VAR['PROFILE'] = sys.argv[1]
+makeAll = False
+makeClean = False
+if len(sys.argv) > 2:
+    VAR['ARG2'] = sys.argv[2].lower()
+    if len(sys.argv) > 3:
+        VAR['ARG3'] = sys.argv[3].lower()
+        makeClean = (VAR['ARG2']=='clean') or (VAR['ARG3']=='clean')
+        makeAll = (VAR['ARG2']=='all') or (VAR['ARG3']=='all')
+    else:
+        makeClean = VAR['ARG2']=='clean'
+        makeAll = VAR['ARG2']=='all'
 
 VAR['CURRENT_DIR'] = os.getcwd()
 VAR['MSX_BUILD_TIME'] = datetime.now().strftime('%H:%M:%S')
@@ -994,11 +1007,9 @@ try:
     
     configureTarget()
     createDirStruct()
-    if makeClean:
-        clean()
-        finished = not makeAll
-
-    if not finished:
+    clean()
+    
+    if makeAll or not makeClean and not makeAll:
         saveTargetHeaders()
 
         configureBuildEvents()
