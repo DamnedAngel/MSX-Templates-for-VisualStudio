@@ -24,11 +24,11 @@
 //	CMDLINE_PARAMETERS on TargetConfig_XXXXX.txt
 unsigned char main(char** argv, int argc) {
 #if __SDCCCALL
-	print("Hello MSX from C (sdcccall(REGs))!\r\n\0");
+	print("Hello MSX from C\r\n(sdcccall(REGs))!\r\n\0");
 #else
-	print("Hello MSX from C (sdcccall(STACK))!\r\n\0");
+	print("Hello MSX from C\r\n(sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
-	dbg("Template by Danilo Angelo\r\n\0");		// only printed in debug mode
+	dbg("Template by\r\nDanilo Angelo\r\n\r\n\0");		// only printed in debug mode
 
 #ifdef CMDLINE_PARAMETERS
 	print("Parameters:\r\n\0");

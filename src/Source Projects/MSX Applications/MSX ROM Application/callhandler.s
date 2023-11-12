@@ -14,7 +14,7 @@
 .if CALL_EXPANSION
 	.include "printinterface.s"
 
-    .globl  _init
+    .globl  _romInit
 
 	.area	_CODE
 
@@ -144,7 +144,7 @@ _onCallRUNCART::
     jr z,   _onCallCMD_fail
 
 ; call program in cartridge
-    call    _init            ; run program in cartridge
+    call    _romInit        ; run program in cartridge
 
 ; end
 .ifeq __SDCCCALL

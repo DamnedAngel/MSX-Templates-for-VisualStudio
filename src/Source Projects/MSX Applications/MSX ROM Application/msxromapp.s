@@ -20,6 +20,12 @@
 _main::
     print	hellomsg
     dbg		bymsg			; only printed in debug mode
+	print	_linefeed
+
+.if LATE_EXECUTION
+	.globl	_saveData
+	call	_saveData
+.endif
 
 ;   Return to BASIC/BOOT
     ret
@@ -31,15 +37,15 @@ _main::
 ;	Messages
 hellomsg::
 .if __SDCCCALL
-.ascii		"Hello MSX from Assembly (sdcccall(REGs))!\r\n"
+.ascii		"Hello MSX from Assembly\r\n(sdcccall(REGs))!\r\n"
 .else
-.ascii		"Hello MSX from Assembly (sdcccall(STACK))!\r\n"
+.ascii		"Hello MSX from Assembly\r\n(sdcccall(STACK))!\r\n"
 .endif
 .ascii		"If you don't want your\r\n"
 .ascii		"ROM program to return to\r\n"
-.ascii		"BASIC/MSX-DOS, just avoid\r\n"
-.asciz      "the RET instruction.\r\n"
+.ascii		"BASIC/MSXDOS, just avoid\r\n"
+.asciz      "the RET instruction in _main.\r\n"
 
 bymsg::
-.asciz		"Template by Danilo Angelo\r\n"
+.asciz		"Template by\r\nDanilo Angelo.\r\n"
 

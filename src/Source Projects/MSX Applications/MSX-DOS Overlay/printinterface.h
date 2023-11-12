@@ -11,6 +11,7 @@
 #include "targetconfig.h"
 
 extern void print(unsigned char*);
+extern unsigned char* linefeed;
 
 #ifdef DEBUG
 extern unsigned char* msgdbg;

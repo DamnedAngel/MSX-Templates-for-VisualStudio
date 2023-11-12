@@ -77,3 +77,6 @@ printchar::
 _msgdbg::
 .asciz		"[DEBUG]"
 .endif
+_linefeed::
+.asciz		"\r\n"
+

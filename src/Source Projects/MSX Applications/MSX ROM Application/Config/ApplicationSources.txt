@@ -37,6 +37,14 @@ callhandler.c
 devicehandler.c
 
 ;----------------------------------------------------------
+;	Disk access example
+;	Only included if LATE_EXECUTION is "_ON" on
+;	ApplicationSettings.txt.
+;	If your ROM doesn't need disk access, comment or
+;	remove the line below.
+diskaccess.s
+
+;----------------------------------------------------------
 ;	Additional source files
 ;	Add below additional source files for your application
 ;	using relative paths from the project folder

@@ -39,6 +39,9 @@
     <Filter Include="ASM Header Files\MSX\BIOS">
       <UniqueIdentifier>{9a550870-19f7-4aa4-9d94-69e2ce1f9403}</UniqueIdentifier>
     </Filter>
+    <Filter Include="C Source Files\MSX">
+      <UniqueIdentifier>{8386e127-4217-4c91-81ff-1370d032e036}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MSX\BIOS\msxbios.h">
@@ -48,7 +51,7 @@
       <Filter>C Header Files</Filter>
     </ClInclude>
     <ClInclude Include="callhandler.c">
-      <Filter>C Source Files</Filter>
+      <Filter>C Source Files\MSX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -70,14 +73,17 @@
     <None Include="print.s">
       <Filter>ASM Source Files\MSX</Filter>
     </None>
-    <None Include="callhandler.s">
-      <Filter>ASM Source Files</Filter>
-    </None>
-    <None Include="devicehandler.s">
-      <Filter>ASM Source Files</Filter>
-    </None>
     <None Include="Make\make.py">
       <Filter>Make</Filter>
+    </None>
+    <None Include="diskaccess.s">
+      <Filter>ASM Source Files\MSX</Filter>
+    </None>
+    <None Include="callhandler.s">
+      <Filter>ASM Source Files\MSX</Filter>
+    </None>
+    <None Include="devicehandler.s">
+      <Filter>ASM Source Files\MSX</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -85,7 +91,7 @@
       <Filter>C Source Files</Filter>
     </ClCompile>
     <ClCompile Include="devicehandler.c">
-      <Filter>C Source Files</Filter>
+      <Filter>C Source Files\MSX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
