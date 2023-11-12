@@ -47,9 +47,6 @@
     <ClInclude Include="MSX\BIOS\msxbios.h">
       <Filter>C Header Files\MSX\BIOS</Filter>
     </ClInclude>
-    <ClInclude Include="mdointerface.h">
-      <Filter>C Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="printinterface.h">
       <Filter>C Header Files</Filter>
     </ClInclude>
@@ -66,12 +63,6 @@
     </None>
     <None Include="Make\symbol.py">
       <Filter>Make</Filter>
-    </None>
-    <None Include="mdointerface.s">
-      <Filter>ASM Source Files</Filter>
-    </None>
-    <None Include="mdoimplementation.s">
-      <Filter>ASM Source Files</Filter>
     </None>
     <None Include="MSX\MSX-DOS\mdoservices.s">
       <Filter>ASM Header Files\MSX\MDO</Filter>

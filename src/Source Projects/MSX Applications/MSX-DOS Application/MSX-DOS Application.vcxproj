@@ -56,7 +56,6 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="mdointerface.h" />
     <ClInclude Include="MSX\BIOS\msxbios.h" />
     <ClInclude Include="printinterface.h" />
   </ItemGroup>
@@ -64,8 +63,6 @@
     <None Include="Make\make.py" />
     <None Include="Make\symbol.py" />
     <None Include="mdo.s" />
-    <None Include="mdoimplementation.s" />
-    <None Include="mdointerface.s" />
     <None Include="msxdosapp.s" />
     <None Include="MSX\BIOS\msxbios.s" />
     <None Include="MSX\MSX-DOS\mdostructures.s" />
