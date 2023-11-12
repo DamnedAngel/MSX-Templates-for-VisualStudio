@@ -20,6 +20,7 @@
 _main::
     print	hellomsg
     dbg		bymsg			; only printed in debug mode
+	print	_linefeed
 
 ;   Return to BASIC/BOOT
     ret
@@ -31,10 +32,10 @@ _main::
 ;	Hello Message
 hellomsg::
 .if __SDCCCALL
-.asciz		"Hello MSX from Assembly (sdcccall(REGs))!\r\n"
+.asciz		"Hello MSX from Assembly\r\n(sdcccall(REGs))!\r\n"
 .else
-.asciz		"Hello MSX from Assembly (sdcccall(STACK))!\r\n"
+.asciz		"Hello MSX from Assembly\r\n(sdcccall(STACK))!\r\n"
 .endif
 
 bymsg::
-.asciz		"Template by Danilo Angelo\r\n"
+.asciz		"Template by\r\nDanilo Angelo.\r\n"

@@ -15,7 +15,7 @@
 
 #include "printinterface.h"
 
-extern void init(void);
+extern void romInit(void);
 
 // ----------------------------------------------------------
 //	This is a parameterized CALL handler example.
@@ -91,7 +91,7 @@ unsigned char onCallRUNCART(char** param) {
 		return -1;
 	}
 
-	init();			// run program in cartridge
+	romInit();			// run program in cartridge
 	return 0;
 }
 

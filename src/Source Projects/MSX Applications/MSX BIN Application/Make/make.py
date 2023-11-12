@@ -919,7 +919,7 @@ def buildSymbolFile():
 
 def finish():
     debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
-    debug(VAR['DBG_STEPS'], 'All set for {} project. Happy MSX\'ing!'.format(VAR['PROJECT_TYPE']))
+    debug(VAR['DBG_STEPS'], 'All set for {} project ({}). Happy MSX\'ing!'.format(VAR['PROJECT_TYPE'], VAR['PROFILE']))
     return
 
 
@@ -1053,12 +1053,12 @@ except Exception as e:
     debug (VAR['DBG_ERROR'], 'AN ERROR OCCURRED!!!')
     debug (VAR['DBG_ERROR'], '')
     debug (VAR['DBG_ERROR'], e)
-    debug (VAR['DBG_ERROR'], '')
+    debug (VAR['DBG_ERROR'], '****************************************')
     traceback.print_exc()
     debug (VAR['DBG_ERROR'], '')
-    debug (VAR['DBG_ERROR'], '****************************************')
+    debug (VAR['DBG_ERROR'], '*************************************')
     debug (VAR['DBG_ERROR'], 'Build abnormally ended. MSX very sad!')
-    debug (VAR['DBG_ERROR'], '****************************************')
+    debug (VAR['DBG_ERROR'], '*************************************')
     debug (VAR['DBG_ERROR'], '')
 
 exit(err)

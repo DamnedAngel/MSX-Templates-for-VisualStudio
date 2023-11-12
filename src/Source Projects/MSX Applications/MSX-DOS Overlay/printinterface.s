@@ -5,6 +5,7 @@
 ;----------------------------------------------------------
 
 .globl __print
+.globl _linefeed
 
 .macro print msg
 	ld		hl, #msg

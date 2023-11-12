@@ -17,10 +17,11 @@
 //	Replace the code below with your art.
 void main(void) {
 #if __SDCCCALL
-	print("Hello MSX from C (sdcccall(REGs))!\r\n\0");
+	print("Hello MSX from C\r\n(sdcccall(REGs))!\r\n\0");
 #else
-	print("Hello MSX from C (sdcccall(STACK))!\r\n\0");
+	print("Hello MSX from C\r\n(sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
-	dbg("Template by Danilo Angelo\r\n");
+	dbg("Template by\r\nDanilo Angelo\r\n");
+	print(linefeed);
 	return;
 }

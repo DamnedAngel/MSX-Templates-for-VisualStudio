@@ -39,6 +39,9 @@
     <Filter Include="ASM Header Files\MSX\BIOS">
       <UniqueIdentifier>{9a550870-19f7-4aa4-9d94-69e2ce1f9403}</UniqueIdentifier>
     </Filter>
+    <Filter Include="C Source Files\MSX">
+      <UniqueIdentifier>{ce72702b-1276-4e49-8b02-5855fef34a2d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MSX\BIOS\msxbios.h">
@@ -67,11 +70,11 @@
     <None Include="printinterface.s">
       <Filter>ASM Header Files</Filter>
     </None>
-    <None Include="usrroutines.s">
-      <Filter>ASM Source Files</Filter>
-    </None>
     <None Include="Make\make.py">
       <Filter>Make</Filter>
+    </None>
+    <None Include="usrroutines.s">
+      <Filter>ASM Source Files\MSX</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -108,7 +111,7 @@
       <Filter>C Source Files</Filter>
     </ClCompile>
     <ClCompile Include="usrroutines.c">
-      <Filter>C Source Files</Filter>
+      <Filter>C Source Files\MSX</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

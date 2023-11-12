@@ -11,9 +11,17 @@ PROJECT_TYPE			ROM
 ;----------------------------------------------------------
 ;	crt0 features
 GLOBALS_INITIALIZER		_ON 						; _ON: Includes routine to initialize global variables; _OFF: Don't include
-RETURN_TO_BASIC			_ON 						; _ON: Returns to basic; _OFF: Don't return
+RETURN_TO_BASIC			_ON 						; _ON: Returns to basic; _OFF: Don't return (if main returns, the MSX is rebooted)
 STACK_HIMEM				_OFF 						; _ON: Sets stack to HIMEM (RETURN_TO_BASIC *MUST* be _OFF); _OFF: Don't set
 SET_PAGE_2				_OFF     					; _ON: Enables page 2 on the same slot/subslot as page 1 (useful for 32kb ROMs on pages 1 and 2); _OFF: Leaves page 2 as is
+LATE_EXECUTION			_OFF     					; _ON: Enables other carts to be initialized before running (based on H.STKE hook)
+                                                    ;      Provides, among other things, disk support for ROMS.
+                                                    ;      WARNING: To experience all funcionalities of the example application in diskaccess.s:
+                                                    ;       - Set LATE_EXECUTION _ON
+                                                    ;       - Set RETURN_TO_BASIC _OFF
+                                                    ;       - Set FILESTART to 0x8000
+                                                    ;       - Use a floppy interface
+                                                    ;       - Don't plug in a mass storage unit
 
 ;----------------------------------------------------------
 ;	C Calling Convention
@@ -25,6 +33,7 @@ SDCCCALL                1                           ; SDCCCALL=0    Old C callin
 ROM_SIZE				16k							; 16k/32k
 FILESTART				0x4000						; Typically,    0x4000 for 32kb ROM or 16kb ROM with CALL/DEVICE expansions; or
                                                     ;               0x8000 for 16kb ROM
+                                                    ;               0x8000 for 16kb ROM with BASIC programs
 CALL_EXPANSION			_ON 						; _ON: expands BASIC's CALL instruction; _OFF: Don't expand
 DEVICE_EXPANSION		_ON							; _ON: creates BASIC's device; _OFF: Don't create
 BASIC_PROGRAM			0							; 0 -> no BASIC program; other values: BASIC program address

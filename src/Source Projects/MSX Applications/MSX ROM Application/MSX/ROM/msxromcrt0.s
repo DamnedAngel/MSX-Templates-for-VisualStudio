@@ -55,6 +55,36 @@ STR_COMPARE = 0
 ;----------------------------------------------------------
 _init::
 
+.if LATE_EXECUTION
+;----------------------------------------------------------
+;	Configure H.STKE hook if LATE_EXECUTION is _ON.
+	ld		a, c				; Get the ROM slot number
+	ld		hl,	#H_STKE_romInit
+	ld		de,	#BIOS_H_STKE
+	ld		bc,	#H_STKE_romInit_end - H_STKE_romInit
+	ldir						; Copy the routine to execute the ROM to the hook
+	ld		(#BIOS_H_STKE+1), a	; Put the ROM slot number to the hook
+	ret							; Back to slots scanning
+
+H_STKE_romInit::				; Routine to execute the ROM
+	rst		#BIOS_CALLF			; Inter-slot call
+	.db		#0					; Dummy; to be replaced with the slot number of ROM in RAM
+	.dw		#_romInit			; Address to execute the ROM
+H_STKE_romInit_end:
+.endif
+
+_romInit::
+.if LATE_EXECUTION
+;----------------------------------------------------------
+;	Step 0: Remove hook H.STKE
+	ld		hl, #BIOS_H_STKE
+	ld		de, #BIOS_H_STKE + 1
+	ld		bc,	#H_STKE_romInit_end - H_STKE_romInit - 1
+	ld		a, #0xC9			; ret
+	ld		(hl), a				; Remove the hook 
+	ldir
+.endif
+
 ;----------------------------------------------------------
 ;	Step 1: Initialize heap pointer
 	ld		hl, #_HEAP_start
@@ -111,7 +141,7 @@ _init::
 	jp		_main
 .else
 	call	_main
-	RST		0 ;CHKRAM
+	jp		BIOS_CHKRAM
 .endif 
 
 ;----------------------------------------------------------
@@ -344,6 +374,9 @@ compareString::
 ;   ========== GSINIT SEGMENTS ==========
 ;   =====================================
 .if GLOBALS_INITIALIZER
+	; Note: not possible to #if l__INITIALIZER eq 0 because
+	; it depends on the assembly/compilation of other modules
+
 	.area	_GSINIT
 gsinit::
     ld      bc,#l__INITIALIZER

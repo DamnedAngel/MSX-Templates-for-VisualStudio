@@ -17,14 +17,20 @@
 //	Replace the code below with your art.
 void main(void) {
 #if __SDCCCALL
-	print("Hello MSX from C (sdcccall(REGs))!\r\n\0");
+	print("Hello MSX from C\r\n(sdcccall(REGs))!\r\n\0");
 #else
-	print("Hello MSX from C (sdcccall(STACK))!\r\n\0");
+	print("Hello MSX from C\r\n(sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
 	print("If you don't want your\r\n"
 		"ROM program to return to\r\n"
-		"BASIC/MSX-DOS, just avoid\r\n"
-		"main's return instruction.\r\n\0");
-	dbg("Template by Danilo Angelo\r\n\0");		// only printed in debug mode
+		"BASIC/MSXDOS avoid returning\r\n"
+		"from program's main funtion.\r\n\0");
+	dbg("Template by\r\nDanilo Angelo\r\n\0");		// only printed in debug mode
+	print(&linefeed);
+
+#ifdef LATE_EXECUTION
+extern void saveData(void);
+	saveData();
+#endif
 }
 
