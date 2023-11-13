@@ -29,12 +29,13 @@ unsigned char main(char** argv, int argc) {
 	print("Hello MSX from C\r\n(sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
 	dbg("Template by\r\nDanilo Angelo\r\n\r\n\0");		// only printed in debug mode
+	print(&linefeed);
 
 #ifdef CMDLINE_PARAMETERS
 	print("Parameters:\r\n\0");
 	for (int i = 0; i < argc; i++) {
 		print(argv[i]);
-		print("\r\n\0");
+		print(&linefeed);
 	}
 #endif
 

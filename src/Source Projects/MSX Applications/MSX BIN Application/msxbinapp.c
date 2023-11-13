@@ -22,6 +22,6 @@ void main(void) {
 	print("Hello MSX from C\r\n(sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
 	dbg("Template by\r\nDanilo Angelo\r\n");
-	print(linefeed);
+	print(&linefeed);
 	return;
 }
