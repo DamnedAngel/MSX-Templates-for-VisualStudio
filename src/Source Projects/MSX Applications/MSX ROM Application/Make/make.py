@@ -10,7 +10,7 @@
 
 # -----------------------------------------------------------------------------------
 OPEN1 = 'MSX SDCC Make Script Copyright © 2020-2023 Danilo Angelo'
-OPEN2 = 'version 00.06.00 alpha 1 - Codename Sam'
+OPEN2 = 'version 00.06.00 - Codename Sam'
 # -----------------------------------------------------------------------------------
 
 from dis import code_info
