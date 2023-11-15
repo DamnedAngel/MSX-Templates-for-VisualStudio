@@ -18,13 +18,14 @@ Damned Angel / 2020-2023
 	1. [Setting up the environment](#setting-up-the-environment)
 	1. [Creating your MSX Application in Visual Studio](#creating-your-msx-application-in-visual-studio)
 	1. [Building (compiling/assembling) your MSX Application in Visual Studio](#building-compilingassembling-your-msx-application-in-visual-studio)
-	1. Running your MSX BIN Application
+	1. [Running your MSX applications on emulators](#running-your-msx-applications-on-emulators)
+
+[qwe](#abcd)
+
+		1. [Example 1: Running your BIN program in WebMSX](#re1)
+		1. Example 2: Running your program in OpenMSX (with Catapult)
 		1. Example 1: Running your program in WebMSX
 		1. Example 2: Running your program in OpenMSX (with Catapult)
-	1. Running your MSX ROM Application
-		1. Example 1: Running your program in WebMSX
-		1. Example 2: Running your program in OpenMSX (with Catapult)
-	1. Running your MSX-DOS Application
 		1. Example 1: Running your program in WebMSX
 		1. Example 2: Running your program in OpenMSX (with Catapult)
 
@@ -159,7 +160,9 @@ To use the templates outside Visual Studio (Windows, Linux, MacOS):
 
 **Note:** The processes below suppose you have the emulators and its tools configured. If you don't, you will probably still be able to use [WebMSX](https://webmsx.org/), which operation is very straight forward.
 
-1. **Example 1:** Running your BIN program in WebMSX:
+<a name="#abcd"></a> lalal
+
+1. <a name="re1">**Example 1:** Running your BIN program in WebMSX:</a>
 	1. Fire WebMSX up and select **Drive A | Import Files to Disk** menu option:
 	![WebMSX Import File Menu](WebMSX-BIN-1.png "WebMSX Import File Menu")
 	1. Select your program in the **Open File dialog** and click **Open**:
@@ -170,7 +173,7 @@ To use the templates outside Visual Studio (Windows, Linux, MacOS):
 and you should see you program blissfully running:
 	![WebMSX BIN Program Running](WebMSX-BIN-4.png "WebMSX BIN program running")
 	1. Yey! You successfully executed your MSX BIN application! Have one more beer!
-2. **Example 2:** Running your BIN program in OpenMSX (with Catapult):
+1. **Example 2:** Running your BIN program in OpenMSX (with Catapult):
 	1. Fire OpenMSX's Catapult up, start the emulation and, in the **Session tab**, click on **Disk A** and select **Browse for disk folder (DirAsDisk)** on the drop down menu:
 	![OpenMSX Mount Dir as Disk](OpenMSX-BIN-1.png "OpenMSX Mount Dir as Disk")
 	1. Select your program’s folder in the Browse for Folder dialog and click on the **Select Folder** button:
@@ -181,7 +184,7 @@ and you should see you program blissfully running:
 and you should see you program blissfully running:
 	![OpenMSX BIN Program Running](OpenMSX-BIN-4.png "OpenMSX BIN program running")
 	1. Yey! You successfully executed your MSX BIN application! Have one more beer!
-2. **Example 3:** Running your ROM program in WebMSX:
+1. **Example 3:** Running your ROM program in WebMSX:
 	1. Fire WebMSX up, drag the ROM file from your filesystem explorer and drop it on WebMSX's **Cartridge 1** panel:
 	![WebMSX ROM File Drop](WebMSX-ROM-1.png "WebMSX ROM file drop")
 	1. During the boot process, you will see a (very fast) flash with the messages from the cartridge (don't worry they are repeated. That is an effect of the ROM mirroring feature of the emulator):
@@ -189,3 +192,18 @@ and you should see you program blissfully running:
 	**NOTE:** the messages are shown for just a brief moment because the example program just shows the messages and quits. Your program may (and probably will) have a different behavior.
 	1. Since the example program in its original settings implements extensions to the CALL command in basic, you can also test this feature after the boot, typing **CALL CMD1 ("Message") \<ENTER\>** and **CALL RUNCART \<ENTER\>**:
 	![WebMSX ROM Call Extensions](WebMSX-ROM-3.png "WebMSX ROM call extensions")
+	1. That's it! You successfully executed your MSX Cartridge ROM! One more beer for you!
+1. **Example 4:** Running your ROM program in OpenMSX:
+	1. Run OpenMSX's Catapult. In the **Session** tab, click on **Cart A** and select **Browse ROM image** in the drop down menu:
+	![OpenMSX ROM Open Image](OpenMSX-ROM-1.png "OpenMSX Open ROM Image")
+	1. Select your ROM file in the **Select ROM image** dialog and click on the **Open** button:
+	![OpenMSX ROM Open File](OpenMSX-ROM-2.png "OpenMSX Open ROM File")
+	1. Back on Catapult's window, click on **Start** button on the bottom right:
+	![OpenMSX ROM Start](OpenMSX-ROM-3.png "OpenMSX Start")
+	1. During the boot process, you will see a (very fast) flash with the messages from the cartridge (don't worry they are repeated. That is an effect of the ROM mirroring feature of the emulator):
+	![OpenMSX ROM Program Running](OpenMSX-ROM-4.png "OpenMSX ROM program running")
+	**NOTE:** the messages are shown for just a brief moment because the example program just shows the messages and quits. Your program may (and probably will) have a different behavior.
+	1. Since the example program in its original settings implements extensions to the CALL command in basic, you can also test this feature after the boot, typing **CALL CMD1 ("Message") \<ENTER\>** and **CALL RUNCART \<ENTER\>**:
+	![OpenMSX ROM Call Extensions](OpenMSX-ROM-5.png "OpenMSX ROM call extensions")
+	1. That's it! You successfully executed your MSX Cartridge ROM! One more beer for you!
+
