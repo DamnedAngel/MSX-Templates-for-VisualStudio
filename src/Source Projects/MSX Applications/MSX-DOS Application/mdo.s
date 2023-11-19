@@ -26,9 +26,13 @@
 
 	; load MDO
 	ld		hl, #_OVERLAY_ONE
-	call	_mdoLoad
 .if eq __SDCCCALL
+	push	hl
+	call	_mdoLoad
 	ld		a, l
+	pop		hl
+.else
+	call	_mdoLoad
 .endif
 	or		a
 	ld		hl, #msgloaderror
@@ -37,9 +41,13 @@
 
 	; link MDO
 	ld		hl, #_OVERLAY_ONE
-	call	_mdoLink
 .if eq __SDCCCALL
+	push	hl
+	call	_mdoLink
 	ld		a, l
+	pop		hl
+.else
+	call	_mdoLink
 .endif
 	or		a
 	ld		hl, #msglinkerror
@@ -51,9 +59,13 @@
 
 	; unlink MDO
 	ld		hl, #_OVERLAY_ONE
-	call	_mdoUnlink
 .if eq __SDCCCALL
+	push	hl
+	call	_mdoUnlink
 	ld		a, l
+	pop		hl
+.else
+	call	_mdoUnlink
 .endif
 	or		a
 	ld		hl, #msgunlinkerror
@@ -62,11 +74,20 @@
 
 	; release MDO
 	ld		hl, #_OVERLAY_ONE
-	call	_mdoRelease
-	or		a
 .if eq __SDCCCALL
+	push	hl
+	call	_mdoRelease
 	ld		a, l
+	pop		hl
+.else
+	call	_mdoRelease
 .endif
+	or		a
+;call	_mdoRelease
+;	or		a
+;.if eq __SDCCCALL
+;	ld		a, l
+;.endif
 	ld		hl, #msgreleaseerror
 	jr nz,	#useMDOerror
 	dbg		msgreleasesuccess

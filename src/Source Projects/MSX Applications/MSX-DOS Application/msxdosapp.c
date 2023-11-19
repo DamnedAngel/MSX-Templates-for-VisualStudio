@@ -28,7 +28,7 @@ unsigned char main(char** argv, int argc) {
 #else
 	print("Hello MSX from C\r\n(sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
-	dbg("Template by\r\nDanilo Angelo\r\n\r\n\0");		// only printed in debug mode
+	dbg("Template by\r\nDanilo Angelo\r\n\0");		// only printed in debug mode
 	print(&linefeed);
 
 #ifdef CMDLINE_PARAMETERS
@@ -37,6 +37,7 @@ unsigned char main(char** argv, int argc) {
 		print(argv[i]);
 		print(&linefeed);
 	}
+	print(&linefeed);
 #endif
 
 #ifdef MDO_SUPPORT

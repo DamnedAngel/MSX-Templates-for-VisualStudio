@@ -1,7 +1,7 @@
 ;----------------------------------------------------------
-;		msxdosapp.s - by Danilo Angelo, 2020-2023
+;		msxdosovl.s - by Danilo Angelo, 2020-2023
 ;
-;		MSX-DOS program example
+;		MSX-DOS program overlay example
 ;		Assembly version
 ;----------------------------------------------------------
 

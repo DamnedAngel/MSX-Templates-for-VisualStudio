@@ -20,3 +20,4 @@ s__AFTERHEAP s__A PARENT_A
 ;_main _m m
 _print
 __print
+_linefeed

@@ -26,6 +26,7 @@ _main::
     dbg		bymsg			; only printed in debug mode
 
 .if CMDLINE_PARAMETERS
+	print	_linefeed
     print	parametersmsg
 
 .if __SDCCCALL
@@ -55,13 +56,15 @@ paramLoop::
 	push	de
 	push	bc
     call	__print			; prints param
-	print	#linefeed
+	print	_linefeed
 	pop		bc
 	pop		hl
 	djnz	paramLoop
 .endif
 	
 mainContinue:
+	print	_linefeed
+
 ;   Calls MDO example, id MDO_SUPPORT enabled
 .if MDO_SUPPORT
 	.globl	_useMDO
@@ -91,8 +94,8 @@ hellomsg::
 .endif
 
 bymsg::
-.asciz		"Template by\r\nDanilo Angelo.\r\n\r\n\"
+.asciz		"Template by\r\nDanilo Angelo.\r\n"
 
 parametersmsg::
-.ascii		"Parameters:"
+.asciz		"Parameters:\r\n"
 

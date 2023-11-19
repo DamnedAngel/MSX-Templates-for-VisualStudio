@@ -676,12 +676,12 @@ def configureMDO():
                         mhtokens = value.split('|')
                         mim_s = mim_s + 'MDO_HOOK {}\n'.format (mhtokens[1])
                         mi_h = mi_h + 'extern {} {}_hook {};\n'.format (mhtokens[0], mhtokens[1], mhtokens[2])
-                        mi_s = mi_s + '.globl {}_hook\n'.format (mhtokens[1])
+                        mi_s = mi_s + '.globl _{}_hook\n'.format (mhtokens[1])
 
                     elif key == "MDO_CHILD":
                         mim_s = mim_s + 'MDO_CHILD {}\n'.format (value)
                         mi_h = mi_h + 'extern unsigned char {};\n'.format (tokens[1])
-                        mi_s = mi_s + '.globl {}_hook\n'.format (tokens[1])
+                        mi_s = mi_s + '.globl _{}\n'.format (tokens[1])
 
                     else:
                         mim_s = mim_s + '{} {}\n'.format (key, value)

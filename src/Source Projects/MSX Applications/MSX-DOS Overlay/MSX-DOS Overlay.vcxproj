@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
-    <ProjectGuid>{e511f404-3bbb-4da7-bed6-4f87616886a7}</ProjectGuid>
+    <ProjectGuid>{f998665e-3f72-4650-ac3b-0efe5df4ac6a}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
