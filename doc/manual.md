@@ -9,7 +9,6 @@ Damned Angel / 2020-2023
 ---
 
 ## Table of contents
-
 1. [Introduction](#introduction)
 1. [To Caesar what is Caesar's - My note of acknowledgement and thanks](#to-caesar-what-is-caesars)
 1. [Where to get the templates](#where-to-get-the-templates)
@@ -29,7 +28,6 @@ Damned Angel / 2020-2023
 ---
 
 ## Introduction
-
 This asset is intended to document information about Damned Angel’s MSX Templates for MS Visual Studio (and other
 environments).
 
@@ -51,7 +49,6 @@ favorite IDE. Build commands must be issued in command-line (Windows, Linux and 
 
 ## To Caesar what is Caesar's
 ### Or: My note of acknowledgement and thanks
-
 All the work I have been putting into the construction of the templates have been HEAVILY and COMPLETELY influenced by
 [Konamiman](https://www.konamiman.com/msx/msx-e.html)'s work on
 [SDCC libraries](https://www.konamiman.com/msx/msx-e.html#sdcc) and by
@@ -73,7 +70,6 @@ individually, but who helped a lot analyzing bugs and finding solutions. Thank y
 ---
 
 ## Where to get the templates
-
 Please access the project's [Github](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases) to get the
 latest version of the templates.
 
@@ -83,7 +79,6 @@ variants.
 ---
 
 ## I don’t like/have/care for/use MS Visual Studio
-
 If you don’t use MS VIsual Studio but still want to use the MSX project templates, you are lucky.
 
 Although the templates are conceptualized and developed inside Microsoft Visual Studio, their bindings to this
@@ -94,21 +89,29 @@ structure and build script, along with his/her preferred IDE/Editors. In fact, a
 
 To use the templates outside Visual Studio (Windows, Linux, MacOS):
 1. Make sure to have Python, SDCC and Hex2Bin installed in the path of your OS.
-1. Download the raw template (\*.Application.zip) and unzip it in an appropriate folder in you computer;
-1. Take advantage of the project structure;
-1. Use the configuration files as described in this manual;
-1. Build your project, either through your IDE commands or manually, with:
-	1. Go to your project’s folder with “cd” command;
-	1. Windows (replace \<PROFILE\> with “Debug” or “Release” (case sensitive)):	
-			Build:			python .\Make\make.bat <PROFILE>
-			Rebuild All: 		python .\Make\make.bat <PROFILE> clean all
-			Clean:			python .\Make\make.bat <PROFILE> clean
+1. Download the raw template (\*.Application.zip) and unzip it in an appropriate folder in you computer.
+1. Take advantage of the project structure.
+1. Use the configuration files as described in this manual.
+1. Build your project:
+	1. Open a console of your Operating System (run **"CMD"** on Windows).
+	1. Go to your project’s folder with the **“cd”** command.
+	1. Enter one of the following commands (replace **\<PROFILE\>** with **“Debug”** or **“Release”** (case sensitive)):
+		1. Windows (backslash):
+
+				Build:			python .\Make\make.py <PROFILE>
+				Rebuild All: 		python .\Make\make.py <PROFILE> clean all
+				Clean:			python .\Make\make.py <PROFILE> clean
+
+		1. Linux/Mac (slash):
+
+				Build:			python ./Make/make.py <PROFILE>
+				Rebuild All: 		python ./Make/make.py <PROFILE> clean all
+				Clean:			python ./Make/make.py <PROFILE> clean
 1. Have FUN!
 
 ---
 
 ## Starting a project
-
 ### Setting up the environment
 1. Download and install your preferred IDE/Code editor.
 	1. In case you wish to use MS Visual Studio, download it from https://visualstudio.microsoft.com/downloads/. The
@@ -126,9 +129,10 @@ To use the templates outside Visual Studio (Windows, Linux, MacOS):
 	1. Make sure you have hex2bin.exe in your Windows path variable (open a prompt/terminal/shell and type **hex2bin
 	\<enter\>** and be sure the programs are executed).
 1. Install Python from https://www.python.org/.
-1. Download the MSX Application Templates for MS Visual Studio from the project's
+1. Download the MSX Application Templates from the project's
 [Github](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases).
-	1. If you are using the templates for MS Visual Studio:
+	1. If you are using Visual Studio:
+		1. Download the the Visual Studio templates (**\*.Template.zip**).
 		1. Open Windows Explorer and go to **C:\\Users\\[User Name]\\Documents\\Visual Studio
 		[Version]\\Templates\ProjectTemplates\\** (create the folders, if needed).
 		1. Copy/Move the MSX Application Templates zip files to this folder:
@@ -140,22 +144,22 @@ To use the templates outside Visual Studio (Windows, Linux, MacOS):
 			1. Create a new folder under “ProjectTemplates” and name it "MSX". Put the templates there.
 			1. Unzip the templates, each in their own separate folder.
 			1. If you installed VS without any workload (Language support), try to install C/C++ workloads
+	1. If you are **NOT** using Visual Studio:
+		1. Download the raw templates (**\*.Application.zip**). These should be unzipped in your development folder every
+		time you want to create a new project.
 1. Have a beer.
 
-### Creating your MSX application in Visual Studio
+### Creating your MSX project in Visual Studio
 1. After installing the templates, fire MS Visual Studio up.
 1. Create you MSX project:
 	1. Click the **Create a new project** button: 
 	
 		![Create a new project](vs-wizard-1.png "Create a new project")
-	
 	1. Locate the MSX templates on the template list. Sometimes their are shown in the bottom of the list, so you
 	may have to scroll down:
 	
 		![MSX templates shown in VS's template list](vs-wizard-2.png "MSX templates shown in VS's template list")
-	
 	1. Choose the template you want and click **Next**.
-	
 	1. Fill in the name of your solution and project and set your preferred location for the project files:
 	
 		![Solution and Project names form](vs-wizard-3.png "Solution and Project names form")
@@ -170,23 +174,25 @@ To use the templates outside Visual Studio (Windows, Linux, MacOS):
 		![MSX Project in Visual Studio](vs-wizard-4.png "MSX Project in Visual Studio")
 1. Congrats! You have an MSX Application project. Have another beer.
 
+### Creating your MSX project WITHOUT Visual Studio
+1. After downloading the appropriate raw template (**\*.Application.zip**), create a folder for your project and unzip
+the template into it.
+1. Open the project files in the IDE of your choice.
+1. Congrats! You have an MSX Application project. Have another beer.
+
 ### Building (compiling/assembling) your MSX application in Visual Studio
 1. Select the configuration you want to use for the compiling/assembling:
 	
-	![MSX Project Profile](vs-building-1.png "MSX Project Profile")
-
+	![MSX VS Project Profile](vs-building-1.png "MSX Project Profile in VS")
 	**Note:** Later in this document we will (eventually) discuss what this option is for. For the moment, choose
 	whatever you like, there will be no difference.
-
 1. Select **Build | Build Solution** menu option:
 
-	![MSX Project Build](vs-building-2.png "MSX Project Build")
-
+	![MSX VS Project Build](vs-building-2.png "MSX Project Build in VS")
 1. Visual Studio will run the make script. When it ends, you should see the results of the build process and the
 messages of success in the bottom **Output** panel:
 
-	![MSX Project Build Success](vs-building-3.png "MSX Project Build success")
-
+	![MSX VS Project Build Success](vs-building-3.png "MSX Project Build in VS success")
 1. Inspect your generated binary file:
 	1. Open Windows Explorer and navigate to the directory holding your solution (the folder you defined in step 2.iv
 	of [Creating your MSX Application in Visual Studio](#creating-your-msx-application-in-visual-studio) section above.
@@ -196,8 +202,41 @@ messages of success in the bottom **Output** panel:
 	1. Access the "bin" folder. Your program should be there (the extension of the file may vary according to the type
 	of project you chose):
 	
-		![MSX Project Binary File](vs-building-4.png "MSX Project binary file")
+		![MSX Win Project Binary File](vs-building-4.png "MSX Project binary file in Windows")
+1. Yey! You successfully built your MSX application! Have one more beer!
 
+### Building (compiling/assembling) your MSX application WITHOUT Visual Studio
+1. Open a console of your Operating System (run **"CMD"** on Windows).
+1. Go to your project’s folder:
+	1. Windows:
+		![MSX Win Project Build CD](win-building-1.png "MSX CD in Windows")
+	1. Linux/Mac:
+		![MSX Linux Project Build CD](linux-building-1.png "MSX CD in Linux/Mac")
+1. Enter one of the following commands (replace **\<PROFILE\>** with **“Debug”** or **“Release”** (case sensitive)):
+	1. Windows (backslash):
+
+			Build:			python .\Make\make.py <PROFILE>
+			Rebuild All: 		python .\Make\make.py <PROFILE> clean all
+			Clean:			python .\Make\make.py <PROFILE> clean
+
+		![MSX Win Project Build Script](win-building-2.png "MSX build script in Windows")
+	1. Linux/Mac (slash):
+
+			Build:			python ./Make/make.py <PROFILE>
+			Rebuild All: 		python ./Make/make.py <PROFILE> clean all
+			Clean:			python ./Make/make.py <PROFILE> clean
+
+		![MSX Linux Project Build Script](linux-building-2.png "MSX build script in Linux/Mac")
+1. When the script ends, you should see the results of the build process and the messages of success:
+	1. Windows:
+		![MSX Win Project Build Success](win-building-3.png "MSX Project Build in Windows success")
+	1. Linux/Mac:
+		![MSX Linux Project Build Success](linux-building-3.png "MSX Project Build in Linux/Mac success")
+1. Inspect your generated binary file:
+	1. Windows:
+		![MSX Win Project Binary File](win-building-4.png "MSX Project binary file in Windows")
+	1. Linux/Mac:
+		![MSX Linux Project Binary File](linux-building-4.png "MSX Project binary file in Linux/Mac")
 1. Yey! You successfully built your MSX application! Have one more beer!
 
 ---
@@ -207,23 +246,20 @@ The processes below suppose you have the emulators and its tools configured. If 
 able to use [WebMSX](https://webmsx.org/), which operation is very straight forward.
 
 ### Running your BIN program in WebMSX
+1. Build your project as instructed in the session.
 1. Fire WebMSX up and select **Drive A | Import Files to Disk** menu option:
 
 	![WebMSX Import File Menu](WebMSX-BIN-1.png "WebMSX Import File Menu")
-
 1. Select your program in the **Open File dialog** and click **Open**:
  
 	![WebMSX Import BIN File](WebMSX-BIN-2.png "WebMSX Import BIN File")
-
 1. In MSX-BASIC, type the command **FILES \<ENTER\>** to confirm that your program was added to the disk image:
 
 	![WebMSX FILES Command](WebMSX-BIN-3.png "WebMSX FILES command")
-
 1. Now… the time of truth! The moment we all have been waiting for… Type **BLOAD “MSXAPP.BIN”, R \<ENTER\>**
 and you should see you program blissfully running:
 
 	![WebMSX BIN Program Running](WebMSX-BIN-4.png "WebMSX BIN program running")
-
 1. Yey! You successfully executed your MSX BIN application! Have one more beer!
 
 ## Running your BIN program in OpenMSX
@@ -231,7 +267,6 @@ and you should see you program blissfully running:
 **Browse for disk folder (DirAsDisk)** on the drop down menu:
 
 	![OpenMSX Mount Dir as Disk](OpenMSX-BIN-1.png "OpenMSX Mount Dir as Disk")
-
 1. Select your program’s folder in the Browse for Folder dialog and click on the **Select Folder** button:
 
 	![OpenMSX Select Dir](OpenMSX-BIN-2.png "OpenMSX Select disk")
@@ -294,4 +329,33 @@ test this feature after the boot, typing **CALL CMD1 ("Message") \<ENTER\>** and
 	![OpenMSX ROM Call Extensions](OpenMSX-ROM-5.png "OpenMSX ROM call extensions")
 
 1. You made it! You successfully executed your MSX Cartridge ROM! One more beer for you!
+
+### Running a MSX-DOS program without overlays in WebMSX
+1. Make sure that the **MDO_SUPPORT** option in *ApplicationSettings.txt** is set to **_OFF** and compile your project:
+
+	![WebMSX DOS XXX](WebMSX-DOS-1.png "WebMSX DOS XXX")
+
+	![WebMSX DOS XXX](WebMSX-DOS-2.png "WebMSX DOS XXX")
+
+	![WebMSX DOS XXX](WebMSX-DOS-3.png "WebMSX DOS XXX")
+
+	![WebMSX DOS XXX](WebMSX-DOS-4.png "WebMSX DOS XXX")
+
+	![WebMSX DOS XXX](WebMSX-DOS-5.png "WebMSX DOS XXX")
+
+	![WebMSX DOS XXX](WebMSX-DOS-6.png "WebMSX DOS XXX")
+
+	![WebMSX DOS XXX](WebMSX-DOS-7.png "WebMSX DOS XXX")
+
+	![WebMSX DOS XXX](WebMSX-DOS-8.png "WebMSX DOS XXX")
+
+In MSX-DOS, access the disk mounted by Catapult's DirAsDisk (in my setup, my floppy drive is F, but chances are that your drive has a different letter) and type the command 
+DIR
+to confirm that your program was added to the disk image :
+
+
+Now… the time of truth! The moment we all have been waiting for…
+Type
+MSXAPP
+And you should see your program blissfully running:
 
