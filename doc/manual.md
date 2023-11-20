@@ -213,7 +213,7 @@ messages of success in the bottom **Output** panel:
 	1. Windows:
 		![MSX Win Project Build CD](win-building-1.png "MSX CD in Windows")
 	1. Linux/Mac:
-		![MSX Linux Project Build CD](linux-building-1.png "MSX CD in Linux/Mac")
+			![MSX Linux Project Build CD](linux-building-1.png "MSX CD in Linux/Mac")
 1. Enter one of the following commands (replace **\<PROFILE\>** with **“Debug”** or **“Release”** (case sensitive)):
 	1. Windows (backslash):
 
