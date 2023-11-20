@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	ApplicationSources.txt - by Danilo Angelo, 2020
+;	ApplicationSources.txt - by Danilo Angelo, 2020 - 2023
 ;
 ;	List of all specific application C and ASM sources
 ;	These will always be processed by any build actions
@@ -8,10 +8,11 @@
 ;----------------------------------------------------------
 ;	General structure of a MSX BIN application
 ;	Do NOT remove.
+;	This MUST be the first entry in this file.
 MSX\MSX-DOS\msxdoscrt0.s
 
 ;----------------------------------------------------------
-;	MSX BIN application, in C and ASM formats
+;	MSX-DOS application source file, in C and ASM formats
 ;	This is where your main function is.
 ;	THIS IS YOUR PROGRAM!
 ;	Choose ONE and ONLY ONE of the lines below,
@@ -20,9 +21,17 @@ MSX\MSX-DOS\msxdoscrt0.s
 msxdosapp.c
 
 ;----------------------------------------------------------
+;	MDO implementation example
+;	When MDO_SUPPORT is "_ON" on ApplicationSettings.txt,
+;	choose ONE and ONLY ONE of the examples below,
+;	and leave the other commented!
+;mdo.s
+mdo.c
+
+;----------------------------------------------------------
 ;	Additional source files
 ;	Add below additional source files for your application
 ;	using relative paths from the project folder
-
+print.s
 ;yourSourceCodeHere.s
 ;yourSourceCodeHere.c

@@ -15,8 +15,10 @@ Damned Angel / 2020-2023
 1. [I don’t like/have/care for/use MS Visual Studio](#i-dont-likehavecare-foruse-ms-visual-studio)
 1. [Starting a project](#starting-a-project)
 	1. [Setting up the environment](#setting-up-the-environment)
-	1. [Creating your MSX Application in Visual Studio](#creating-your-msx-application-in-visual-studio)
+	1. [Creating your MSX project in Visual Studio](#creating-your-msx-project-in-visual-studio)
+	1. [Creating your MSX project WITHOUT Visual Studio](#creating-your-msx-project-without-visual-studio)
 	1. [Building (compiling/assembling) your MSX Application in Visual Studio](#building-compilingassembling-your-msx-application-in-visual-studio)
+	1. [Building (compiling/assembling) your MSX Application WITHOUT Visual Studio](#building-compilingassembling-your-msx-application-without-visual-studio)
 1. [Running your MSX applications on emulators](#running-your-msx-applications-on-emulators)
 	1. [Example 1: Running your BIN program in WebMSX]
 	1. Example 2: Running your program in OpenMSX (with Catapult)
