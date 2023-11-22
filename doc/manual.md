@@ -20,12 +20,14 @@ Damned Angel / 2020-2023
 	1. [Building (compiling/assembling) your MSX Application in Visual Studio](#building-compilingassembling-your-msx-application-in-visual-studio)
 	1. [Building (compiling/assembling) your MSX Application WITHOUT Visual Studio](#building-compilingassembling-your-msx-application-without-visual-studio)
 1. [Running your MSX applications on emulators](#running-your-msx-applications-on-emulators)
-	1. [Example 1: Running your BIN program in WebMSX]
-	1. Example 2: Running your program in OpenMSX (with Catapult)
-	1. Example 1: Running your program in WebMSX
-	1. Example 2: Running your program in OpenMSX (with Catapult)
-	1. Example 1: Running your program in WebMSX
-	1. Example 2: Running your program in OpenMSX (with Catapult)
+	1. [Running your BIN program in WebMSX](#running-your-bin-program-in-webmsx)
+	1. [Running your BIN program in OpenMSX](#running-your-bin-program-in-openmsx)
+	1. [Running your ROM program in WebMSX](#running-your-rom-program-in-webmsx)
+	1. [Running your ROM program in OpenMSX](#running-your-rom-program-in-openmsx)
+	1. [Running your standard MSX-DOS program in WebMSX](#running-your-standard-msx-dos-program-in-webmsx)
+	1. [Running your standard MSX-DOS program in OpenMSX](#running-your-standard-msx-dos-program-in-openmsx)
+	1. [Running your MSX-DOS program with overlays in WebMSX](#running-your-msx-dos-program-with-overlays-in-webmsx)
+	1. [Running your MSX-DOS program with overlays in OpenMSX](#running-your-msx-dos-program-with-overlays-in-openmsx)
 
 ---
 
@@ -248,7 +250,10 @@ The processes below suppose you have the emulators and its tools configured. If 
 able to use [WebMSX](https://webmsx.org/), which operation is very straight forward.
 
 ### Running your BIN program in WebMSX
-1. Build your project as instructed in the session.
+1. Build your BIN project as instructed in the sections
+[Building (compiling/assembling) your MSX Application in Visual Studio](#building-compilingassembling-your-msx-application-in-visual-studio)
+or
+[Building (compiling/assembling) your MSX Application WITHOUT Visual Studio](#building-compilingassembling-your-msx-application-without-visual-studio).
 1. Fire WebMSX up and select **Drive A | Import Files to Disk** menu option:
 
 	![WebMSX Import File Menu](WebMSX-BIN-1.png "WebMSX Import File Menu")
@@ -265,6 +270,10 @@ and you should see you program blissfully running:
 1. Yey! You successfully executed your MSX BIN application! Have one more beer!
 
 ## Running your BIN program in OpenMSX
+1. Build your BIN project as instructed in the sections
+[Building (compiling/assembling) your MSX Application in Visual Studio](#building-compilingassembling-your-msx-application-in-visual-studio)
+or
+[Building (compiling/assembling) your MSX Application WITHOUT Visual Studio](#building-compilingassembling-your-msx-application-without-visual-studio).
 1. Fire OpenMSX's Catapult up, start the emulation and, in the **Session tab**, click on **Disk A** and select
 **Browse for disk folder (DirAsDisk)** on the drop down menu:
 
@@ -285,6 +294,10 @@ and you should see you program blissfully running:
 1. Yey! You successfully executed your MSX BIN application! Have one more beer!
 
 ## Running your ROM program in WebMSX:
+1. Build your ROM project as instructed in the sections
+[Building (compiling/assembling) your MSX Application in Visual Studio](#building-compilingassembling-your-msx-application-in-visual-studio)
+or
+[Building (compiling/assembling) your MSX Application WITHOUT Visual Studio](#building-compilingassembling-your-msx-application-without-visual-studio).
 1. Fire WebMSX up, drag the ROM file from your filesystem explorer and drop it on WebMSX's **Cartridge 1** panel:
 
 	![WebMSX ROM File Drop](WebMSX-ROM-1.png "WebMSX ROM file drop")
@@ -305,6 +318,10 @@ test this feature after the boot, typing **CALL CMD1 ("Message") \<ENTER\>** and
 1. That's it! You successfully executed your MSX Cartridge ROM! One more beer for you!
 
 ## Running your ROM program in OpenMSX:
+1. Build your ROM project as instructed in the sections
+[Building (compiling/assembling) your MSX Application in Visual Studio](#building-compilingassembling-your-msx-application-in-visual-studio)
+or
+[Building (compiling/assembling) your MSX Application WITHOUT Visual Studio](#building-compilingassembling-your-msx-application-without-visual-studio).
 1. Run OpenMSX's Catapult. In the **Session** tab, click on **Cart A** and select **Browse ROM image** in the drop down
 menu:
 
@@ -332,32 +349,156 @@ test this feature after the boot, typing **CALL CMD1 ("Message") \<ENTER\>** and
 
 1. You made it! You successfully executed your MSX Cartridge ROM! One more beer for you!
 
-### Running a MSX-DOS program without overlays in WebMSX
-1. Make sure that the **MDO_SUPPORT** option in *ApplicationSettings.txt** is set to **_OFF** and compile your project:
+### Running your standard MSX-DOS program in WebMSX
+1. Make sure that the **MDO_SUPPORT** option in *ApplicationSettings.txt** is set to **_OFF**:
 
-	![WebMSX DOS XXX](WebMSX-DOS-1.png "WebMSX DOS XXX")
+	![WebMSX DOS MDO Support](WebMSX-DOS-1.png "WebMSX MDO Support in MSX-DOS Projects")
+1. Build your MSX-DOS project as instructed in the sections
+[Building (compiling/assembling) your MSX Application in Visual Studio](#building-compilingassembling-your-msx-application-in-visual-studio)
+or
+[Building (compiling/assembling) your MSX Application WITHOUT Visual Studio](#building-compilingassembling-your-msx-application-without-visual-studio).
+1. Select WebMSX's **Drive A | Add Boot Disk** menu option:
 
-	![WebMSX DOS XXX](WebMSX-DOS-2.png "WebMSX DOS XXX")
+	![WebMSX DOS Boot Disk](WebMSX-DOS-2.png "WebMSX Boot Disk")
+1. Select WebMSX's **Drive A | Import Files to Disk** menu option:
 
-	![WebMSX DOS XXX](WebMSX-DOS-3.png "WebMSX DOS XXX")
+	![WebMSX DOS Import File Menu](WebMSX-DOS-3.png "WebMSX Import File Menu")
+1. Navigate to your project's binary file folder, select your executable and click the **Open** button:
 
-	![WebMSX DOS XXX](WebMSX-DOS-4.png "WebMSX DOS XXX")
+	![WebMSX DOS Import COM File](WebMSX-DOS-4.png "WebMSX Import COM File")
+1. Now your floppy image is complete, with MSX-DOS and your executable. Reset WebMSX to boot into MSX-DOS by selecting
+**System | Reset** menu option:
 
-	![WebMSX DOS XXX](WebMSX-DOS-5.png "WebMSX DOS XXX")
+	![WebMSX DOS Reset](WebMSX-DOS-5.png "WebMSX Reset")
+1. When MSX-DOS boot completes, issue the "**DIR \<ENTER\>**" command and confirm that your program is available to be
+executed:
 
-	![WebMSX DOS XXX](WebMSX-DOS-6.png "WebMSX DOS XXX")
+	![WebMSX DOS Dir](WebMSX-DOS-6.png "WebMSX DOS DIR")
+1. Execute your program by typing "**MSXAPP \<ENTER\>**":
 
-	![WebMSX DOS XXX](WebMSX-DOS-7.png "WebMSX DOS XXX")
+	![WebMSX DOS Program Run](WebMSX-DOS-7.png "WebMSX DOS program run")
+1. Since the default configuration of the MSX-DOS template includes support to command line parameters, we can
+experiment that too. Type "**MSXAPP \<PARAMETERS\> \<ENTER\>**":
 
-	![WebMSX DOS XXX](WebMSX-DOS-8.png "WebMSX DOS XXX")
+	![WebMSX DOS Parameters](WebMSX-DOS-8.png "WebMSX DOS program run with parameters")
+1. Congrats for having your MSX-DOS program run! Have one more beer!
 
-In MSX-DOS, access the disk mounted by Catapult's DirAsDisk (in my setup, my floppy drive is F, but chances are that your drive has a different letter) and type the command 
-DIR
-to confirm that your program was added to the disk image :
+### Running your standard MSX-DOS program in OpenMSX
+1. Although our target is using OpenMSX, we will still use WebMSX to generate the floppy disk image. Run steps
+1 through 7 of the previous section
+([Running your standard MSX-DOS program in WebMSX](#running-your-rom-program-in-webmsx)).
+1. Once you confirmed that the floppy disk image is correct in the previous steps, select WebMSX's 
+**Drive A | Save Disk Image** menu option and store the file somewhere in your computer.
 
+	![OpenMSX DOS Save Disk Image](OpenMSX-DOS-1.png "WebMSX Save Disk Image")
+1. Fire OpenMSX's Catapult front-end up and choose an MSX model with floppy disk to be emulated. In the
+example below I chose Panasonic FS-A1GT (Turbo-R) because it is fast:
 
-Now… the time of truth! The moment we all have been waiting for…
-Type
-MSXAPP
-And you should see your program blissfully running:
+	![OpenMSX DOS Select Machine](OpenMSX-DOS-2.png "OpenMSX Machine selection")
+1. Click on **Disk A** button and select **Browse for disk image** menu option:
+
+	![OpenMSX DOS Browse for Disk Image](OpenMSX-DOS-3.png "OpenMSX Browse for Disk Image")
+1. In the **Select disk image** dialog, navigate to the folder you saved the floppy image file. Select the
+image file and click the **Open** button:
+
+	![OpenMSX DOS Select Disk Image](OpenMSX-DOS-4.png "OpenMSX Select Disk Image")
+1. In Catapult's main window, click the **Start** button:
+
+	![OpenMSX DOS Start Emulation](OpenMSX-DOS-5.png "OpenMSX Start")
+1. When MSX-DOS boot completes, issue the "**DIR \<ENTER\>**" command and confirm that your program is available to be
+executed:
+
+	![OpenMSX DOS Dir](OpenMSX-DOS-6.png "OpenMSX DOS DIR")
+1. Execute your program by typing "**MSXAPP \<ENTER\>**":
+
+	![OpenMSX DOS Program Run](OpenMSX-DOS-7.png "OpenMSX DOS program run")
+1. Since the default configuration of the MSX-DOS template includes support to command line parameters, we can
+experiment that too. Type "**MSXAPP \<PARAMETERS\> \<ENTER\>**":
+
+	![OpenMSX DOS Parameters](OpenMSX-DOS-8.png "OpenMSX DOS program run with parameters")
+1. Congrats for succeeding running your MSX-DOS program! Have one more beer!
+
+### Running your MSX-DOS program with overlays in WebMSX
+1. In the MSX-DOS module of your project (the program itself, not the MDO (MSX-DOS Overlay) module yet), make sure
+that the **MDO_SUPPORT** option in the **ApplicationSettings.txt** config file is set to **_ON**:
+
+	![WebMSX MDO MDO Support](WebMSX-MDO-1.png "MDO Support in MSX-DOS Projects")
+1. Build your MSX-DOS project module as instructed in the sections
+[Building (compiling/assembling) your MSX Application in Visual Studio](#building-compilingassembling-your-msx-application-in-visual-studio)
+or
+[Building (compiling/assembling) your MSX Application WITHOUT Visual Studio](#building-compilingassembling-your-msx-application-without-visual-studio).
+1. In the MDO module of your project, make sure that the **MSX_BIN_PATH** option in both **TargetConfig_Debug.txt** and
+**TargetConfig_Release.txt** config files points to the main MSX-DOS application's bin folders, so that the build
+process will automatically place the MDOs files with the COM executable file:
+ 
+	![WebMSX MDO BIN PATH](WebMSX-MDO-2.png "MSX_BIN_PATH Configuration")
+1. Still in the MDO module of your project, make sure that the **MDO_APPLICATION_PROJECT_PATH** and
+**MDO_PARENT_PROJECT_PATH** variables in the **MDOSettings.txt** config file point to your main MSX-DOS module
+project:
+ 
+	![WebMSX MDO Hierarchy](WebMSX-MDO-3.png "MDO_APPLICATION_PROJECT_PATH and MDO_PARENT_PROJECT_PATH configurations")
+1. Build your MDO module as instructed in the sections
+[Building (compiling/assembling) your MSX Application in Visual Studio](#building-compilingassembling-your-msx-application-in-visual-studio)
+or
+[Building (compiling/assembling) your MSX Application WITHOUT Visual Studio](#building-compilingassembling-your-msx-application-without-visual-studio).
+1. Select WebMSX's **Drive A | Add Boot Disk** menu option:
+
+	![WebMSX MDO Boot Disk](WebMSX-DOS-2.png "WebMSX Boot Disk")
+1. Select WebMSX's **Drive A | Import Files to Disk** menu option:
+
+	![WebMSX MDO Import File Menu](WebMSX-DOS-3.png "WebMSX Import File Menu")
+1. Navigate to your project's binary file folder, select your COM executable and your MDO library and click the **Open** button:
+
+	![WebMSX MDO Import COM and MDO File](WebMSX-MDO-4.png "WebMSX Import COM and MDO Files")
+1. Now your floppy image is complete, with MSX-DOS and your executable. Reset WebMSX to boot into MSX-DOS by selecting
+**System | Reset** menu option:
+
+	![WebMSX MDO Reset](WebMSX-DOS-5.png "WebMSX Reset")
+1. When MSX-DOS boot completes, issue the "**DIR \<ENTER\>**" command and confirm that your files are available to be
+executed:
+
+	![WebMSX MDO Dir](WebMSX-MDO-5.png "WebMSX DOS DIR")
+1. Execute your program by typing "**MSXAPP \<ENTER\>**":
+
+	![WebMSX DOS Program Run](WebMSX-DOS-7.png "WebMSX DOS program run")
+1. Since the default configuration of the MSX-DOS template includes support to command line parameters, we can
+experiment that too. Type "**MSXAPP \<PARAMETERS\> \<ENTER\>**":
+
+	![WebMSX DOS Parameters](WebMSX-DOS-8.png "WebMSX DOS program run with parameters")
+1. Congrats for having your MSX-DOS program run! Have one more beer!
+
+### Running your standard MSX-DOS program in OpenMSX
+1. Although our target is using OpenMSX, we will still use WebMSX to generate the floppy disk image. Run steps
+1 through 6 of the previous section
+([Running your standard MSX-DOS program in WebMSX](#running-your-rom-program-in-webmsx)).
+1. Once you confirmed that the floppy disk image is correct in the previous steps, select WebMSX's 
+**Drive A | Save Disk Image** menu option and store the file somewhere in your computer.
+
+	![OpenMSX DOS Save Disk Image](OpenMSX-DOS-1.png "WebMSX Save Disk Image")
+1. Fire OpenMSX's Catapult front-end up and choose an MSX model with floppy disk to be emulated. In the
+example below I chose Panasonic FS-A1GT (Turbo-R) because it is fast:
+
+	![OpenMSX DOS Select Machine](OpenMSX-DOS-2.png "OpenMSX Machine selection")
+1. Click on **Disk A** button and select **Browse for disk image** menu option:
+
+	![OpenMSX DOS Browse for Disk Image](OpenMSX-DOS-3.png "OpenMSX Browse for Disk Image")
+1. In the **Select disk image** dialog, navigate to the folder you saved the floppy image file. Select the
+image file and click the **Open** button:
+
+	![OpenMSX DOS Select Disk Image](OpenMSX-DOS-4.png "OpenMSX Select Disk Image")
+1. In Catapult's main window, click the **Start** button:
+
+	![OpenMSX DOS Start Emulation](OpenMSX-DOS-5.png "OpenMSX Start")
+1. When MSX-DOS boot completes, issue the "**DIR \<ENTER\>**" command and confirm that your program is available to be
+executed:
+
+	![OpenMSX DOS Dir](OpenMSX-DOS-6.png "OpenMSX DOS DIR")
+1. Execute your program by typing "**MSXAPP \<ENTER\>**":
+
+	![OpenMSX DOS Program Run](OpenMSX-DOS-7.png "OpenMSX DOS program run")
+1. Since the default configuration of the MSX-DOS template includes support to command line parameters, we can
+experiment that too. Type "**MSXAPP \<PARAMETERS\> \<ENTER\>**":
+
+	![OpenMSX DOS Parameters](OpenMSX-DOS-8.png "OpenMSX DOS program run with parameters")
+1. Congrats for succeeding running your MSX-DOS program! Have one more beer!
 
