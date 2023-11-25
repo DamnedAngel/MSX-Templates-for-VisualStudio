@@ -9,12 +9,11 @@
 # ----------------------------------------------------------
 
 # -----------------------------------------------------------------------------------
-OPEN1 = 'MSX SDCC Make Script Copyright © 2020-2023 Danilo Angelo'
-OPEN2 = 'version 00.06.00 - Codename Sam'
+OPEN1 = r'MSX SDCC Make Script Copyright © 2020-2023 Danilo Angelo'
+OPEN2 = r'version 00.06.00 - Codename Sam'
 # -----------------------------------------------------------------------------------
 
 from dis import code_info
-from distutils.command import build_scripts
 import sys
 import platform
 from datetime import datetime, date
@@ -87,7 +86,7 @@ def execAction (phase):
 ## RESOLVE STRING
 def resolveString (string):
     while (True):
-        foundVar=re.search('\[(.*?)\]', string)
+        foundVar=re.search(r'\[(.*?)\]', string)
         if foundVar:
             name=foundVar.group(0)
             string = string.replace(name, VAR[name[1:-1]])
@@ -158,7 +157,7 @@ def getHeaderSize() -> int:
 # -----------------------------------------------------------------------------------
 def setDebugLevel():
     global BUILD_DEBUG_NAME
-    filename = fixPath ('{}\TargetConfig_{}.txt'.format(VAR['MSX_CFG_PATH'], VAR['PROFILE']))
+    filename = fixPath (r'{}\TargetConfig_{}.txt'.format(VAR['MSX_CFG_PATH'], VAR['PROFILE']))
     with open(filename, 'r') as f1:
         for line in f1:
             line1 = line.strip()
@@ -212,7 +211,7 @@ def configureTarget():
     tc_s = tc_s + ';-------------------------------------------------\n'
     tc_s = tc_s + '\n'
     
-    filename = fixPath ('{}\TargetConfig_{}.txt'.format(VAR['MSX_CFG_PATH'], VAR['PROFILE']))
+    filename = fixPath (r'{}\TargetConfig_{}.txt'.format(VAR['MSX_CFG_PATH'], VAR['PROFILE']))
     debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(filename))
     with open(filename, 'r') as f1:
         debug(VAR['DBG_VERBOSE'], 'Opened file {}.'.format(filename))
@@ -350,7 +349,7 @@ def configureBuildEvents():
     debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
     debug(VAR['DBG_STEPS'], 'Configuring build events...')
     
-    filename = fixPath ('{}\BuildEvents.txt'.format(VAR['MSX_CFG_PATH']))
+    filename = fixPath (r'{}\BuildEvents.txt'.format(VAR['MSX_CFG_PATH']))
     debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(filename))
     with open(filename, 'r') as f1:
         debug(VAR['DBG_VERBOSE'], 'Opened file {}.'.format(filename))
@@ -434,7 +433,7 @@ def configureApplication():
     as_s = as_s + ';-------------------------------------------------\n'
     as_s = as_s + '\n'
 
-    filename = fixPath ('{}\ApplicationSettings.txt'.format(VAR['MSX_CFG_PATH']))
+    filename = fixPath (r'{}\ApplicationSettings.txt'.format(VAR['MSX_CFG_PATH']))
     debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(filename))
     with open(filename, 'r') as f1:
         debug(VAR['DBG_VERBOSE'], 'Opened file {}.'.format(filename))
@@ -626,7 +625,7 @@ def configureMDO():
     mim_s = mim_s + '.globl s__AFTERHEAP\n'
     mim_s = mim_s + '\n'
 
-    filename = fixPath ('{}\MDOSettings.txt'.format(VAR['MSX_CFG_PATH']))
+    filename = fixPath (r'{}\MDOSettings.txt'.format(VAR['MSX_CFG_PATH']))
     debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(filename))
     with open(filename, 'r') as f1:
         debug(VAR['DBG_VERBOSE'], 'Opened file {}.'.format(filename))
@@ -751,7 +750,7 @@ def collectIncludeDirs():
     
     INCDIRS.append(VAR['MSX_OBJ_PATH'])
     
-    filename = fixPath ('{}\IncludeDirectories.txt'.format(VAR['MSX_CFG_PATH']))
+    filename = fixPath (r'{}\IncludeDirectories.txt'.format(VAR['MSX_CFG_PATH']))
     debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(filename))
     with open(filename, 'r') as f1:
         debug(VAR['DBG_VERBOSE'], 'Opened file {}.'.format(filename))
@@ -778,7 +777,7 @@ def collectCompiledLibs():
 
     global OBJLIST
 
-    filename = fixPath ('{}\Libraries.txt'.format(VAR['MSX_CFG_PATH']))
+    filename = fixPath (r'{}\Libraries.txt'.format(VAR['MSX_CFG_PATH']))
     debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(filename))
     with open(filename, 'r') as f1:
         debug(VAR['DBG_VERBOSE'], 'Opened file {}.'.format(filename))
@@ -802,7 +801,7 @@ def compileLibs():
 
     global OBJLIST
     
-    filename = fixPath ('{}\LibrarySources.txt'.format(VAR['MSX_CFG_PATH']))
+    filename = fixPath (r'{}\LibrarySources.txt'.format(VAR['MSX_CFG_PATH']))
     debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(filename))
     with open(filename, 'r') as f1:
         debug(VAR['DBG_VERBOSE'], 'Opened file {}.'.format(filename))
@@ -833,7 +832,7 @@ def compileProject():
 
     global OBJLIST
 
-    filename = fixPath ('{}\ApplicationSources.txt'.format(VAR['MSX_CFG_PATH']))
+    filename = fixPath (r'{}\ApplicationSources.txt'.format(VAR['MSX_CFG_PATH']))
     debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(filename))
     with open(filename, 'r') as f1:
         debug(VAR['DBG_VERBOSE'], 'Opened file {}.'.format(filename))
@@ -910,7 +909,7 @@ def buildSymbolFile():
     debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
     debug(VAR['DBG_STEPS'], 'Building symbol file...')
     
-    exe = fixPath("Make\symbol.py")
+    exe = os.path.join("Make", "symbol.py")
 
     execute (VAR['DBG_CALL3'], f'python "{exe}" {VAR["PROJECT_TYPE"]} "{VAR["MSX_OBJ_PATH"]}\" "{VAR["MSX_FILE_NAME"]}" {VAR["SYMBOL_DETAIL"]}')
 
@@ -983,11 +982,11 @@ VAR['MDO_SUPPORT'] = 0
 
 VAR['MSX_FILE_NAME'] = 'MSXAPP'
 VAR['PROJECT_TYPE'] = None
-VAR['MSX_OBJ_PATH'] = '{}\objs'.format(VAR['PROFILE'])
-VAR['MSX_BIN_PATH'] = '{}\bin'.format(VAR['PROFILE'])
-VAR['MSX_DEV_PATH'] = '..\..\..'
-VAR['MSX_LIB_PATH'] = '{}\libs'.format(VAR['MSX_DEV_PATH'])
-VAR['MSX_CFG_PATH'] = 'Config'
+VAR['MSX_OBJ_PATH'] = r'{}\objs'.format(VAR['PROFILE'])
+VAR['MSX_BIN_PATH'] = r'{}\bin'.format(VAR['PROFILE'])
+VAR['MSX_DEV_PATH'] = r'..\..\..'
+VAR['MSX_LIB_PATH'] = r'{}\libs'.format(VAR['MSX_DEV_PATH'])
+VAR['MSX_CFG_PATH'] = r'Config'
 VAR['MDO_PARENT_OBJ_PATH'] = None
 VAR['MDO_PARENT_AFTERHEAP'] = None
 
