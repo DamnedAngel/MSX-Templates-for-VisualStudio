@@ -883,7 +883,7 @@ def linkProject():
     for obj in OBJLIST:
         QUOTED_OBJLIST.append ('"{}"'.format(obj))
  
-    execute (VAR['DBG_CALL1'], f'sdcc {VAR["SDCC_DETAIL"]} {VAR["LINKER_EXTRA_DIRECTIVES"]} --code-loc {VAR["CODE_LOC"]} --data-loc {VAR["DATA_LOC"]} -mz80 --no-std-crt0 {" ".join(QUOTED_OBJLIST)} {" ".join(QUOTED_INCDIRS)} -o "{fixPath("{}/{}.IHX".format(VAR["MSX_OBJ_PATH"], VAR["MSX_FILE_NAME"]))}"')
+    execute (VAR['DBG_CALL1'], f'sdcc {VAR["SDCC_DETAIL"]} {VAR["LINKER_EXTRA_DIRECTIVES"]} --code-loc {VAR["CODE_LOC"]} --data-loc {VAR["DATA_LOC"]} -mz80 --no-std-crt0 {" ".join(QUOTED_OBJLIST)} {" ".join(QUOTED_INCDIRS)} -o "{fixPath("{}/{}.ihx".format(VAR["MSX_OBJ_PATH"], VAR["MSX_FILE_NAME"]))}"')
 
     debug(VAR['DBG_STEPS'], 'Done linking project.')
     return
@@ -893,9 +893,9 @@ def buildBinary():
     debug(VAR['DBG_STEPS'], 'Building MSX binary...')
 
     if VAR['BIN_SIZE'] == None:
-        execute (VAR['DBG_CALL3'], f'hex2bin {VAR["HEX2BIN_DETAIL"]} {VAR["EXECGEN_EXTRA_DIRECTIVES"]} -e {VAR["MSX_FILE_EXTENSION"]} "{fixPath("{}/{}.IHX".format(VAR["MSX_OBJ_PATH"], VAR["MSX_FILE_NAME"]))}"')
+        execute (VAR['DBG_CALL3'], f'hex2bin {VAR["HEX2BIN_DETAIL"]} {VAR["EXECGEN_EXTRA_DIRECTIVES"]} -e {VAR["MSX_FILE_EXTENSION"]} "{fixPath("{}/{}.ihx".format(VAR["MSX_OBJ_PATH"], VAR["MSX_FILE_NAME"]))}"')
     else:
-        execute (VAR['DBG_CALL3'], f'hex2bin {VAR["HEX2BIN_DETAIL"]} {VAR["EXECGEN_EXTRA_DIRECTIVES"]} -e {VAR["MSX_FILE_EXTENSION"]} -l {VAR["BIN_SIZE"]} "{fixPath("{}/{}.IHX".format(VAR["MSX_OBJ_PATH"], VAR["MSX_FILE_NAME"]))}"')
+        execute (VAR['DBG_CALL3'], f'hex2bin {VAR["HEX2BIN_DETAIL"]} {VAR["EXECGEN_EXTRA_DIRECTIVES"]} -e {VAR["MSX_FILE_EXTENSION"]} -l {VAR["BIN_SIZE"]} "{fixPath("{}/{}.ihx".format(VAR["MSX_OBJ_PATH"], VAR["MSX_FILE_NAME"]))}"')
 
     source = fixPath('{}/{}.{}'.format(VAR['MSX_OBJ_PATH'], VAR['MSX_FILE_NAME'], VAR['MSX_FILE_EXTENSION']))
     target = fixPath('{}/{}.{}'.format(VAR['MSX_BIN_PATH'], VAR['MSX_FILE_NAME'], VAR['MSX_FILE_EXTENSION']))

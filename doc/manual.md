@@ -133,6 +133,12 @@ To use the templates outside Visual Studio (Windows, Linux, MacOS):
 	1. Make sure you have hex2bin.exe in your Windows path variable (open a prompt/terminal/shell and type **hex2bin
 	\<enter\>** and be sure the programs are executed).
 1. Install Python from https://www.python.org/.
+    1. In MacOS, the Python installer may create a python alias for the command line operation, but python scripts
+cannot make use of such aliases. So, if you are on Mac, create a symbolic link to your python binary:
+
+            ln -s /usr/local/bin/python /usr/local/bin/python3.12
+        Replace the last term in the line above with the proper version of the python binary installed.
+
 1. Download the MSX Application Templates from the project's
 [Github](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases).
 	1. If you are using Visual Studio:
