@@ -99,6 +99,7 @@ mdoService_notLoadedError::
 ;		0xff: file open error
 ;----------------------------------------------------------
 _mdoLoad::
+	push	ix				; by sdcc standard, ix must be preserved by the callee
 	; retrieve mdo handler and status, and test if loaded
 .if eq __SDCCCALL
 	ld		hl, #4			; first argument, but after two call instructions!
@@ -200,6 +201,7 @@ mdoService_finalize::
 	ld		l, a
 .endif
 	ei
+	pop		ix				; by sdcc standard, ix must be preserved by the callee
 	ret
 
 ;----------------------------------------------------------
@@ -246,6 +248,7 @@ mdoLoad_readError::
 ;		0x05: mdo linked
 ;----------------------------------------------------------
 _mdoRelease::
+	push	ix				; by sdcc standard, ix must be preserved by the callee
 	call	isMdoLinked
 	jr nz,	mdoService_linkedError
 
@@ -295,6 +298,7 @@ getHookImpAddrTable::
 ;		0x05: mdo already linked
 ;----------------------------------------------------------
 _mdoLink::
+	push	ix				; by sdcc standard, ix must be preserved by the callee
 	call	isMdoLinked
 	jr nz,	mdoService_linkedError
 
@@ -343,6 +347,7 @@ mdoLink_setStatusLinked:
 ;		0x06: mdo not linked
 ;----------------------------------------------------------
 _mdoUnlink::
+	push	ix				; by sdcc standard, ix must be preserved by the callee
 	call	isMdoLinked
 	jr z,	mdoService_notLinkedError
 
