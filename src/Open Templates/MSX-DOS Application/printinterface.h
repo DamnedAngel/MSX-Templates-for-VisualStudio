@@ -10,12 +10,14 @@
 
 #include "targetconfig.h"
 
-extern void print(unsigned char*);
-extern unsigned char* linefeed;
+extern void print(const unsigned char*);
+extern const unsigned char linefeed[];
 
 #ifdef DEBUG
-extern unsigned char* msgdbg;
-#define dbg(msg)	print (&msgdbg); print(msg);
+extern const unsigned char msgdbg[];
+
+// casting below needed for SDCC 4.2.0. Not necessary for 4.3.0.
+#define dbg(msg)	do { print (msgdbg); print(msg); } while(0)
 #else
 #define dbg(msg)	// nothing
 #endif
