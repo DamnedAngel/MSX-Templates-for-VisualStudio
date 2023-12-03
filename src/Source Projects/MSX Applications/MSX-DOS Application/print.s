@@ -4,13 +4,11 @@
 ;		Simple _print and _printchar implementation
 ;----------------------------------------------------------
 
+MSXDOSPRINT = 0
+
 .include "MSX/BIOS/msxbios.s"
 .include "applicationsettings.s"
 .include "targetconfig.s"
-
-.ifndef MSXDOSPRINT
-MSXDOSPRINT = 0
-.endif
 
 	.area	_CODE
 
@@ -79,3 +77,4 @@ _msgdbg::
 .endif
 _linefeed::
 .asciz		"\r\n"
+
