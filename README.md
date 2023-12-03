@@ -1,4 +1,41 @@
 # MSX-Templates-for-VisualStudio
+## MSX Application Template Pack for MS Visual Studio (and other environments)
+
+### Version 00.06.00 - Codename Sam released!
+
+Dec 3<sup>rd</sup>, 2023
+
+**Enable your ROM projects to save files in disk (savegame, perhaps?)!**
+
+**Enable your MSX-DOS programs to use MSX-DOS Overlays (MDOs), dinamically linked libraries, for virtually infinite-sized MSX-DOS applications!**
+
+[Link](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases/tag/v00.06.00) to release page.
+
+### Downloads - Visual Studio Templates
+* [BIN (BLOADable binary) template](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases/download/v00.06.00/MSX.BIN.Template.zip)
+* [ROM template](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases/download/v00.06.00/MSX.ROM.Template.zip)
+* [MSX-DOS template](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases/download/v00.06.00/MSX.DOS.Template.zip)
+* [MDO (MSX-DOS Overlays, dinamically linked libraries) template](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases/download/v00.06.00/MSX.MDO.Template.zip)
+
+### Downloads - Raw Application Templates (other IDEs, Linux, Mac)
+* [BIN (BLOADable binary) application](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases/download/v00.06.00/MSX.BIN.Application.zip)
+* [ROM application](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases/download/v00.06.00/MSX.ROM.Application.zip)
+* [MSX-DOS application](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases/download/v00.06.00/MSX.DOS.Application.zip)
+* [MDO (MSX-DOS Overlays, dinamically linked libraries) application](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/releases/download/v00.06.00/MSX.MDO.Application.zip)
+
+### Basic Instructions
+* **Visual Studio Templates**: Download them to your **\Users\\&lt;user&gt;\Documents\Visual Studio &lt;version&gt;\Templates\ProjectTemplates** folder and the templates will appear as options when creating new projecs from within Visual Studio.
+* **Raw Application Templates**: Unzip them and edit away. Call **python Make\make.py** (Windows) or **python Make/make.py** (Linux/Mac) to build your program.
+
+### Documentation
+[Here](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/blob/REL_00.06.00/doc/manual.md).
+
+### Contact
+Danilo Angelo / Damned Angel - 2023
+
+---
+
+# MSX-Templates-for-VisualStudio
 ## MSX Application Template Pack for MS Visual Studio.
 
 ### Version 00.05.02 - Codename Rubens released!
