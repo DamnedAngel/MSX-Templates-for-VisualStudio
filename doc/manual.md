@@ -67,7 +67,7 @@ Masters, thank you very much for pioneering and publishing the content on MSX fi
 
 In the current version of the templates, the build script has been unified in a single python file, supporting Windows, Linux and MacOS. Originally, however, there was a BAT script for Windows and a port for bash (Linux and MacOS) by [Pedro de Medeiros](https://github.com/pvmm).
 
-Moreover, Pedro was also a valuable critic, supporter, beta tester and technical orientator. In other words, a real friend!
+Moreover, Pedro has been also a valuable critic, supporter, beta tester and technical orientator. In other words, a real friend!
 
 Pedro, you have my eternal gratitude for your interest, ideas, patience and willful caring for the templates and build script.
 
@@ -125,7 +125,7 @@ To use the templates outside Visual Studio (Windows, Linux, MacOS):
 free "Community" version is good enough. **Be sure to install some workload, preferably the support for C++ and/or
 C++ games. Such extensions are NOT used for building the MSX programs, but they seem to be necessary in order for
 VS to recognize the MSX project templates.**
-1. Download and install the latest version of SDCC from http://sdcc.sourceforge.net/.
+1. Download and install SDCC (version 4.2.0 or newer) from http://sdcc.sourceforge.net/.
     1. You may need to recompile from the source if the binary distribution for your OS is not available. It is a
 straightforward process, though.
     1. Make sure you have sdcc.exe and sdasz80.exe (comes with SDCC) in your OS’s path variable (open a command

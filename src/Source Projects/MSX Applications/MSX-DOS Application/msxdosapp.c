@@ -29,26 +29,27 @@ unsigned char main(char** argv, int argc) {
 	print("Hello MSX from C\r\n(sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
 	dbg("Template by\r\nDanilo Angelo\r\n\0");		// only printed in debug mode
-	print(&linefeed);
+	print((unsigned char*)&linefeed);				// casting needed for SDCC 4.2.0. Not necessary for 4.3.0.
 
 #ifdef CMDLINE_PARAMETERS
 	print("Parameters:\r\n\0");
 	for (int i = 0; i < argc; i++) {
 		print(argv[i]);
-		print(&linefeed);
+		print((unsigned char*)&linefeed);			// casting needed for SDCC 4.2.0. Not necessary for 4.3.0.
 	}
-	print(&linefeed);
+	print((unsigned char*)&linefeed);				// casting needed for SDCC 4.2.0. Not necessary for 4.3.0.
 #endif
 
 #ifdef MDO_SUPPORT
-//	useMDO returns errorcode, but in this
-//  example we will ignore it and return
-//	#0xa0 error code for all MDO errors.
-//  Remove it if you're not using MDOs.
-extern unsigned char useMDO(void);
+	//	useMDO returns errorcode, but in this
+	//  example we will ignore it and return
+	//	#0xa0 error code for all MDO errors.
+	//  Remove it if you're not using MDOs.
+	extern unsigned char useMDO(void);
 	if (useMDO()) {
 		return 0xa0;
-	} else {
+	}
+	else {
 		return 0;
 	}
 #else

@@ -15,7 +15,9 @@ extern unsigned char* linefeed;
 
 #ifdef DEBUG
 extern unsigned char* msgdbg;
-#define dbg(msg)	do { print (msgdbg); print(msg); } while(0)
+
+// casting below needed for SDCC 4.2.0. Not necessary for 4.3.0.
+#define dbg(msg)	do { print ((unsigned char*) &msgdbg); print(msg); } while(0)
 #else
 #define dbg(msg)	// nothing
 #endif
