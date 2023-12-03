@@ -29,15 +29,15 @@ unsigned char main(char** argv, int argc) {
 	print("Hello MSX from C\r\n(sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
 	dbg("Template by\r\nDanilo Angelo\r\n\0");		// only printed in debug mode
-	print((unsigned char*)&linefeed);				// casting needed for SDCC 4.2.0. Not necessary for 4.3.0.
+	print(linefeed);
 
 #ifdef CMDLINE_PARAMETERS
 	print("Parameters:\r\n\0");
 	for (int i = 0; i < argc; i++) {
 		print(argv[i]);
-		print((unsigned char*)&linefeed);			// casting needed for SDCC 4.2.0. Not necessary for 4.3.0.
+		print(linefeed);
 	}
-	print((unsigned char*)&linefeed);				// casting needed for SDCC 4.2.0. Not necessary for 4.3.0.
+	print(linefeed);
 #endif
 
 #ifdef MDO_SUPPORT

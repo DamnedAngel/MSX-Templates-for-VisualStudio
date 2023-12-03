@@ -26,7 +26,7 @@ void main(void) {
 		"BASIC/MSXDOS avoid returning\r\n"
 		"from program's main funtion.\r\n\0");
 	dbg("Template by\r\nDanilo Angelo\r\n\0");		// only printed in debug mode
-	print((unsigned char*)&linefeed);				// casting needed for SDCC 4.2.0. Not necessary for 4.3.0.
+	print(linefeed);
 
 #ifdef LATE_EXECUTION
 extern void saveData(void);

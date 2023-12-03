@@ -22,6 +22,6 @@ void main(void) {
 	print("Hello MSX from C\r\n(sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
 	dbg("Template by\r\nDanilo Angelo\r\n");
-	print((unsigned char*)&linefeed);				// casting needed for SDCC 4.2.0. Not necessary for 4.3.0.
+	print(linefeed);
 	return;
 }
