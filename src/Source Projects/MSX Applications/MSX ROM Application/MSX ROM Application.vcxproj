@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
+    <VCProjectVersion>17.0</VCProjectVersion>
     <ProjectGuid>{3f19ba36-622e-40c4-909f-1c2f67368001}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
@@ -20,12 +20,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -40,37 +40,40 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>Make\make $(Configuration)</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>python Make\make.py $(Configuration)</NMakeBuildCommandLine>
     <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
-    <NMakeCleanCommandLine>Make\make $(Configuration) clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>Make\make $(Configuration) clean all</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>python Make\make.py $(Configuration) clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>python Make\make.py $(Configuration) clean all</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>Make\make $(Configuration)</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>python Make\make.py $(Configuration)</NMakeBuildCommandLine>
     <NMakeOutput>$(ProjectName).BIN</NMakeOutput>
-    <NMakeCleanCommandLine>Make\make $(Configuration) clean</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>Make\make $(Configuration) clean all</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>python Make\make.py $(Configuration) clean</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>python Make\make.py $(Configuration) clean all</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="applicationsettings.h" />
+    <ClInclude Include="callhandler.c" />
     <ClInclude Include="MSX\BIOS\msxbios.h" />
-    <ClInclude Include="targetconfig.h" />
+    <ClInclude Include="printinterface.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="applicationsettings.s" />
-    <None Include="Make\make.bat" />
-    <None Include="Make\make.sh" />
+    <None Include="callhandler.s" />
+    <None Include="devicehandler.s" />
+    <None Include="diskaccess.s" />
+    <None Include="Make\make.py" />
     <None Include="Make\symbol.py" />
     <None Include="msxromapp.s" />
     <None Include="MSX\BIOS\msxbios.s" />
     <None Include="MSX\ROM\msxromcrt0.s" />
-    <None Include="targetconfig.s" />
+    <None Include="print.s" />
+    <None Include="printinterface.s" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="devicehandler.c" />
     <ClCompile Include="msxromapp.c" />
   </ItemGroup>
   <ItemGroup>

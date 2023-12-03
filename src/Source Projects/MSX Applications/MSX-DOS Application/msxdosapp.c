@@ -8,76 +8,52 @@
 #include "MSX/BIOS/msxbios.h"
 #include "targetconfig.h"
 #include "applicationsettings.h"
-
-// ----------------------------------------------------------
-//	This is an example of embedding asm code into C.
-//	This is only for the demo app.
-//	You can safely remove it for your application.
-#pragma disable_warning 85	// because the var msg is not used in C context
-void _print(char* msg) {
-__asm
-#if !__SDCCCALL
-	ld      hl, #2; retrieve address from stack
-	add     hl, sp
-	ld		b, (hl)
-	inc		hl
-	ld		h, (hl)
-	ld		l, b
-#endif
-
-_print_loop :
-	ld		a, (hl)	; print
-	or		a
-	ret z
-	push	hl
-	push	ix
-	ld		iy, (BIOS_ROMSLT)
-	ld		ix, #BIOS_CHPUT
-	call	BIOS_CALSLT
-	ei				; in some MSXs (i.e. F1XV) CALSLT returns with di.
-	pop		ix
-	pop		hl
-	inc		hl
-	jr		_print_loop
-__endasm;
-
-	return;
-}
-
-// ----------------------------------------------------------
-//	This is an example of using debug code in C.
-//	This is only for the demo app.
-//	You can safely remove it for your application.
-void print(char* msg) {
-#ifdef DEBUG
-	_print("[DEBUG]");
-#endif
-	_print(msg);
-	return;
-}
+#include "printinterface.h"
 
 // ----------------------------------------------------------
 //	This is the main function for your C MSX APP!
 //
 //	Your fun starts here!!!
 //	Replace the code below with your art.
-//	Note: Only use argv and argc if you enabled
+// 
+//  Note 1: You only need conditional code based
+//	on __SDCCCALL if youplan to support both
+//	calling convention.
+// 
+//	Note 2: Only use argv and argc if you enabled
 //	CMDLINE_PARAMETERS on TargetConfig_XXXXX.txt
 unsigned char main(char** argv, int argc) {
 #if __SDCCCALL
-	print("Hello MSX from C (sdcccall(REGs))!\r\n\0");
+	print("Hello MSX from C\r\n(sdcccall(REGs))!\r\n\0");
 #else
-	print("Hello MSX from C (sdcccall(STACK))!\r\n\0");
+	print("Hello MSX from C\r\n(sdcccall(STACK))!\r\n\0");
 #endif // __SDCCCALL
+	dbg("Template by\r\nDanilo Angelo\r\n\0");		// only printed in debug mode
+	print(linefeed);
+
 #ifdef CMDLINE_PARAMETERS
 	print("Parameters:\r\n\0");
 	for (int i = 0; i < argc; i++) {
 		print(argv[i]);
-		_print("\r\n\0");
+		print(linefeed);
 	}
+	print(linefeed);
 #endif
+
+#ifdef MDO_SUPPORT
+	//	useMDO returns errorcode, but in this
+	//  example we will ignore it and return
+	//	#0xa0 error code for all MDO errors.
+	//  Remove it if you're not using MDOs.
+	extern unsigned char useMDO(void);
+	if (useMDO()) {
+		return 0xa0;
+	}
+	else {
+		return 0;
+	}
+#else
 	return 0;
+#endif
 }
-
-
 

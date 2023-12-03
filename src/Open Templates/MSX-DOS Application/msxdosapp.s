@@ -8,6 +8,7 @@
 	.include "MSX/BIOS/msxbios.s"
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
+	.include "printinterface.s"
 
 	.area	_CODE
 
@@ -15,106 +16,86 @@
 ;	This is the main function for your ASM MSX APP!
 ;
 ;	Your fun starts here!!!
-;	Replace the code below with your art.
+;	Replace the example code below with your art.
 _main::
-;   Replace the lines below with your own program logic
 .if __SDCCCALL & CMDLINE_PARAMETERS
-	push	hl
+	push	hl				; saves parameter index buffer address
+	push	de
 .endif
-    ld		hl,	#_hellomsg
-    call	print
+    print	hellomsg
+    dbg		bymsg			; only printed in debug mode
+
 .if CMDLINE_PARAMETERS
-    ld		hl,	#_parametersmsg
-    call	print
+	print	_linefeed
+    print	parametersmsg
+
 .if __SDCCCALL
-	pop		hl
+	pop		de
+	pop		hl				; restores param index buffer address
 	xor		a
-	cp		e
-	jr z,	_mainEnding
+	cp		e				; param count
+	jr z,	mainContinue	; continues if no params
 	ld		b,e
 .else
-	ld      ix, #0			; retrieve param address from stack
+	ld      ix, #0			
 	add     ix, sp
-	ld		l, 2(ix)
-	ld		h, 3(ix)
-    ld      a, 4(ix)
+    ld      a, 4(ix)		; retrieves param count from stack
 	or		a
-	jr z,	_mainEnding
+	jr z,	mainContinue	; continues if no params
+	ld		l, 2(ix)		; retrieve param address from stack
+	ld		h, 3(ix)
 	ld		b,a
 .endif
 
-_paramLoop:
-	ld		e,(hl)
+paramLoop::
+	ld		e,(hl)			; gets param address from index
 	inc		hl
 	ld		d,(hl)
 	inc		hl
 	ex		de,hl
-    call	print
-	ld		hl,#_linefeed
-    call	_print
-	ex		de,hl
-	djnz	_paramLoop
+	push	de
+	push	bc
+    call	__print			; prints param
+	print	_linefeed
+	pop		bc
+	pop		hl
+	djnz	paramLoop
 .endif
 	
-;   Return to MSX-DOS
-_mainEnding:
-.if __SDCCCALL
-	ld		a,#0
+mainContinue:
+	print	_linefeed
+
+;   Calls MDO example, id MDO_SUPPORT enabled
+.if MDO_SUPPORT
+	.globl	_useMDO
+	call	_useMDO
 .else
-	ld		l,#0
+.if __SDCCCALL
+	xor		a
+.else
+    ld      l, #0
 .endif
+.endif
+
+mainEnding:
+;   Returns to MSX-DOS
 	ret
 
-; ----------------------------------------------------------
-;   Once you replaced the commands in the _main routine
-;   above with your own program, you should delete the
-;   lines below. They are for demonstration purposes only.
-; ----------------------------------------------------------
-
-; ----------------------------------------------------------
-;	This is an example of using debug code in ASM.
-;	This is only for the demo app.
-;	You can safely remove it for your application.
-print:
-.if DEBUG
-	push	hl
-    ld hl,	#_msgdbg
-	call	_print
-	pop		hl
-.endif
-
-_print:
-    ld		a,(hl)
-    or		a
-    ret z
-	push	hl
-	ld		iy, (#0xfcc0)	; BIOS_ROMSLT
-	ld		ix, #0x00a2		; BIOS_CHPUT
-	call	#0x001c			; BIOS_CALSLT
-	pop		hl
-    inc		hl
-    jr		_print
 
 		.area	_DATA
 
 ; ----------------------------------------------------------
 ;	Messages
-_hellomsg::
+hellomsg::
 .if __SDCCCALL
-.ascii		"Hello MSX from Assembly (sdcccall(REGs))!\r\n\0"
+.asciz		"Hello MSX from Assembly\r\n(sdcccall(REGs))!\r\n"
 .else
-.ascii		"Hello MSX from Assembly (sdcccall(STACK))!\r\n\0"
+.asciz		"Hello MSX from Assembly\r\n(sdcccall(STACK))!\r\n"
 .endif
 
-_parametersmsg::
-.ascii		"Parameters:"
-_linefeed::
-.ascii		"\r\n\0"
+bymsg::
+.asciz		"Template by\r\nDanilo Angelo.\r\n"
 
-; ----------------------------------------------------------
-;	Debug Message
-;	Another example of debug code in ASM.
-.if DEBUG
-_msgdbg::
-.ascii		"[DEBUG]\0"
-.endif
+parametersmsg::
+.asciz		"Parameters:\r\n"
+
