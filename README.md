@@ -30,6 +30,13 @@ Dec 3<sup>rd</sup>, 2023
 ### Documentation
 [Here](https://github.com/DamnedAngel/MSX-Templates-for-VisualStudio/blob/REL_00.06.00/doc/manual.md).
 
+### Thanks
+I can't neglect my eternal gratitude to [Pedro de Medeiros](https://github.com/pvmm), for his interest, ideas, patience and willful caring for the templates and build script.
+Throughout the whole develpment cycle Pedro had been a valuable critic, supporter, beta tester and technical orientator. In other words, a real friend!
+
+Additionally, I want to thank everbody on the WhatsApp **"MSX Pascal, C, ASM etc."** group, which are too many to cite
+individually, but who helped a lot analyzing bugs and finding solutions. Thank you all!
+
 ### Contact
 Danilo Angelo / Damned Angel - 2023
 
