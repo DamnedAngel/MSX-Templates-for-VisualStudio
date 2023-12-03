@@ -26,7 +26,7 @@ void main(void) {
 		"BASIC/MSXDOS avoid returning\r\n"
 		"from program's main funtion.\r\n\0");
 	dbg("Template by\r\nDanilo Angelo\r\n\0");		// only printed in debug mode
-	print(&linefeed);
+	print(linefeed);
 
 #ifdef LATE_EXECUTION
 extern void saveData(void);
