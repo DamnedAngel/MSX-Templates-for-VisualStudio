@@ -27,7 +27,7 @@
 	.db		#0xfe			; BIN ID
 	.dw		#fileStart		; Start address
 	.dw		#fileEnd - #1	; End address
-	.dw		#init			; Entry point
+	.dw		#_init			; Entry point
 
 ;----------------------------------------------------------
 ;	Build user call index
@@ -35,7 +35,7 @@
 
 ;----------------------------------------------------------
 ;	Step 1: Publish File Start at (HIMEM - 1)
-init::
+_init::
 .if PUBLISH_FILESTART
 	ld		hl, (#BIOS_HIMEM)
 	dec		hl
