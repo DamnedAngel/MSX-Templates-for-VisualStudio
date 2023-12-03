@@ -68,7 +68,7 @@ printchar::
 	pop		iy
 	ret
 
-	.area	_DATA
+	.area	_ROMDATA
 ; ----------------------------------------------------------
 ;	Debug Prefix
 .if DEBUG
