@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Make">
+      <UniqueIdentifier>{3ef91682-59b4-4500-8b1e-472a09b82231}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Project Config">
+      <UniqueIdentifier>{dd93d829-192d-46c9-8f5b-f39bb2d68324}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ASM Source Files">
+      <UniqueIdentifier>{52835113-377d-4d52-ba1a-d14fcb244687}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Source Files\MSX">
+      <UniqueIdentifier>{5e121c30-2210-4202-8196-2d8ca96c05f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Header Files">
+      <UniqueIdentifier>{12fda4a1-4229-4b67-b100-0d7a25e46b7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Header Files\MSX">
+      <UniqueIdentifier>{f8c973e9-5327-4af0-9ee1-6ae8238ac555}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Header Files\MSX\BIOS">
+      <UniqueIdentifier>{9a550870-19f7-4aa4-9d94-69e2ce1f9403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="C Header Files\MSX">
+      <UniqueIdentifier>{74a0b57a-c1be-4402-85d0-168788c6be08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C Header Files\MSX\BIOS">
+      <UniqueIdentifier>{a28f4563-9c19-4eb8-8b3a-b326d570df42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASM Source Files\MSX\MDO">
+      <UniqueIdentifier>{fb61106d-43ca-44a6-804d-3c9e63975b1a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MSX\BIOS\msxbios.h">
+      <Filter>C Header Files\MSX\BIOS</Filter>
+    </ClInclude>
+    <ClInclude Include="printinterface.h">
+      <Filter>C Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MSX\BIOS\msxbios.s">
+      <Filter>ASM Header Files\MSX\BIOS</Filter>
+    </None>
+    <None Include="Make\symbol.py">
+      <Filter>Make</Filter>
+    </None>
+    <None Include="printinterface.s">
+      <Filter>ASM Header Files</Filter>
+    </None>
+    <None Include="Make\make.py">
+      <Filter>Make</Filter>
+    </None>
+    <None Include="MSX\MDO\msxdosovlcrt0.s">
+      <Filter>ASM Source Files\MSX\MDO</Filter>
+    </None>
+    <None Include="msxdosovl.s">
+      <Filter>ASM Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Config\ApplicationSettings.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\ApplicationSources.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\IncludeDirectories.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\Libraries.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\LibrarySources.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\Symbols.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\TargetConfig_Debug.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\TargetConfig_Release.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\BuildEvents.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+    <Text Include="Config\MDOSettings.txt">
+      <Filter>Project Config</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="msxdosovl.c">
+      <Filter>C Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

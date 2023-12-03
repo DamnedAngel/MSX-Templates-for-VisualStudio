@@ -1,0 +1,37 @@
+;----------------------------------------------------------
+;	MDOSettings.txt - by Danilo Angelo, 2020-2023
+;
+;	MDO (MSX-DOS Overlay) features general configuration.
+;----------------------------------------------------------
+
+;----------------------------------------------------------
+;	MDO hierarchy
+MDO_APPLICATION_PROJECT_PATH	../MSX-DOS Application
+MDO_PARENT_PROJECT_PATH			../MSX-DOS Application
+
+;----------------------------------------------------------
+;	MDO settings
+FILESTART						PARENT_AFTERHEAP
+
+;----------------------------------------------------------
+;	MDO name
+MDO_NAME						OVERLAY_ONE
+
+;----------------------------------------------------------
+;	MDO hooks
+;	Syntax: MDO_HOOK <C return type>|<hookname>|<C signature>
+;MDO_HOOK						void|voidmdoDoSomething|(void)
+;MDO_HOOK						unsigned char|mdoDoSomethingElse|(int)
+
+;----------------------------------------------------------
+;	MDO hook implementation
+MDO_HOOK_IMPLEMENTATION			mdoChildHello		_hello
+MDO_HOOK_IMPLEMENTATION			mdoChildGoodbye		_goodbye
+
+;----------------------------------------------------------
+;	Children MDOs
+;	Syntax: MDO_CHILD <mdoname> <filename> <extension> <starting address>
+;	Notes:
+;	  - if filename is less than 8 characters, the rest must be filled in by spaces.
+;	  - if extension is less than 3 characters, the rest must be filled in by spaces.
+;MDO_CHILD						OVERLAY_ONE ^/MSXOVL1 / MDO #s__AFTERHEAP
