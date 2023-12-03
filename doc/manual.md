@@ -3,7 +3,7 @@
 
 ### Version 00.06.00 - Codename Sam
 
-Nov 19th, 2023</br>
+Dec 3rd, 2023</br>
 Damned Angel / 2020-2023
 
 ---
