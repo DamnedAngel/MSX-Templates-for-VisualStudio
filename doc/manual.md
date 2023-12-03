@@ -67,7 +67,9 @@ Masters, thank you very much for pioneering and publishing the content on MSX fi
 
 In the current version of the templates, the build script has been unified in a single python file, supporting Windows, Linux and MacOS. Originally, however, there was a BAT script for Windows and a port for bash (Linux and MacOS) by [Pedro de Medeiros](https://github.com/pvmm).
 
-Pedro, you have my eternal gratitude for your interest, ideas, patience and willful caring for the build script.
+Moreover, Pedro was also a valuable critic, supporter, beta tester and technical orientator. In other words, a real friend!
+
+Pedro, you have my eternal gratitude for your interest, ideas, patience and willful caring for the templates and build script.
 
 Additionally, I want to thank everbody on the WhatsApp **"MSX Pascal, C, ASM etc."** group, which are too many to cite
 individually, but who helped a lot analyzing bugs and finding solutions. Thank you all!

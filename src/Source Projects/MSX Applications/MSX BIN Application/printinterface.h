@@ -15,7 +15,7 @@ extern unsigned char* linefeed;
 
 #ifdef DEBUG
 extern unsigned char* msgdbg;
-#define dbg(msg)	print (&msgdbg); print(msg);
+#define dbg(msg)	do { print (msgdbg); print(msg); } while(0)
 #else
 #define dbg(msg)	// nothing
 #endif
