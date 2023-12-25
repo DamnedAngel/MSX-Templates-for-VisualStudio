@@ -10,7 +10,7 @@
 
 # -----------------------------------------------------------------------------------
 OPEN1 = r'MSX SDCC Make Script Copyright © 2020-2023 Danilo Angelo'
-OPEN2 = r'version 00.06.00 - Codename Sam'
+OPEN2 = r'version 00.06.01 - Codename Sam'
 # -----------------------------------------------------------------------------------
 
 from dis import code_info
@@ -47,9 +47,9 @@ def debug(debugLevel, message):
 	return
 
 
-## EXECUTE
-def execute(debugLevel, commandLine):
-    cl = fixPath(commandLine)
+## EXECUTE WITHOUT FIX
+def executeWithoutFix(debugLevel, commandLine):
+    cl = commandLine
     debug(debugLevel, '## {}'.format(cl))
     tokens = shlex.split(cl)
     
@@ -67,7 +67,13 @@ def execute(debugLevel, commandLine):
         print (fixLF(execution.stdout.decode()))
 
     return
-      
+
+
+## EXECUTE
+def execute(debugLevel, commandLine):
+    executeWithoutFix (debugLevel, fixPath(commandLine))
+    return
+
 
 ## EXECUTE ACTION
 def execAction (phase):
@@ -78,7 +84,7 @@ def execAction (phase):
         if not commandLine == '':
             debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
             debug(VAR['DBG_STEPS'], 'Executing {} action...'.format(phase))
-            execute(VAR['DBG_CALL3'], commandLine)
+            executeWithoutFix(VAR['DBG_CALL3'], '{} {}'.format(VAR['SHELL_PREFIX'], commandLine))
             debug(VAR['DBG_STEPS'], 'Done executing {} action.'.format(phase))
     return
 
@@ -963,10 +969,12 @@ VAR['MSX_BUILD_TIME'] = datetime.now().strftime('%H:%M:%S')
 VAR['MSX_BUILD_DATE'] = date.today().strftime('%Y-%m-%d')
 if platform.system()=='Windows':
     VAR['SHELL_SCRIPT_EXTENSION'] = 'BAT'
+    VAR['SHELL_PREFIX'] = 'CMD /C'
     VAR['POSIX'] = False
     separator = posixpath.sep
 else:
     VAR['SHELL_SCRIPT_EXTENSION'] = 'sh'
+    VAR['SHELL_PREFIX'] = ''
     separator = ntpath.sep
     VAR['POSIX'] = True
 
