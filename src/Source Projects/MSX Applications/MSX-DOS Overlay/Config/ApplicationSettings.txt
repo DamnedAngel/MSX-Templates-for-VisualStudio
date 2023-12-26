@@ -12,7 +12,7 @@ PROJECT_TYPE			MDO
 ;	crt0 features
 GLOBALS_INITIALIZER		_ON             			; _ON: include routine to initialize global variables; _OFF: Don't include
 MDO_SUPPORT             _ON                         ; This project IS an MDO. Always leave _ON.
-VDP_PORT_FIX    		_ON               			; _ON: include routine to support MA-like devices (with vdpportmacros.s);
+VDP_PORT_FIX    		_OFF               			; _ON: include routine to support MA-like devices (with vdpportmacros.s);
                                                     ; _OFF: Don't include
 
 ;----------------------------------------------------------

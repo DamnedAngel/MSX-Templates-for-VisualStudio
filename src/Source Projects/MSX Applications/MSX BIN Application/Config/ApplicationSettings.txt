@@ -12,7 +12,7 @@ PROJECT_TYPE			BIN
 ;	crt0 features
 GLOBALS_INITIALIZER		_ON 						; _ON: include routine to initialize global variables; _OFF: Don't include
 PUBLISH_FILESTART		_ON							; _ON: register program start address at HIMEM-1; _OFF: Don't register
-VDP_PORT_FIX    		_ON               			; _ON: include routine to support MA-like devices (with vdpportmacros.s);
+VDP_PORT_FIX    		_OFF               			; _ON: include routine to support MA-like devices (with vdpportmacros.s);
                                                     ; _OFF: Don't include
 
 ;----------------------------------------------------------
