@@ -65,6 +65,7 @@
     <None Include="msxdosovl.s" />
     <None Include="MSX\BIOS\msxbios.s" />
     <None Include="MSX\MDO\msxdosovlcrt0.s" />
+    <None Include="MSX\VDP\vdpportmacros.s" />
     <None Include="printinterface.s" />
   </ItemGroup>
   <ItemGroup>

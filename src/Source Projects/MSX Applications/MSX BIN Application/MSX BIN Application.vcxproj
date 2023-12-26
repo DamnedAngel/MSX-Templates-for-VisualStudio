@@ -65,6 +65,7 @@
     <None Include="msxbinapp.s" />
     <None Include="MSX\BIN\msxbincrt0.s" />
     <None Include="MSX\BIOS\msxbios.s" />
+    <None Include="MSX\VDP\vdpportmacros.s" />
     <None Include="print.s" />
     <None Include="printinterface.s" />
     <None Include="usrroutines.s" />

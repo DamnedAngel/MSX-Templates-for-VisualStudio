@@ -39,6 +39,9 @@
     <Filter Include="ASM Source Files\MSX\MDO">
       <UniqueIdentifier>{fb61106d-43ca-44a6-804d-3c9e63975b1a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ASM Header Files\MSX\VDP">
+      <UniqueIdentifier>{442c8cf3-2879-4985-8ded-19250a0c1dea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MSX\BIOS\msxbios.h">
@@ -66,6 +69,9 @@
     </None>
     <None Include="msxdosovl.s">
       <Filter>ASM Source Files</Filter>
+    </None>
+    <None Include="MSX\VDP\vdpportmacros.s">
+      <Filter>ASM Header Files\MSX\VDP</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
