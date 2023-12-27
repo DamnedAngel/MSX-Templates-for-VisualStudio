@@ -42,10 +42,56 @@
 ;	Initialization routine
 ;----------------------------------------------------------
 onLoad::
+
+;----------------------------------------------------------
+;	Step 1: Initialize globals
 .if GLOBALS_INITIALIZER
 	call    gsinit
 .endif
+
+
+;----------------------------------------------------------
+;	Step 2: VDP port fix
+.if VDP_PORT_FIX
+    ld      a,(#BIOS_EXPTBL)
+    ld      hl, #BIOS_VDPDR
+    call    BIOS_RDSLT
+    ld      hl, #vdpInPortMap
+    ld      b,  a
+    call    vdpPortFix
+
+    ld      a,(#BIOS_EXPTBL)
+    ld      hl, #BIOS_VDPDW
+    call    BIOS_RDSLT
+    ld      hl, #vdpOutPortMap
+    ld      b,  a
+    call    vdpPortFix
+
+    ei
+.endif
+
+
+;----------------------------------------------------------
+;	Step 3: Initialize MDO
     jp      _initialize
+
+
+;----------------------------------------------------------
+;	VDP Port Fix helper routine
+.if VDP_PORT_FIX
+vdpPortFix::
+   ld      a, (hl)     ; relative port
+   cp      #0xff
+   ret z
+   add     a, b        ; a = port
+   inc     hl
+   ld      e, (hl)
+   inc     hl
+   ld      d, (hl)     ; de = address to be fixed
+   ld      (de), a
+   inc     hl
+   jr      vdpPortFix
+.endif
 
 ;----------------------------------------------------------
 ;	Segments order
@@ -60,6 +106,13 @@ onLoad::
     .area _MDOHOOKIMPLEMENTATIONS
     .area _MDOHOOKIMPLEMENTATIONSFINAL
     .area _MDOSERVICES
+
+ .if VDP_PORT_FIX
+    .area _VDPINPORTMAP
+    .area _VDPINPORTMAPFINAL
+    .area _VDPOUTPORTMAP
+    .area _VDPOUTPORTMAPFINAL
+.endif
 
     .area _HOME
     .area _GSINIT
@@ -112,6 +165,30 @@ mdoHookImplementationsFinal::
 	.area	_MDOSERVICES
 
 .include "mdoimplementation.s"
+
+
+;   ==================================
+;   ======== VDP FIX SEGMENTS ========
+;   ==================================
+
+ .if VDP_PORT_FIX
+;----------------------------------------------------------
+;	VDP in port map
+    .area _VDPINPORTMAP
+vdpInPortMap::
+    .area _VDPINPORTMAPFINAL
+vdpInPortMapFinal::
+    .db     #0xff
+
+;----------------------------------------------------------
+;	VDP out port map
+    .area _VDPOUTPORTMAP
+vdpOutPortMap::
+    .area _VDPOUTPORTMAPFINAL
+vdpOutPortMapFinal::
+    .db     #0xff
+.endif
+
 
 ;   =====================================
 ;   ========== GSINIT SEGMENTS ==========
