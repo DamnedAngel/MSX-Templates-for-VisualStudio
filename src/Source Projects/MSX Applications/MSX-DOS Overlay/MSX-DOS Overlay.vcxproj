@@ -45,6 +45,8 @@
     <NMakeCleanCommandLine>python Make\make.py $(Configuration) clean</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>python Make\make.py $(Configuration) clean all</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <IncludePath>$(Configuration)\obj\;$(IncludePath)</IncludePath>
+    <SourcePath>$(Configuration)\obj\;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeBuildCommandLine>python Make\make.py $(Configuration)</NMakeBuildCommandLine>
@@ -52,6 +54,8 @@
     <NMakeCleanCommandLine>python Make\make.py $(Configuration) clean</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>python Make\make.py $(Configuration) clean all</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>WIN32NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <IncludePath>$(Configuration)\obj\;$(IncludePath)</IncludePath>
+    <SourcePath>$(Configuration)\obj\;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
@@ -65,6 +69,7 @@
     <None Include="msxdosovl.s" />
     <None Include="MSX\BIOS\msxbios.s" />
     <None Include="MSX\MDO\msxdosovlcrt0.s" />
+    <None Include="MSX\VDP\vdpportmacros.s" />
     <None Include="printinterface.s" />
   </ItemGroup>
   <ItemGroup>

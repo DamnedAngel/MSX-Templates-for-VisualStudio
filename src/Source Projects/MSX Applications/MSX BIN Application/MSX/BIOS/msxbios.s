@@ -1,4 +1,5 @@
 ;----------------------------------------------------------
+;----------------------------------------------------------
 ;		msxbios.s - by Danilo Angelo 2020-2023
 ;		Adapted from http://www.konamiman.com/msx/msx2th/th-ap.txt
 ;		230221: added BDOS system calls, from http://www.msxtop.msxall.com/Docs/MSXTopSecret2Continuo.pdf
@@ -28,6 +29,8 @@ BIOS_INITIO  .equ 0x003b
 BIOS_INIFNK  .equ 0x003e
 
 ; VDP access
+BIOS_VDPDR   .equ 0x0006
+BIOS_VDPDW   .equ 0x0007
 BIOS_DISSCR  .equ 0x0041
 BIOS_ENASCR  .equ 0x0044
 BIOS_WRTVDP  .equ 0x0047
@@ -585,8 +588,14 @@ BIOS_ENAINT  .equ 0xffd4
 ; --- bdos calls ---
 BDOS_SYSCAL  .equ 0x0005
 
+; --- bdos variables ---
+BDOS_ABORTH	 .equ 0xf1e6
 BDOS_DTA     .equ 0xf23d		; MSX TOP SECRET states this as 0xf23c
 								; but by my experiences it's 0xf23d
+BDOS_DSKERR  .equ 0xf323
+BDOS_DPBBAS	 .equ 0xf353
+BDOS		 .equ 0xf37d
+
 
 ; I/O
 BDOS_CONIN   .equ 0x01
