@@ -1,4 +1,5 @@
 ;----------------------------------------------------------
+;----------------------------------------------------------
 ;		msxbios.s - by Danilo Angelo 2020-2023
 ;		Adapted from http://www.konamiman.com/msx/msx2th/th-ap.txt
 ;		230221: added BDOS system calls, from http://www.msxtop.msxall.com/Docs/MSXTopSecret2Continuo.pdf
@@ -28,6 +29,8 @@ BIOS_INITIO  .equ 0x003b
 BIOS_INIFNK  .equ 0x003e
 
 ; VDP access
+BIOS_VDPDR   .equ 0x0006
+BIOS_VDPDW   .equ 0x0007
 BIOS_DISSCR  .equ 0x0041
 BIOS_ENASCR  .equ 0x0044
 BIOS_WRTVDP  .equ 0x0047

@@ -15,8 +15,6 @@ extern const unsigned char linefeed[];
 
 #ifdef DEBUG
 extern const unsigned char msgdbg[];
-
-// casting below needed for SDCC 4.2.0. Not necessary for 4.3.0.
 #define dbg(msg)	do { print (msgdbg); print(msg); } while(0)
 #else
 #define dbg(msg)	// nothing
