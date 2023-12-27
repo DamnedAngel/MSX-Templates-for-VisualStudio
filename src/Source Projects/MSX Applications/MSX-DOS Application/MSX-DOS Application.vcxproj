@@ -69,6 +69,7 @@
     <None Include="MSX\MSX-DOS\mdostructures.s" />
     <None Include="MSX\MSX-DOS\msxdoscrt0.s" />
     <None Include="MSX\MSX-DOS\mdoservices.s" />
+    <None Include="MSX\VDP\vdpportmacros.s" />
     <None Include="print.s" />
     <None Include="printinterface.s" />
   </ItemGroup>

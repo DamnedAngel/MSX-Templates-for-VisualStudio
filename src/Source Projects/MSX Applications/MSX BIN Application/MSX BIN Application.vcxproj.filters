@@ -42,6 +42,9 @@
     <Filter Include="C Source Files\MSX">
       <UniqueIdentifier>{ce72702b-1276-4e49-8b02-5855fef34a2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ASM Header Files\MSX\VDP">
+      <UniqueIdentifier>{c55eb098-b854-4926-9c10-9a03365dfd78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MSX\BIOS\msxbios.h">
@@ -75,6 +78,9 @@
     </None>
     <None Include="usrroutines.s">
       <Filter>ASM Source Files\MSX</Filter>
+    </None>
+    <None Include="MSX\VDP\vdpportmacros.s">
+      <Filter>ASM Header Files\MSX\VDP</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
