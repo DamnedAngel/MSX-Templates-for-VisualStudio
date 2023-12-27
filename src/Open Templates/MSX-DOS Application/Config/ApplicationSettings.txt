@@ -13,6 +13,8 @@ PROJECT_TYPE			DOS
 GLOBALS_INITIALIZER		_ON             			; _ON: include routine to initialize global variables; _OFF: Don't include
 CMDLINE_PARAMETERS		_ON 						; _ON: include routine to parse cmdline parameters; _OFF: Don't include
 MDO_SUPPORT             _OFF                        ; _ON: include support for overlay modules; _OFF: Don't include
+VDP_PORT_FIX    		_OFF               			; _ON: include routine to support MA-like devices (with vdpportmacros.s);
+                                                    ; _OFF: Don't include
 
 ;----------------------------------------------------------
 ;	Temporary MSX-DOS cmdline routine start

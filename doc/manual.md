@@ -1,9 +1,9 @@
 # MSX-Templates-for-VisualStudio
 ## MSX Application Template Pack for MS Visual Studio (and other environments)
 
-### Version 00.06.00 - Codename Sam
+### Version 00.06.01 - Codename Sam
 
-Dec 3rd, 2023</br>
+Dec 27th, 2023</br>
 Damned Angel / 2020-2023
 
 ---

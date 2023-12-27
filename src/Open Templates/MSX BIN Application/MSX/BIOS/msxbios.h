@@ -33,6 +33,8 @@
 #define BIOS_INIFNK     0x003e
 
 // VDP access
+#define BIOS_VDPDR		0x0006
+#define BIOS_VDPDW		0x0007
 #define BIOS_DISSCR     0x0041
 #define BIOS_ENASCR     0x0044
 #define BIOS_WRTVDP     0x0047

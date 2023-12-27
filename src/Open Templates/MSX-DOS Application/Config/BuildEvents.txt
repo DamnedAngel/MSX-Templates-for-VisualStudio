@@ -3,7 +3,7 @@
 ;
 ;	Actions to be taken during the Build Process
 ;	Example: 
-;   BUILD_START_ACTION	MyStartScript.[SHELL_SCRIPT_EXTENSION] [PROFILE]
+;   BUILD_START_ACTION	"MyStartScript.[SHELL_SCRIPT_EXTENSION]" [PROFILE]
 ;----------------------------------------------------------
 
 ;----------------------------------------------------------
