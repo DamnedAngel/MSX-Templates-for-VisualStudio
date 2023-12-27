@@ -42,12 +42,18 @@
     <Filter Include="C Header Files\MSX\BIOS">
       <UniqueIdentifier>{a28f4563-9c19-4eb8-8b3a-b326d570df42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ASM Header Files\MSX\VDP">
+      <UniqueIdentifier>{9092382a-7e44-474e-949d-04f819a60344}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MSX\BIOS\msxbios.h">
       <Filter>C Header Files\MSX\BIOS</Filter>
     </ClInclude>
     <ClInclude Include="printinterface.h">
+      <Filter>C Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mdostructures.h">
       <Filter>C Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -81,6 +87,9 @@
     </None>
     <None Include="Make\make.py">
       <Filter>Make</Filter>
+    </None>
+    <None Include="MSX\VDP\vdpportmacros.s">
+      <Filter>ASM Header Files\MSX\VDP</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
