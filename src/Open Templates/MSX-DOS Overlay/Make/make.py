@@ -10,7 +10,7 @@
 
 # -----------------------------------------------------------------------------------
 OPEN1 = r'MSX SDCC Make Script Copyright © 2020-2023 Danilo Angelo'
-OPEN2 = r'version 00.06.00 - Codename Sam'
+OPEN2 = r'version 00.06.01 - Codename Sam'
 # -----------------------------------------------------------------------------------
 
 from dis import code_info
@@ -47,9 +47,9 @@ def debug(debugLevel, message):
 	return
 
 
-## EXECUTE
-def execute(debugLevel, commandLine):
-    cl = fixPath(commandLine)
+## EXECUTE WITHOUT FIX
+def executeWithoutFix(debugLevel, commandLine):
+    cl = commandLine
     debug(debugLevel, '## {}'.format(cl))
     tokens = shlex.split(cl)
     
@@ -67,7 +67,13 @@ def execute(debugLevel, commandLine):
         print (fixLF(execution.stdout.decode()))
 
     return
-      
+
+
+## EXECUTE
+def execute(debugLevel, commandLine):
+    executeWithoutFix (debugLevel, fixPath(commandLine))
+    return
+
 
 ## EXECUTE ACTION
 def execAction (phase):
@@ -78,7 +84,7 @@ def execAction (phase):
         if not commandLine == '':
             debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
             debug(VAR['DBG_STEPS'], 'Executing {} action...'.format(phase))
-            execute(VAR['DBG_CALL3'], commandLine)
+            executeWithoutFix(VAR['DBG_CALL3'], '{} {}'.format(VAR['SHELL_PREFIX'], commandLine))
             debug(VAR['DBG_STEPS'], 'Done executing {} action.'.format(phase))
     return
 
@@ -593,10 +599,12 @@ def configureMDO():
     mi_h = mi_h + '\n'
     mi_h = mi_h + '#ifdef MDO_SUPPORT\n'
     mi_h = mi_h + '\n'
-    mi_h = mi_h + 'extern unsigned char mdoLoad(unsigned char*);\n'
-    mi_h = mi_h + 'extern unsigned char mdoRelease(unsigned char*);\n'
-    mi_h = mi_h + 'extern unsigned char mdoLink(unsigned char*);\n'
-    mi_h = mi_h + 'extern unsigned char mdoUnlink(unsigned char*);\n'
+    mi_h = mi_h + '#include "mdostructures.h"\n'
+    mi_h = mi_h + '\n'
+    mi_h = mi_h + 'extern unsigned char mdoLoad (mdoHandler*);\n'
+    mi_h = mi_h + 'extern unsigned char mdoRelease (mdoHandler*);\n'
+    mi_h = mi_h + 'extern unsigned char mdoLink (mdoHandler*);\n'
+    mi_h = mi_h + 'extern unsigned char mdoUnlink (mdoHandler*);\n'
     mi_h = mi_h + '\n'
 
     mi_s = mi_s + ';-------------------------------------------------\n'
@@ -671,15 +679,14 @@ def configureMDO():
                         as_s = as_s + 'fileStart .equ {}\n'.format(VAR['FILE_START'])
                             
                     elif key == "MDO_HOOK":
-#                       serVar ('HOOK_TEMPLATE', '{} {}'.format(tokens[1], tokens[2]))
                         mhtokens = value.split('|')
                         mim_s = mim_s + 'MDO_HOOK {}\n'.format (mhtokens[1])
                         mi_h = mi_h + 'extern {} {}_hook {};\n'.format (mhtokens[0], mhtokens[1], mhtokens[2])
                         mi_s = mi_s + '.globl _{}_hook\n'.format (mhtokens[1])
 
                     elif key == "MDO_CHILD":
-                        mim_s = mim_s + 'MDO_CHILD {}\n'.format (value)
-                        mi_h = mi_h + 'extern unsigned char {};\n'.format (tokens[1])
+                        mim_s = mim_s + 'MDO_CHILD {}\n'.format (line1[9::])
+                        mi_h = mi_h + 'extern mdoHandler {};\n'.format (tokens[1])
                         mi_s = mi_s + '.globl _{}\n'.format (tokens[1])
 
                     else:
@@ -963,10 +970,12 @@ VAR['MSX_BUILD_TIME'] = datetime.now().strftime('%H:%M:%S')
 VAR['MSX_BUILD_DATE'] = date.today().strftime('%Y-%m-%d')
 if platform.system()=='Windows':
     VAR['SHELL_SCRIPT_EXTENSION'] = 'BAT'
+    VAR['SHELL_PREFIX'] = 'CMD /C'
     VAR['POSIX'] = False
     separator = posixpath.sep
 else:
     VAR['SHELL_SCRIPT_EXTENSION'] = 'sh'
+    VAR['SHELL_PREFIX'] = ''
     separator = ntpath.sep
     VAR['POSIX'] = True
 
@@ -1055,9 +1064,13 @@ except Exception as e:
     debug (VAR['DBG_ERROR'], '****************************************')
     traceback.print_exc()
     debug (VAR['DBG_ERROR'], '')
-    debug (VAR['DBG_ERROR'], '*************************************')
-    debug (VAR['DBG_ERROR'], 'Build abnormally ended. MSX very sad!')
-    debug (VAR['DBG_ERROR'], '*************************************')
+    debug (VAR['DBG_ERROR'], '****************************************')
+    debug (VAR['DBG_ERROR'], 'Build abnormally ended.')
+    debug (VAR['DBG_ERROR'], 'Project: {}.{}'.format(VAR['MSX_FILE_NAME'], VAR['MSX_FILE_EXTENSION']))
+    debug (VAR['DBG_ERROR'], 'Project type: {}'.format(VAR['PROJECT_TYPE']))
+    debug (VAR['DBG_ERROR'], 'Profile: {}'.format(VAR['PROFILE'])) 
+    debug (VAR['DBG_ERROR'], 'MSX very sad!')
+    debug (VAR['DBG_ERROR'], '****************************************')
     debug (VAR['DBG_ERROR'], '')
 
 exit(err)
