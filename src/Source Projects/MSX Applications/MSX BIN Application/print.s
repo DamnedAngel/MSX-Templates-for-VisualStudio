@@ -73,7 +73,7 @@ printchar::
 ;	Debug Prefix
 .if DEBUG
 _msgdbg::
-.asciz		"[DEBUG]"
+.asciz		"[DEBUG] "
 .endif
 _linefeed::
 .asciz		"\r\n"

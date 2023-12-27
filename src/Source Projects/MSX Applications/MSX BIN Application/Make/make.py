@@ -599,10 +599,12 @@ def configureMDO():
     mi_h = mi_h + '\n'
     mi_h = mi_h + '#ifdef MDO_SUPPORT\n'
     mi_h = mi_h + '\n'
-    mi_h = mi_h + 'extern unsigned char mdoLoad(unsigned char*);\n'
-    mi_h = mi_h + 'extern unsigned char mdoRelease(unsigned char*);\n'
-    mi_h = mi_h + 'extern unsigned char mdoLink(unsigned char*);\n'
-    mi_h = mi_h + 'extern unsigned char mdoUnlink(unsigned char*);\n'
+    mi_h = mi_h + '#include "mdostructures.h"\n'
+    mi_h = mi_h + '\n'
+    mi_h = mi_h + 'extern unsigned char mdoLoad (mdoHandler*);\n'
+    mi_h = mi_h + 'extern unsigned char mdoRelease (mdoHandler*);\n'
+    mi_h = mi_h + 'extern unsigned char mdoLink (mdoHandler*);\n'
+    mi_h = mi_h + 'extern unsigned char mdoUnlink (mdoHandler*);\n'
     mi_h = mi_h + '\n'
 
     mi_s = mi_s + ';-------------------------------------------------\n'
@@ -677,15 +679,14 @@ def configureMDO():
                         as_s = as_s + 'fileStart .equ {}\n'.format(VAR['FILE_START'])
                             
                     elif key == "MDO_HOOK":
-#                       serVar ('HOOK_TEMPLATE', '{} {}'.format(tokens[1], tokens[2]))
                         mhtokens = value.split('|')
                         mim_s = mim_s + 'MDO_HOOK {}\n'.format (mhtokens[1])
                         mi_h = mi_h + 'extern {} {}_hook {};\n'.format (mhtokens[0], mhtokens[1], mhtokens[2])
                         mi_s = mi_s + '.globl _{}_hook\n'.format (mhtokens[1])
 
                     elif key == "MDO_CHILD":
-                        mim_s = mim_s + 'MDO_CHILD {}\n'.format (value)
-                        mi_h = mi_h + 'extern unsigned char {};\n'.format (tokens[1])
+                        mim_s = mim_s + 'MDO_CHILD {}\n'.format (line1[9::])
+                        mi_h = mi_h + 'extern mdoHandler {};\n'.format (tokens[1])
                         mi_s = mi_s + '.globl _{}\n'.format (tokens[1])
 
                     else:
