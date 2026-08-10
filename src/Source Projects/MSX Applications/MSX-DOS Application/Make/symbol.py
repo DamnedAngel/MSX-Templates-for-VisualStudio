@@ -48,7 +48,7 @@ if mdo:
 	f3 = open(path.join(sys.argv[2], 'parentinterface') + '.s', 'w')
 	f4 = open(path.join(sys.argv[2], 'parentinterface') + '.h', 'w')
 	f4.write('#pragma once\n')
-	f5 = open(path.join(sys.argv[2], 'PARENT_AFTERHEAP'), 'w')
+	f5 = open(path.join(sys.argv[2], 'MODULE_AFTERHEAP'), 'w')
 
 
 with open(path.join(sys.argv[2], sys.argv[3]) + '.map', 'r') as f1:
