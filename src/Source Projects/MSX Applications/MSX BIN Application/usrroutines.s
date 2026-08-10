@@ -6,7 +6,7 @@
 ;		Assembly version
 ;----------------------------------------------------------
 
-	.include "MSX/BIOS/msxbios.s"
+	.include "msxbios.s"
 	.include "targetconfig.s"
 	.include "printinterface.s"
 

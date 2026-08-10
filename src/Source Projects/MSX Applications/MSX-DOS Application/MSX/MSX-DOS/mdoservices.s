@@ -4,7 +4,7 @@
 ;		Overlay services for MSX-DOS applications.
 ;----------------------------------------------------------
 
-	.include "MSX/BIOS/msxbios.s"
+	.include "msxbios.s"
 	.globl _onMDOAbend
 		 
 mdoStatus_loaded			.equ	#0b00000001

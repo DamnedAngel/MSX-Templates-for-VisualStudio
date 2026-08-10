@@ -5,6 +5,7 @@
 ;	must search source files.
 ;----------------------------------------------------------
 .
+MSX\BIOS
 ;[MSX_LIB_PATH]\msx
 ;[MSX_LIB_PATH]\msxdos
 ;[MSX_LIB_PATH]\util

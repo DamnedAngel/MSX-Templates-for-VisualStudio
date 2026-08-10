@@ -5,7 +5,7 @@
 ;		Derived from the work of mvac7/303bcn
 ;----------------------------------------------------------
 
-	.include "MSX/BIOS/msxbios.s"
+	.include "msxbios.s"
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
 
@@ -287,7 +287,7 @@ deviceExpansionNotEndOfList:
 	inc		hl
 	push	hl
 
-;	get pointer to program´s device
+;	get pointer to programï¿½s device
 	ld		hl, #BIOS_PROCNM
 	call	compareString
 	jr nz,	deviceNotFound

@@ -4,7 +4,7 @@
 ;		Template for MDO (MSX-DOS Overlay)
 ;----------------------------------------------------------
 
-	.include "MSX/BIOS/msxbios.s"
+	.include "msxbios.s"
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
 
