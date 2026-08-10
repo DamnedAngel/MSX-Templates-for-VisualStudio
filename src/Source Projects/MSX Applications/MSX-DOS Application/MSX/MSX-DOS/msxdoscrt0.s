@@ -7,7 +7,7 @@
 ;			https://github.com/Konamiman/MSX/blob/master/SRC/SDCC/crt0-msxdos/crt0msx_msxdos_advanced.asm
 ;----------------------------------------------------------
 
-	.include "MSX/BIOS/msxbios.s"
+	.include "msxbios.s"
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
 .if MDO_SUPPORT

@@ -6,7 +6,7 @@
 //		C version
 // ----------------------------------------------------------
 
-#include "MSX/BIOS/msxbios.h"
+#include "msxbios.h"
 #include "targetconfig.h"
 #include "printinterface.h"
 

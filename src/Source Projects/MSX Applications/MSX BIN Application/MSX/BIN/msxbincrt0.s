@@ -4,7 +4,7 @@
 ;		Template for BIN (BLOADable) programs for MSX 
 ;----------------------------------------------------------
 
-	.include "MSX/BIOS/msxbios.s"
+	.include "msxbios.s"
 	.include "targetconfig.s"
 	.include "applicationsettings.s"
 

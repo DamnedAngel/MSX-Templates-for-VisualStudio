@@ -6,7 +6,7 @@
 
 MSXDOSPRINT = 0
 
-.include "MSX/BIOS/msxbios.s"
+.include "msxbios.s"
 .include "applicationsettings.s"
 .include "targetconfig.s"
 
