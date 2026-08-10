@@ -26,7 +26,7 @@
 	.dw			routine
 .endm
 
-.macro MDO_CHILD	mdoname, filename, extension, address
+.macro MDO_CHILD	mdoname, filename, extension
 	.area _MDOCHILDLIST
 	.dw			_'mdoname
 
@@ -35,6 +35,6 @@
 	mdoname'_status:	.db		#0
 	mdoname'_filename:	.ascii	"filename"
 	mdoname'_extension:	.ascii	"extension"
-	mdoname'_address:	.dw		address
+	mdoname'_address:	.dw		#0
 	mdoname'_name:		.asciz	"mdoname"
 .endm

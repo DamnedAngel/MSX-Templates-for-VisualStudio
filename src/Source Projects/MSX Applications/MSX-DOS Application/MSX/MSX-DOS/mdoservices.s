@@ -36,8 +36,7 @@ mdoHandler::				.dw		0
 mdoAddress::				.dw		0
 
 ;----------------------------------------------------------
-;	Retrieve mdo handler, its address and status,
-;	and test if loaded
+;	Store mdo handler and test if loaded
 isMdoLoaded::
 	di
 
@@ -49,21 +48,12 @@ isMdoLoaded::
 	ld		l, d
 .endif
 	ld		(#mdoHandler), hl
-	ld		de, #12
-	add		hl, de
-	ld		e, (hl)
-	inc		hl
-	ld		d, (hl)
-	ex		de, hl
-	ld		(#mdoAddress), hl
-	ld		hl, (#mdoHandler)
 	ld		a, (hl)
 	and		#mdoStatus_loaded
 	ret
 
 ;----------------------------------------------------------
-;	Retrieve mdo handler, its address and status,
-;	and test if loaded and linked
+;	Store mdo handler and test if loaded and linked
 isMdoLinked::
 .if eq __SDCCCALL
 	ld		hl, #6			; first argument, but after three call instructions!
@@ -127,19 +117,43 @@ _mdoLoad::
 	ld		c, #BDOS_FOPEN
 	call	BDOS_SYSCAL
 	or		a
-	jr nz,	mdoService_finalize
+	jp nz,	mdoService_finalize
+
+	; set mdoHandler.mdoAddress in DTA
+	ld		hl, (#mdoHandler)
+	ld		de, #12
+	add		hl, de
+	ex		de, hl
+	push	de
+	ld		c, #BDOS_SETDTA
+	call	BDOS_SYSCAL
+
+	; read mdo address from MDO
+	ld		hl, #1
+	ld		(#_mdoFCB_record_size), hl
+	ld		de, #_mdoFCB
+	ld		hl, #2				; read 2 byte word
+	ld		c, #BDOS_RDBLK
+	call	BDOS_SYSCAL
+	or		a
+	pop		hl					; mdoHandler.mdoAddress
+	jr nz,	mdoLoad_readError
 
 	; set mdo address in DTA
-	ld		hl, (#mdoAddress)
-	ex		de, hl
+	ld		e, (hl)
+	inc		hl
+	ld		d, (hl)				; de = mdo address
+	ld		h, d
+	ld		l, e
+	ld		(#mdoAddress), hl
 	ld		c, #BDOS_SETDTA
 	call	BDOS_SYSCAL
 
 	; load file
-	ld		hl, #1
-	ld		(#_mdoFCB_record_size), hl
 	ld		de, #_mdoFCB
 	ld		hl, (#_mdoFCB_file_size)
+	dec		hl
+	dec		hl
 	ld		c, #BDOS_RDBLK
 	call	BDOS_SYSCAL
 	or		a

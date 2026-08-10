@@ -661,7 +661,7 @@ def configureMDO():
                     
                     elif key == 'MDO_PARENT_PROJECT_PATH':
                         setVar ('MDO_PARENT_PROJECT_PATH', value)
-                        filename = fixPath ('{}/{}/objs/PARENT_AFTERHEAP'.format(value, VAR['PROFILE']))
+                        filename = fixPath ('{}/{}/objs/MODULE_AFTERHEAP'.format(value, VAR['PROFILE']))
                         debug(VAR['DBG_EXTROVERT'], 'Reading MDO_PARENT_AFTERHEAP from {}.'.format(filename))
                         with open(filename, 'r') as f2:
                             debug(VAR['DBG_VERBOSE'], 'Opened file {}.'.format(filename))
@@ -671,9 +671,27 @@ def configureMDO():
                         setVar ('MDO_PARENT_INTERFACE', '{}/{}/objs/parentinterface.s'.format(value, VAR['PROFILE']))
                         mim_s = mim_s + '.include "{}"\n'.format(VAR['MDO_PARENT_INTERFACE'])
 
+                    elif key == 'MDO_PREVIOUS_PROJECT_PATH':
+                        setVar ('MDO_PREVIOUS_PROJECT_PATH', value)
+                        filename = fixPath ('{}/{}/objs/MODULE_AFTERHEAP'.format(value, VAR['PROFILE']))
+                        debug(VAR['DBG_EXTROVERT'], 'Reading MDO_PREVIOUS_AFTERHEAP from {}.'.format(filename))
+                        with open(filename, 'r') as f2:
+                            debug(VAR['DBG_VERBOSE'], 'Opened file {}.'.format(filename))
+                            setVar ('MDO_PREVIOUS_AFTERHEAP', f2.read().strip())
+                            debug(VAR['DBG_VERBOSE'], 'MDO_PREVIOUS_AFTERHEAP read.')
+                        f2.close()
+
                     elif key == 'FILESTART':
                         if value == 'PARENT_AFTERHEAP':
                             setVar ('FILE_START', VAR['MDO_PARENT_AFTERHEAP'])
+                        elif value == 'PREVIOUS_AFTERHEAP':
+                            if VAR['MDO_PREVIOUS_AFTERHEAP'] is None:
+                                debug (VAR['DBG_ERROR'], '### FILESTART set to PREVIOUS_AFTERHEAP,')
+                                debug (VAR['DBG_ERROR'], '### but MDO_PREVIOUS_AFTERHEAP info is not set.')
+                                debug (VAR['DBG_ERROR'], '### Check MDO_PREVIOUS_PROJECT_PATH configuration.')
+                                raise Exception(1)
+                            else:
+                                setVar ('FILE_START', VAR['MDO_PREVIOUS_AFTERHEAP'])
                         else:
                             setVar ('FILE_START', value)
                         as_s = as_s + 'fileStart .equ {}\n'.format(VAR['FILE_START'])
@@ -998,6 +1016,7 @@ VAR['MSX_LIB_PATH'] = r'{}\libs'.format(VAR['MSX_DEV_PATH'])
 VAR['MSX_CFG_PATH'] = r'Config'
 VAR['MDO_PARENT_OBJ_PATH'] = None
 VAR['MDO_PARENT_AFTERHEAP'] = None
+VAR['MDO_PREVIOUS_AFTERHEAP'] = None
 
 VAR['DBG_MUTE'] = 0
 VAR['DBG_ERROR'] = 10

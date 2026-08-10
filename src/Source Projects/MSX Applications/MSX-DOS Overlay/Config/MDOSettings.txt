@@ -8,9 +8,13 @@
 ;	MDO hierarchy
 MDO_APPLICATION_PROJECT_PATH	../MSX-DOS Application
 MDO_PARENT_PROJECT_PATH			../MSX-DOS Application
+;	MDO_PREVIOUS_PROJECT_PATH lets this MDO snap after any already-loaded
+;	module (not only its parent) via FILESTART PREVIOUS_AFTERHEAP below.
+;MDO_PREVIOUS_PROJECT_PATH		../SomeOtherMDO
 
 ;----------------------------------------------------------
 ;	MDO settings
+;	FILESTART: PARENT_AFTERHEAP, PREVIOUS_AFTERHEAP, or a literal address.
 FILESTART						PARENT_AFTERHEAP
 
 ;----------------------------------------------------------
@@ -30,8 +34,9 @@ MDO_HOOK_IMPLEMENTATION			mdoChildGoodbye		_goodbye
 
 ;----------------------------------------------------------
 ;	Children MDOs
-;	Syntax: MDO_CHILD <mdoname> <filename> <extension> <starting address>
+;	Syntax: MDO_CHILD <mdoname> <filename> <extension>
 ;	Notes:
 ;	  - if filename is less than 8 characters, the rest must be filled in by spaces.
 ;	  - if extension is less than 3 characters, the rest must be filled in by spaces.
-;MDO_CHILD						OVERLAY_ONE ^/MSXOVL1 / MDO #s__AFTERHEAP
+;	  - the load address is not configured here; each MDO embeds its own (see its FILESTART).
+;MDO_CHILD						OVERLAY_ONE ^/MSXOVL1 / MDO
