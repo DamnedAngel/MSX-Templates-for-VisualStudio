@@ -14,6 +14,8 @@ GLOBALS_INITIALIZER		_ON             			; _ON: include routine to initialize glo
 MDO_SUPPORT             _ON                         ; This project IS an MDO. Always leave _ON.
 VDP_PORT_FIX    		_OFF               			; _ON: include routine to support MA-like devices (with vdpportmacros.s);
                                                     ; _OFF: Don't include
+ZOO_SUPPORT             _OFF                        ; _ON: include the ZOO object-orientation framework; _OFF: Don't include
+ZOO_REFLECTION_LEVEL    polymorphism                ; inheritance|polymorphism|classStructure|namedInheritance|namedMembers|typedMembers
 
 ;----------------------------------------------------------
 ;	C Calling Convention

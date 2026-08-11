@@ -23,6 +23,8 @@ BUILD_DEBUG			        150 				; DBG_MUTE=0
                                                 ; DBG_PARAMS=230
                                                 ; DBG_VERBOSE=255
 
+ADB_SUPPORT			        _OFF				; _ON: generate .adb source-level debug symbols for AlchemiaZ; _OFF: Don't include
+
 ASSEMBLER_EXTRA_DIRECTIVES  -l
 COMPILER_EXTRA_DIRECTIVES
 LINKER_EXTRA_DIRECTIVES     --opt-code-size --disable-warning 196
@@ -47,3 +49,4 @@ MSX_BIN_PATH		        [PROFILE]\bin
 MSX_OBJ_PATH		        [PROFILE]\objs
 MSX_DEV_PATH		        ..\..\..
 MSX_LIB_PATH		        [MSX_DEV_PATH]\libs
+ZOO_PATH		        					; path to your local ZOO checkout (required if ZOO_SUPPORT is _ON)
