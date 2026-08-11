@@ -1,5 +1,5 @@
 ﻿# ----------------------------------------------------------
-#		make.py - by Danilo Angelo, 2023
+#		make.py - by Danilo Angelo, 2023-2026
 #
 #		Build script for MSX projects.
 #
@@ -9,8 +9,8 @@
 # ----------------------------------------------------------
 
 # -----------------------------------------------------------------------------------
-OPEN1 = r'MSX SDCC Make Script Copyright © 2020-2023 Danilo Angelo'
-OPEN2 = r'version 00.06.01 - Codename Sam'
+OPEN1 = r'MSX SDCC Make Script Copyright © 2020-2026 Danilo Angelo'
+OPEN2 = r'version 00.07.00 - Codename Venus'
 # -----------------------------------------------------------------------------------
 
 from dis import code_info
@@ -495,6 +495,14 @@ def configureApplication():
 
                     elif key == 'ZOO_REFLECTION_LEVEL':
                         setVar ('ZOO_REFLECTION_LEVEL', value)
+
+                    elif key == 'MAX_CMDLINE_PARAMETERS':
+                        if int(value) > 63:
+                            debug (VAR['DBG_ERROR'], '### MAX_CMDLINE_PARAMETERS is {}, but 63 is the maximum supported.'.format(value))
+                            debug (VAR['DBG_ERROR'], '### MSX-DOS\'s 127-byte command tail can\'t realistically exceed this.')
+                            raise Exception(1)
+                        as_h = as_h + '#define {} {}\n'.format(key, value)
+                        as_s = as_s + '{} = {}\n'.format(key, value)
 
                     elif key == 'CODE_LOC':
                         setVar ('CODE_LOC', value)

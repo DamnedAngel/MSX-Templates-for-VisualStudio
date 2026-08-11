@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		print.s - by Danilo Angelo, 2023
+;		print.s - by Danilo Angelo, 2023-2026
 ;
 ;		Simple _print and _printchar implementation
 ;----------------------------------------------------------

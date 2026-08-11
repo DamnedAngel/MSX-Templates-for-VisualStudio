@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		mdostructures.s - by Danilo Angelo, 2023
+;		mdostructures.s - by Danilo Angelo, 2023-2026
 ;
 ;		Overlay structures for MSX-DOS applications.
 ;----------------------------------------------------------

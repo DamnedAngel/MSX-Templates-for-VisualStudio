@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	ApplicationSettings.txt - by Danilo Angelo, 2021-2023
+;	ApplicationSettings.txt - by Danilo Angelo, 2021-2026
 ;
 ;	MSX ROM project general configuration.
 ;----------------------------------------------------------

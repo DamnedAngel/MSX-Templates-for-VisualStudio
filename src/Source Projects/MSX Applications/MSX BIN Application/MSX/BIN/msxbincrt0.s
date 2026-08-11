@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxbincrt0.s - by Danilo Angelo, 2020-2023
+;		msxbincrt0.s - by Danilo Angelo, 2020-2026
 ;
 ;		Template for BIN (BLOADable) programs for MSX 
 ;----------------------------------------------------------

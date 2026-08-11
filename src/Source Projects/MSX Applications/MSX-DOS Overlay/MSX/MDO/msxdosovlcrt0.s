@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxdosovlcrt0.s - by Danilo Angelo, 2023
+;		msxdosovlcrt0.s - by Danilo Angelo, 2023-2026
 ;
 ;		Template for MDO (MSX-DOS Overlay)
 ;----------------------------------------------------------
@@ -47,56 +47,7 @@
 ;	Initialization routine
 ;----------------------------------------------------------
 onLoad::
-
-;----------------------------------------------------------
-;	Step 1: Initialize globals
-.if GLOBALS_INITIALIZER
-	call    gsinit
-.endif
-
-
-;----------------------------------------------------------
-;	Step 2: VDP port fix
-.if VDP_PORT_FIX
-    ld      a,(#BIOS_EXPTBL)
-    ld      hl, #BIOS_VDPDR
-    call    BIOS_RDSLT
-    ld      hl, #vdpInPortMap
-    ld      b,  a
-    call    vdpPortFix
-
-    ld      a,(#BIOS_EXPTBL)
-    ld      hl, #BIOS_VDPDW
-    call    BIOS_RDSLT
-    ld      hl, #vdpOutPortMap
-    ld      b,  a
-    call    vdpPortFix
-
-    ei
-.endif
-
-
-;----------------------------------------------------------
-;	Step 3: Initialize MDO
-    jp      _initialize
-
-
-;----------------------------------------------------------
-;	VDP Port Fix helper routine
-.if VDP_PORT_FIX
-vdpPortFix::
-   ld      a, (hl)     ; relative port
-   cp      #0xff
-   ret z
-   add     a, b        ; a = port
-   inc     hl
-   ld      e, (hl)
-   inc     hl
-   ld      d, (hl)     ; de = address to be fixed
-   ld      (de), a
-   inc     hl
-   jr      vdpPortFix
-.endif
+    jp      start
 
 ;----------------------------------------------------------
 ;	Segments order
@@ -120,13 +71,12 @@ vdpPortFix::
 .endif
 
     .area _HOME
-    .area _GSINIT
-    .area _GSFINAL
-    .area _INITIALIZER
     .area _DATA
     .area _INITIALIZED
     .area _HEAP
     .area _AFTERHEAP
+    .area _POSTHEAP
+    .area _INITIALIZER
 
 ;   ==================================
 ;   ========== MDO SEGMENTS ==========
@@ -195,25 +145,6 @@ vdpOutPortMapFinal::
 .endif
 
 
-;   =====================================
-;   ========== GSINIT SEGMENTS ==========
-;   =====================================
-.if GLOBALS_INITIALIZER
-	.area	_GSINIT
-gsinit::
-    ld      bc,#l__INITIALIZER
-    ld      a,b
-    or      a,c
-    jp	z,  gsinit_next
-    ld	    de,#s__INITIALIZED
-    ld      hl,#s__INITIALIZER
-    ldir
-
-	.area	_GSFINAL
-gsinit_next:
-    ret
-.endif
-
 ;   ==================================
 ;   ========== DATA SEGMENT ==========
 ;   ==================================
@@ -227,4 +158,67 @@ _heap_top::
     .area	_HEAP
 _HEAP_start::
     .ds #HEAP_SIZE
+
+;   ==================================
+;   ===== POST-HEAP STARTUP CODE =====
+;   ==================================
+;	Placed after _AFTERHEAP, so it never counts toward it: an MDO or the
+;	app's own memory-management scheme may safely reuse this address once
+;	this code has run - it only ever executes once, at load time.
+    .area	_POSTHEAP
+start::
+;----------------------------------------------------------
+;	Step 1: VDP port fix
+.if VDP_PORT_FIX
+    ld      a,(#BIOS_EXPTBL)
+    ld      hl, #BIOS_VDPDR
+    call    BIOS_RDSLT
+    ld      hl, #vdpInPortMap
+    ld      b,  a
+    call    vdpPortFix
+
+    ld      a,(#BIOS_EXPTBL)
+    ld      hl, #BIOS_VDPDW
+    call    BIOS_RDSLT
+    ld      hl, #vdpOutPortMap
+    ld      b,  a
+    call    vdpPortFix
+
+    ei
+.endif
+
+;----------------------------------------------------------
+;	Step 2: Initialize globals (GSINIT)
+.if GLOBALS_INITIALIZER
+    ld      bc,#l__INITIALIZER
+    ld      a,b
+    or      a,c
+    jp	z,  gsinit_end
+    ld	    de,#s__INITIALIZED
+    ld      hl,#s__INITIALIZER
+    ldir
+.endif
+
+gsinit_end:
+
+;----------------------------------------------------------
+;	Step 3: Initialize MDO
+    jp      _initialize
+
+;----------------------------------------------------------
+;	VDP Port Fix helper routine
+.if VDP_PORT_FIX
+vdpPortFix::
+   ld      a, (hl)     ; relative port
+   cp      #0xff
+   ret z
+   add     a, b        ; a = port
+   inc     hl
+   ld      e, (hl)
+   inc     hl
+   ld      d, (hl)     ; de = address to be fixed
+   ld      (de), a
+   inc     hl
+   jr      vdpPortFix
+.endif
 

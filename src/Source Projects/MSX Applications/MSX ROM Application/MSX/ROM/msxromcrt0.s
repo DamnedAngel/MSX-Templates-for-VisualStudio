@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxromcrt0.s - by Danilo Angelo, 2020-2023
+;		msxromcrt0.s - by Danilo Angelo, 2020-2026
 ;
 ;		Template for ROM (cartridges) programs for MSX 
 ;		Derived from the work of mvac7/303bcn

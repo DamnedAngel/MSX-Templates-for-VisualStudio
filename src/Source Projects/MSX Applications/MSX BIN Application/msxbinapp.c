@@ -1,5 +1,5 @@
 // ----------------------------------------------------------
-//		msxbinapp.c - by Danilo Angelo, 2020-2023
+//		msxbinapp.c - by Danilo Angelo, 2020-2026
 //
 //		BIN program(BLOAD'able) for MSX example
 //		C version
