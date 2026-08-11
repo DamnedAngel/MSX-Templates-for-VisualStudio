@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	MDOSettings.txt - by Danilo Angelo, 2020-2023
+;	MDOSettings.txt - by Danilo Angelo, 2020-2026
 ;
 ;	MDO (MSX-DOS Overlay) features general configuration.
 ;----------------------------------------------------------

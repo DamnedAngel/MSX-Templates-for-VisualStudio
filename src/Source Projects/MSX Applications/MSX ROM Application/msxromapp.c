@@ -1,5 +1,5 @@
 // ----------------------------------------------------------
-//		msxromapp.c - by Danilo Angelo, 2020-2023
+//		msxromapp.c - by Danilo Angelo, 2020-2026
 //
 //		ROM program(cartridge) for MSX example
 //		C version

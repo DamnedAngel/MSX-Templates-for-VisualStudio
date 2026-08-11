@@ -1,5 +1,5 @@
 // ----------------------------------------------------------
-//		msxdosapp.c - by Danilo Angelo, 2020 - 2023
+//		msxdosapp.c - by Danilo Angelo, 2020-2026
 //
 //		MSX - DOS program example
 //		C version
@@ -20,8 +20,8 @@
 //	on __SDCCCALL if youplan to support both
 //	calling convention.
 // 
-//	Note 2: Only use argv and argc if you enabled
-//	CMDLINE_PARAMETERS on TargetConfig_XXXXX.txt
+//	Note 2: Only use argv and argc if you set
+//	MAX_CMDLINE_PARAMETERS above 0 in ApplicationSettings.txt
 unsigned char main(char** argv, int argc) {
 #if __SDCCCALL
 	print("Hello MSX from C\r\n(sdcccall(REGs))!\r\n\0");
@@ -31,7 +31,7 @@ unsigned char main(char** argv, int argc) {
 	dbg("Template by\r\nDanilo Angelo\r\n\0");		// only printed in debug mode
 	print(linefeed);
 
-#ifdef CMDLINE_PARAMETERS
+#if MAX_CMDLINE_PARAMETERS
 	print("Parameters:\r\n\0");
 	for (int i = 0; i < argc; i++) {
 		print(argv[i]);

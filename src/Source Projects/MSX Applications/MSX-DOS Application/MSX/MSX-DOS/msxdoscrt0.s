@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxdoscrt0.s - by Danilo Angelo, 2020-2023
+;		msxdoscrt0.s - by Danilo Angelo, 2020-2026
 ;
 ;		Template for COM (executable) programs for MSX-DOS
 ;		Derived from the work of Konamiman/Avelino
@@ -22,13 +22,6 @@
     .globl  s__INITIALIZER
 .endif
 
-.if PARAM_HANDLING_ROUTINE
-phrAddr	.equ PARAM_HANDLING_ROUTINE
-.else
-phrAddr	.equ _HEAP_start
-.endif
-
-
 ;   ====================================
 ;   ========== HEADER SEGMENT ==========
 ;   ====================================
@@ -41,142 +34,7 @@ phrAddr	.equ _HEAP_start
 ;    MSX-DOS places the command line length at 0x80 (one byte),
 ;    and the command line itself at 0x81 (up to 127 characters).
 _init::
-params::
-.if CMDLINE_PARAMETERS
-    ;* Check if there are any parameters at all
-    ld      a,(#0x80)
-    or      a
-    ld      c,#0
-    jr      z,cont
-        
-    ;* Terminate command line with 0
-    ;  (DOS 2 does this automatically but DOS 1 does not)
-    ld      hl, #0x81
-    ld      c, a
-    ld      b, #0
-    add     hl, bc
-    ld      (hl), #0
-        
-    ;* Copy the command line processing code to other RAM area
-	;  (may be 0 = HEAP or somewhere else set in 
-	;   ApplicationSettings.txt|PARAM_HANDLING_ROUTINE item) and
-    ;  and execute it from there, this way the memory of the original
-    ;  code can be recycled for the parameter pointers table.
-    ;  (The space from 0x100 up to "cont" can be used,
-    ;   this is room for about 40 parameters.
-    ;   No real world application will handle so many parameters.)
-    ld      hl, #parloop
-    ld      de, #phrAddr
-    ld      bc, #parloopend-#parloop
-    ldir
-        
-    ;* Initialize registers and jump to the loop routine    
-    ld      hl, #0x81        ;Command line pointer
-    ld      c, #0            ;Number of params found
-    ld      ix, #0x100       ;Params table pointer
-        
-    ld      de, #cont        ;To continue execution at "cont"
-    push    de               ;when the routine RETs
-    jp      phrAddr
-        
-    ;>>> Command line processing routine begin
-        
-    ;* Loop over the command line: skip spaces
-parloop:
-	ld      a,(hl)
-    or      a       ;Command line end found?
-    ret z
-
-    cp      #32
-    jr      nz,parfnd
-    inc     hl
-    jr      parloop
-
-    ;* Parameter found: add its address to params table...
-
-parfnd:
-	ld      (ix),l
-    ld      1(ix),h
-    inc     ix
-    inc     ix
-    inc     c
-        
-    ld      a,c     ;protection against too many parameters
-    cp      #40
-    ret nc
-        
-    ;* ...and skip chars until finding a space or command line end
-        
-parloop2:
-	ld      a,(hl)
-    or      a       ;Command line end found?
-    ret z
-        
-    cp      #32
-    jr nz,  nospc        ;If space found, set it to 0
-                            ;(string terminator)...
-    ld      (hl),#0
-    inc     hl
-    jr      parloop         ;...and return to space skipping loop
-
-nospc:
-	inc     hl
-    jr      parloop2
-
-parloopend:
-    ;>>> Command line processing routine end
-    ;* Command line processing done. Here, C=number of parameters.
-
-cont:
-    ld      b,#0
-.else
-    ld      bc,#0
-.endif
-
-	ld      hl,#0x100
-    push    bc          ;Pass info as parameters to "main"
-    push    hl
-
-
-;----------------------------------------------------------
-;	Step 2: Initialize globals
-.if GLOBALS_INITIALIZER
-	call    gsinit
-.endif
-
-
-;----------------------------------------------------------
-;	Step 3: VDP port fix
-.if VDP_PORT_FIX
-    ld      a,(#BIOS_EXPTBL)
-    ld      hl, #BIOS_VDPDR
-    call    BIOS_RDSLT
-    ld      hl, #vdpInPortMap
-    ld      b,  a
-    call    vdpPortFix
-
-    ld      a,(#BIOS_EXPTBL)
-    ld      hl, #BIOS_VDPDW
-    call    BIOS_RDSLT
-    ld      hl, #vdpOutPortMap
-    ld      b,  a
-    call    vdpPortFix
-
-    ei
-.endif
-
-
-;----------------------------------------------------------
-;	Step 4: Run application
-.if __SDCCCALL
-    pop     hl
-    pop     de
-	call    _main
-.else
-	call    _main
-    pop     bc
-    pop     bc
-.endif
+    jp      start
 
 
 ;----------------------------------------------------------
@@ -188,6 +46,9 @@ programEnd:
 .if __SDCCCALL
     ld      b,a         ; termination code
 .else
+    pop     de          ; clear Parameter Table address from stack
+    pop     de
+
     ld      b,l         ; termination code
 .endif
     ld      c,#0x62	    ; DOS 2 function for program termination (_TERM)
@@ -196,23 +57,6 @@ programEnd:
     jp      5			;...and then this one terminates
 						;(DOS 1 function for program termination).
 
-
-;----------------------------------------------------------
-;	VDP Port Fix helper routine
-.if VDP_PORT_FIX
-vdpPortFix::
-   ld      a, (hl)     ; relative port
-   cp      #0xff
-   ret z
-   add     a, b        ; a = port
-   inc     hl
-   ld      e, (hl)
-   inc     hl
-   ld      d, (hl)     ; de = address to be fixed
-   ld      (de), a
-   inc     hl
-   jr      vdpPortFix
-.endif
 
 ;----------------------------------------------------------
 ;	Segments order
@@ -236,13 +80,12 @@ vdpPortFix::
 .endif
 
     .area _HOME
-    .area _GSINIT
-    .area _GSFINAL
-    .area _INITIALIZER
     .area _DATA
     .area _INITIALIZED
     .area _HEAP
     .area _AFTERHEAP
+    .area _POSTHEAP
+    .area _INITIALIZER
 
 ;   ==================================
 ;   ========== MDO SEGMENTS ==========
@@ -305,24 +148,6 @@ vdpOutPortMapFinal::
 .endif
 
 
-;   =====================================
-;   ========== GSINIT SEGMENTS ==========
-;   =====================================
-.if GLOBALS_INITIALIZER
-	.area	_GSINIT
-gsinit::
-    ld      bc,#l__INITIALIZER
-    ld      a,b
-    or      a,c
-    jp	z,  gsinit_next
-    ld	    de,#s__INITIALIZED
-    ld      hl,#s__INITIALIZER
-    ldir
-
-	.area	_GSFINAL
-gsinit_next:
-    ret
-.endif
 
 ;   ==================================
 ;   ========== DATA SEGMENT ==========
@@ -331,9 +156,154 @@ gsinit_next:
 _heap_top::
 	.dw     _HEAP_start
 
+CMD_TABLE:
+    .ds     2*MAX_CMDLINE_PARAMETERS   ; 0 bytes when MAX_CMDLINE_PARAMETERS is 0
+
 ;   ==================================
 ;   ========== HEAP SEGMENT ==========
 ;   ==================================
     .area	_HEAP
 _HEAP_start::
     .ds #HEAP_SIZE
+
+;   ==================================
+;   ===== POST-HEAP PARAM ROUTINE ====
+;   ==================================
+;	Placed after _AFTERHEAP, so it never counts toward it: an MDO or the
+;	app's own memory-management scheme may safely reuse this address once
+;	the routine has run - it only ever executes once, at startup.
+    .area	_POSTHEAP
+start::
+;----------------------------------------------------------
+;	Step 1: VDP port fix
+.if VDP_PORT_FIX
+    ld      a,(#BIOS_EXPTBL)
+    ld      hl, #BIOS_VDPDR
+    call    BIOS_RDSLT
+    ld      hl, #vdpInPortMap
+    ld      b,  a
+    call    vdpPortFix
+
+    ld      a,(#BIOS_EXPTBL)
+    ld      hl, #BIOS_VDPDW
+    call    BIOS_RDSLT
+    ld      hl, #vdpOutPortMap
+    ld      b,  a
+    call    vdpPortFix
+
+    ei
+.endif
+
+;----------------------------------------------------------
+;	Step 2: Initialize globals (GSINIT)
+.if GLOBALS_INITIALIZER
+    ld      bc,#l__INITIALIZER
+    ld      a,b
+    or      a,c
+    jp	z,  gsinit_end
+    ld	    de,#s__INITIALIZED
+    ld      hl,#s__INITIALIZER
+    ldir
+.endif
+
+gsinit_end:
+
+;----------------------------------------------------------
+;	Step 3: Process command line paramenters
+.if MAX_CMDLINE_PARAMETERS
+    ;* Check if there are any parameters at all
+    ld      a,(#0x80)
+    or      a
+    ld      e,#0
+    jr z,   parend
+        
+    ;* Terminate command line with 0
+    ;  (DOS 2 does this automatically but DOS 1 does not)
+    ld      hl, #0x81
+    ld      e, a
+    ld      d, #0
+    add     hl, de
+    ld      (hl), #0
+        
+    ;* Initialize registers and call the parsing routine.
+    ld      hl, #0x81       ;Command line pointer
+    ld      e, #0           ;Number of params found
+    ld      ix, #CMD_TABLE  ;Params table pointer
+
+    ;* Loop over the command line: skip spaces
+parloop:
+	ld      a,(hl)
+    or      a               ;Command line end found?
+    jr z,   parend
+
+    cp      #32
+    jr nz,  parfnd
+    inc     hl
+    jr      parloop
+
+    ;* Parameter found: add its address to params table...
+parfnd:
+	ld      (ix),l
+    ld      1(ix),h
+    inc     ix
+    inc     ix
+    inc     e
+
+    ld      a,e             ;protection against too many parameters - CMD_TABLE
+                            ;is strictly sized for MAX_CMDLINE_PARAMETERS entries
+    cp      #MAX_CMDLINE_PARAMETERS
+    jr nc,  parend
+
+    ;* ...and skip chars until finding a space or command line end
+parloop2:
+	ld      a,(hl)
+    or      a               ;Command line end found?
+    jr z,   parend    
+
+    cp      #32
+    jr nz,  parnospc        ;If space found, set it to 0
+                            ;(string terminator)...
+    ld      (hl),#0
+    inc     hl
+    jr      parloop         ;...and return to space skipping loop
+
+parnospc:
+	inc     hl
+    jr      parloop2
+
+parend:
+    ld      d,#0
+.else
+    ld      de,#0
+.endif
+
+	ld      hl,#CMD_TABLE
+
+
+;----------------------------------------------------------
+;	Step 4: Run application
+.if eq __SDCCCALL
+    push    de              ; Pass info as parameters to "main"
+    push    hl
+.endif
+    ; "Call" main, returning to programEnd
+    ld      bc, #programEnd     
+    push	bc
+    jp      _main
+
+;----------------------------------------------------------
+;	VDP Port Fix helper routine
+.if VDP_PORT_FIX
+vdpPortFix::
+   ld      a, (hl)     ; relative port
+   cp      #0xff
+   ret z
+   add     a, b        ; a = port
+   inc     hl
+   ld      e, (hl)
+   inc     hl
+   ld      d, (hl)     ; de = address to be fixed
+   ld      (de), a
+   inc     hl
+   jr      vdpPortFix
+.endif

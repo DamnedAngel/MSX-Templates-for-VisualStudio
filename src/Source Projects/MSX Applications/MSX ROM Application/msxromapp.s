@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxromapp.s - by Danilo Angelo, 2020-2023
+;		msxromapp.s - by Danilo Angelo, 2020-2026
 ;
 ;		ROM program (cartridge) for MSX example
 ;		Assembly version

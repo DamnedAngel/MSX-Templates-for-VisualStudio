@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxdosapp.s - by Danilo Angelo, 2020-2023
+;		msxdosapp.s - by Danilo Angelo, 2020-2026
 ;
 ;		MSX-DOS program example
 ;		Assembly version
@@ -18,14 +18,16 @@
 ;	Your fun starts here!!!
 ;	Replace the example code below with your art.
 _main::
-.if __SDCCCALL & CMDLINE_PARAMETERS
+.if __SDCCCALL
+.if MAX_CMDLINE_PARAMETERS
 	push	hl				; saves parameter index buffer address
 	push	de
+.endif
 .endif
     print	hellomsg
     dbg		bymsg			; only printed in debug mode
 
-.if CMDLINE_PARAMETERS
+.if MAX_CMDLINE_PARAMETERS
 	print	_linefeed
     print	parametersmsg
 

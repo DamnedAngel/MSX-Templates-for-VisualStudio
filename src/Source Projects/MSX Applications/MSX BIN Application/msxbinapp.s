@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;		msxbinapp.s - by Danilo Angelo, 2020-2023
+;		msxbinapp.s - by Danilo Angelo, 2020-2026
 ;
 ;		BIN program (BLOAD'able) for MSX example
 ;		Assembly version

@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	ApplicationSettings.txt - by Danilo Angelo, 2023
+;	ApplicationSettings.txt - by Danilo Angelo, 2023-2026
 ;
 ;	MSX-DOS overlay project general configuration.
 ;----------------------------------------------------------

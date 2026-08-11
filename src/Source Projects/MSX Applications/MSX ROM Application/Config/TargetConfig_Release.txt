@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	TargetConfig_Debug.txt - by Danilo Angelo, 2020-2023
+;	TargetConfig_Debug.txt - by Danilo Angelo, 2020-2026
 ;
 ;	Configuration for the RELEASE profile
 ;----------------------------------------------------------

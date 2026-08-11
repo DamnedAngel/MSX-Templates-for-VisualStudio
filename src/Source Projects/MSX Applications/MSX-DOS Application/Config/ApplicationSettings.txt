@@ -1,5 +1,5 @@
 ;----------------------------------------------------------
-;	ApplicationSettings.txt - by Danilo Angelo, 2020-2023
+;	ApplicationSettings.txt - by Danilo Angelo, 2020-2026
 ;
 ;	MSX-DOS application project general configuration.
 ;----------------------------------------------------------
@@ -11,20 +11,13 @@ PROJECT_TYPE			DOS
 ;----------------------------------------------------------
 ;	crt0 features
 GLOBALS_INITIALIZER		_ON             			; _ON: include routine to initialize global variables; _OFF: Don't include
-CMDLINE_PARAMETERS		_ON 						; _ON: include routine to parse cmdline parameters; _OFF: Don't include
+MAX_CMDLINE_PARAMETERS	10							; 0: Don't include cmdline parsing; N: parse up to N params (space reserved strictly for N)
 MDO_SUPPORT             _ON                         ; _ON: include support for overlay modules; _OFF: Don't include
 VDP_PORT_FIX    		_OFF               			; _ON: include routine to support MA-like devices (with vdpportmacros.s);
                                                     ; _OFF: Don't include
 ZOO_SUPPORT             _OFF                        ; _ON: include the ZOO object-orientation framework; _OFF: Don't include
 ZOO_REFLECTION_LEVEL    polymorphism                ; inheritance|polymorphism|classStructure|namedInheritance|namedMembers|typedMembers
 
-;----------------------------------------------------------
-;	Temporary MSX-DOS cmdline routine start
-;		0 -> routine starts at start of heap
-;		other value -> routine address (warning: may overlap data/code)
-;	If you don't know what you are doing,
-;	LEAVE IT AT 0.
-PARAM_HANDLING_ROUTINE	0
 
 ;----------------------------------------------------------
 ;	C Calling Convention
