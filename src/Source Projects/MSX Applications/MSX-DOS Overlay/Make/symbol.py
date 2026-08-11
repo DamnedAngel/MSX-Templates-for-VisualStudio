@@ -13,13 +13,6 @@ verbose = False
 if argc >= 5:
 	verbose = sys.argv[4] == '-v'
 
-def is_hex(s):
-	try:
-		int(s, 16)
-		return True
-	except ValueError:
-		return False
-
 ###################################
 # Load symbol patterns
 ###################################
@@ -51,18 +44,19 @@ if mdo:
 	f5 = open(path.join(sys.argv[2], 'MODULE_AFTERHEAP'), 'w')
 
 
-with open(path.join(sys.argv[2], sys.argv[3]) + '.map', 'r') as f1:
+with open(path.join(sys.argv[2], sys.argv[3]) + '.noi', 'r') as f1:
 	for line in f1:
 		line1 = line.strip()
 		words = line1.split()
-		if len(words) > 1:
-			if is_hex(words[0]):
-				value = words[0][3:]
+		if len(words) > 2:
+			if words[0] == "DEF":
+				value = words[2][2:]
 				if verbose:
 					print ('Found line: ' + line1)
 				# OpenMSX Symbol file
-				f2.write(words[1] + ': equ ' + words[0] + 'H\n')
-				# MDO PARENT_AFTERHEAP
+				if words[1].find('$') == -1:
+					f2.write(words[1] + ': equ ' + value + 'H\n')
+				# MDO MODULE_AFTERHEAP
 				if (mdo):
 					if (words[1] == 's__AFTERHEAP'):
 						f5.write("0x" + value)

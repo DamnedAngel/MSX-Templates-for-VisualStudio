@@ -14,6 +14,8 @@ GLOBALS_INITIALIZER		_ON 						; _ON: include routine to initialize global varia
 PUBLISH_FILESTART		_ON							; _ON: register program start address at HIMEM-1; _OFF: Don't register
 VDP_PORT_FIX    		_OFF               			; _ON: include routine to support MA-like devices (with vdpportmacros.s);
                                                     ; _OFF: Don't include
+ZOO_SUPPORT             _OFF                        ; _ON: include the ZOO object-orientation framework; _OFF: Don't include
+ZOO_REFLECTION_LEVEL    polymorphism                ; inheritance|polymorphism|classStructure|namedInheritance|namedMembers|typedMembers
 
 ;----------------------------------------------------------
 ;	C Calling Convention

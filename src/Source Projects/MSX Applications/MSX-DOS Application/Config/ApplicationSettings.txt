@@ -15,6 +15,8 @@ CMDLINE_PARAMETERS		_ON 						; _ON: include routine to parse cmdline parameters
 MDO_SUPPORT             _ON                         ; _ON: include support for overlay modules; _OFF: Don't include
 VDP_PORT_FIX    		_OFF               			; _ON: include routine to support MA-like devices (with vdpportmacros.s);
                                                     ; _OFF: Don't include
+ZOO_SUPPORT             _OFF                        ; _ON: include the ZOO object-orientation framework; _OFF: Don't include
+ZOO_REFLECTION_LEVEL    polymorphism                ; inheritance|polymorphism|classStructure|namedInheritance|namedMembers|typedMembers
 
 ;----------------------------------------------------------
 ;	Temporary MSX-DOS cmdline routine start

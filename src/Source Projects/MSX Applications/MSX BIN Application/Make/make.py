@@ -271,8 +271,16 @@ def configureTarget():
     VAR['MSX_BIN_PATH'] = fixPath(VAR['MSX_BIN_PATH'])
     VAR['MSX_DEV_PATH'] = fixPath(VAR['MSX_DEV_PATH'])
     VAR['MSX_LIB_PATH'] = fixPath(VAR['MSX_LIB_PATH'])
+    VAR['ZOO_PATH'] = fixPath(VAR['ZOO_PATH'])
     resolveVariables()
-    
+
+    debug(VAR['DBG_VERBOSE'], 'Configuring ADB support.')
+    VAR['ADB_SUPPORT'] = 1 if str(VAR.get('ADB_SUPPORT', '')).upper() == '_ON' else 0
+    if VAR['ADB_SUPPORT'] == 1:
+        VAR['COMPILER_EXTRA_DIRECTIVES'] = '{} --debug'.format(VAR.get('COMPILER_EXTRA_DIRECTIVES', ''))
+        VAR['LINKER_EXTRA_DIRECTIVES'] = '{} --debug'.format(VAR.get('LINKER_EXTRA_DIRECTIVES', ''))
+        VAR['ASSEMBLER_EXTRA_DIRECTIVES'] = '{} -s'.format(VAR.get('ASSEMBLER_EXTRA_DIRECTIVES', ''))
+
     debug(VAR['DBG_VERBOSE'], 'Configuring verbose parameters.')
     if VAR['DBG_TOOLSDETAIL'] <= VAR['BUILD_DEBUG']:
         VAR['SDCC_DETAIL'] = '-V --verbose'
@@ -282,6 +290,7 @@ def configureTarget():
         VAR['SDCC_DETAIL'] = ''
         VAR['SYMBOL_DETAIL'] = ''
         VAR['HEX2BIN_DETAIL'] = ''
+    VAR['ADB_DETAIL'] = '-v' if 256 <= VAR['BUILD_DEBUG'] else ''
 
     debug(VAR['DBG_SETTING'], '-----------------------------------')
     debug(VAR['DBG_SETTING'], 'Filesystem settings...')
@@ -484,6 +493,9 @@ def configureApplication():
                         else:
                             setVar ('BIN_SIZE', 8000)
 
+                    elif key == 'ZOO_REFLECTION_LEVEL':
+                        setVar ('ZOO_REFLECTION_LEVEL', value)
+
                     elif key == 'CODE_LOC':
                         setVar ('CODE_LOC', value)
 
@@ -526,6 +538,8 @@ def configureApplication():
                             as_s = as_s + '{} = 1\n'.format(key)
                             if key == 'MDO_SUPPORT':
                                 setVar ('MDO_SUPPORT', 1)
+                            if key == 'ZOO_SUPPORT':
+                                setVar ('ZOO_SUPPORT', 1)
 
                         elif value == '':
                             as_h = as_h + '#define {}\n'.format(key)
@@ -820,12 +834,122 @@ def collectCompiledLibs():
     return
 
 
+ZOO_LEVEL_ENGINE_NAMES = {
+    'inheritance':      'r0.inheritance',
+    'polymorphism':     'r1.polymorphism',
+    'classStructure':   'r2.classStructure',
+    'namedInheritance': 'r3.namedInheritance',
+    'namedMembers':     'r4.namedMembers',
+    'typedMembers':     'r5.typedMembers',
+}
+
+def collectZooClasses(filename, dirs):
+    classes = []
+    debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(filename))
+    with open(filename, 'r') as f1:
+        debug(VAR['DBG_VERBOSE'], 'Opened file {}.'.format(filename))
+        for line in f1:
+            line1 = line.strip()
+            if len(line1) > 0:
+                if not line1[0] == ';':
+                    parts = line1.split(';')
+                    sourceFile = fixPath(resolveString(parts[0].strip()))
+                    fExt = sourceFile.split(".")[-1]
+                    if fExt.lower() == "zml":
+                        classes.append(os.path.splitext(os.path.basename(sourceFile))[0])
+                        fDir = os.path.dirname(sourceFile)
+                        if fDir not in dirs:
+                            dirs.append(fDir)
+    f1.close()
+    return classes
+
+
+def runZooGenerator():
+    debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
+    debug(VAR['DBG_STEPS'], 'Running ZOO generator...')
+
+    global INCDIRS
+    global QUOTED_INCDIRS
+    global OBJLIST
+
+    zmlDirs = []
+    classes = collectZooClasses(fixPath(r'{}\ApplicationSources.txt'.format(VAR['MSX_CFG_PATH'])), zmlDirs)
+    classes += collectZooClasses(fixPath(r'{}\LibrarySources.txt'.format(VAR['MSX_CFG_PATH'])), zmlDirs)
+
+    if len(classes) == 0:
+        debug(VAR['DBG_STEPS'], 'No .zml classes found. Skipping ZOO generation.')
+        return
+
+    if VAR['ZOO_SUPPORT'] != 1:
+        debug (VAR['DBG_ERROR'], '### .zml sources found, but ZOO_SUPPORT is _OFF.')
+        debug (VAR['DBG_ERROR'], '### Check ApplicationSettings.txt configuration.')
+        raise Exception(1)
+
+    if VAR['ZOO_PATH'] == '':
+        debug (VAR['DBG_ERROR'], '### ZOO_SUPPORT is _ON, but ZOO_PATH is not configured.')
+        debug (VAR['DBG_ERROR'], '### Check TargetConfig_{}.txt configuration.'.format(VAR['PROFILE']))
+        raise Exception(1)
+
+    if VAR['ZOO_REFLECTION_LEVEL'] not in ZOO_LEVEL_ENGINE_NAMES:
+        debug (VAR['DBG_ERROR'], '### Unknown ZOO_REFLECTION_LEVEL "{}".'.format(VAR['ZOO_REFLECTION_LEVEL']))
+        raise Exception(1)
+    engineName = ZOO_LEVEL_ENGINE_NAMES[VAR['ZOO_REFLECTION_LEVEL']]
+
+    inputDirs = [fixPath(os.path.join(VAR['ZOO_PATH'], 'framework'))]
+    for d in zmlDirs:
+        if d not in inputDirs:
+            inputDirs.append(d)
+    if VAR['MDO_SUPPORT'] == 1 and isSet('MDO_PARENT_PROJECT_PATH'):
+        inputDirs.append(fixPath(VAR['MDO_PARENT_PROJECT_PATH']))
+
+    QUOTED_CLASSES = ['"{}"'.format(c) for c in classes]
+    QUOTED_ZOO_INPUT_DIRS = ['"{}"'.format(d) for d in inputDirs]
+
+    # -t forces the whole ancestry tree to be (re)generated. This is required
+    # since a class's generated code unconditionally .includes its parent's
+    # interface files. It's safe: MDOs/COMs are separate binaries that are
+    # never linked together, so duplicated ancestor code across modules
+    # doesn't collide, and within one module the shared zooClasses registry
+    # already de-duplicates a common ancestor reached from multiple classes.
+    before = set(os.listdir(VAR['MSX_OBJ_PATH']))
+
+    exe = os.path.join(VAR['ZOO_PATH'], "zoo.py")
+    execute (VAR['DBG_CALL2'], f'python "{exe}" -t {" ".join(QUOTED_CLASSES)} -r {VAR["ZOO_REFLECTION_LEVEL"]} -o "{VAR["MSX_OBJ_PATH"]}" -e -i {" ".join(QUOTED_ZOO_INPUT_DIRS)}')
+
+    newFiles = sorted(set(os.listdir(VAR['MSX_OBJ_PATH'])) - before)
+
+    zooInterfaceDir = fixPath(os.path.join(VAR['ZOO_PATH'], 'engine', 'interface'))
+    INCDIRS.append(zooInterfaceDir)
+    QUOTED_INCDIRS.append('-I"{}"'.format(zooInterfaceDir))
+
+    zooEngineLib = fixPath(os.path.join(VAR['ZOO_PATH'], 'engine', 'lib', 'zoo.engine.{}.lib'.format(engineName)))
+    OBJLIST.append(zooEngineLib)
+
+    # Compile every newly-generated class file. zoo.s and the .protected.s/
+    # .public.s interface files are .include-only, never compiled standalone.
+    for fName in newFiles:
+        if not fName.lower().endswith('.s'):
+            continue
+        base = fName[:-2]
+        if base == 'zoo' or base.endswith('.protected') or base.endswith('.public'):
+            continue
+        sourceFile = fixPath(os.path.join(VAR['MSX_OBJ_PATH'], fName))
+        relFile = fixPath(os.path.join(VAR['MSX_OBJ_PATH'], '{}.rel'.format(base)))
+        debug (VAR['DBG_DETAIL'], 'Processing ZOO class file {}...'.format(sourceFile))
+        execute (VAR['DBG_CALL2'], f'sdasz80 {VAR["ASSEMBLER_EXTRA_DIRECTIVES"]} {" ".join(QUOTED_INCDIRS)} -o "{relFile}" "{sourceFile}"')
+        OBJLIST.append(relFile)
+
+    debug(VAR['DBG_STEPS'], 'Done running ZOO generator.')
+    return
+
+
 def compileLibs():
     debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
     debug(VAR['DBG_STEPS'], 'Compiling libraries...')
 
     global OBJLIST
-    
+    global SRCDIRS
+
     filename = fixPath (r'{}\LibrarySources.txt'.format(VAR['MSX_CFG_PATH']))
     debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(filename))
     with open(filename, 'r') as f1:
@@ -836,16 +960,22 @@ def compileLibs():
                 if not line1[0] == ';':
                     parts = line1.split(';')
                     sourceFile = fixPath(resolveString(parts[0].strip()))
-                    fName = os.path.splitext(os.path.basename(sourceFile))[0] 
                     fExt = sourceFile.split(".")[-1]
+                    if fExt.lower() == "zml":
+                        # compiled by runZooGenerator(), not here
+                        continue
+                    fName = os.path.splitext(os.path.basename(sourceFile))[0]
                     relFile = fixPath(os.path.join(VAR['MSX_OBJ_PATH'], '{}.rel'.format(fName)))
+                    fDir = os.path.dirname(sourceFile)
+                    if fDir not in SRCDIRS:
+                        SRCDIRS.append(fDir)
                     if fExt.lower() == "c":
                         debug (VAR['DBG_DETAIL'], 'Processing C file {}...'.format(sourceFile))
                         execute (VAR['DBG_CALL2'], f'sdcc --sdcccall {VAR["SDCC_CALL"]} {VAR["SDCC_DETAIL"]} {VAR["COMPILER_EXTRA_DIRECTIVES"]} -mz80 -c {" ".join(QUOTED_INCDIRS)} -o "{relFile}" "{sourceFile}"')
                     else:
                         debug (VAR['DBG_DETAIL'], 'Processing ASM file {}...'.format(sourceFile))
                         execute (VAR['DBG_CALL2'], f'sdasz80 {VAR["ASSEMBLER_EXTRA_DIRECTIVES"]} {" ".join(QUOTED_INCDIRS)} -o "{relFile}" "{sourceFile}"')
-                    
+
                     OBJLIST.append(relFile)
 
     debug(VAR['DBG_STEPS'], 'Done building libraries.')
@@ -856,6 +986,7 @@ def compileProject():
     debug(VAR['DBG_STEPS'], 'Compiling project...')
 
     global OBJLIST
+    global SRCDIRS
 
     filename = fixPath (r'{}\ApplicationSources.txt'.format(VAR['MSX_CFG_PATH']))
     debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(filename))
@@ -867,16 +998,22 @@ def compileProject():
                 if not line1[0] == ';':
                     parts = line1.split(';')
                     sourceFile = fixPath(resolveString(parts[0].strip()))
-                    fName = os.path.splitext(os.path.basename(sourceFile))[0] 
                     fExt = sourceFile.split(".")[-1]
+                    if fExt.lower() == "zml":
+                        # compiled by runZooGenerator(), not here
+                        continue
+                    fName = os.path.splitext(os.path.basename(sourceFile))[0]
                     relFile = fixPath(os.path.join(VAR['MSX_OBJ_PATH'], '{}.rel'.format(fName)))
+                    fDir = os.path.dirname(sourceFile)
+                    if fDir not in SRCDIRS:
+                        SRCDIRS.append(fDir)
                     if fExt.lower() == "c":
                         debug (VAR['DBG_DETAIL'], 'Processing C file {}...'.format(sourceFile))
                         execute (VAR['DBG_CALL2'], f'sdcc --sdcccall {VAR["SDCC_CALL"]} {VAR["SDCC_DETAIL"]} {VAR["COMPILER_EXTRA_DIRECTIVES"]} -mz80 -c {" ".join(QUOTED_INCDIRS)} -o "{relFile}" "{sourceFile}"')
                     else:
                         debug (VAR['DBG_DETAIL'], 'Processing ASM file {}...'.format(sourceFile))
                         execute (VAR['DBG_CALL2'], f'sdasz80 {VAR["ASSEMBLER_EXTRA_DIRECTIVES"]} {" ".join(QUOTED_INCDIRS)} -o "{relFile}" "{sourceFile}"')
-                    
+
                     OBJLIST.append(relFile)
 
     debug(VAR['DBG_STEPS'], 'Done compiling project.')
@@ -933,12 +1070,27 @@ def buildBinary():
 def buildSymbolFile():
     debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
     debug(VAR['DBG_STEPS'], 'Building symbol file...')
-    
+
     exe = os.path.join("Make", "symbol.py")
 
     execute (VAR['DBG_CALL3'], f'python "{exe}" {VAR["PROJECT_TYPE"]} "{VAR["MSX_OBJ_PATH"]}\" "{VAR["MSX_FILE_NAME"]}" {VAR["SYMBOL_DETAIL"]}')
 
     debug(VAR['DBG_STEPS'], 'Done building symbol file.')
+    return
+
+def buildAdbFile():
+    debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
+    debug(VAR['DBG_STEPS'], 'Building ADB file...')
+
+    exe = os.path.join("Make", "adbgenerator.py")
+
+    QUOTED_SRCDIRS = []
+    for d in SRCDIRS:
+        QUOTED_SRCDIRS.append('-I "{}"'.format(d))
+
+    execute (VAR['DBG_CALL3'], f'python "{exe}" {VAR["ADB_DETAIL"]} {" ".join(QUOTED_SRCDIRS)} {VAR["PROJECT_TYPE"]} "{VAR["MSX_OBJ_PATH"]}" "{VAR["MSX_FILE_NAME"]}"')
+
+    debug(VAR['DBG_STEPS'], 'Done building ADB file.')
     return
 
 def finish():
@@ -963,6 +1115,7 @@ mim_s = ''                          # mdoimplementation (s)
 OBJLIST = []
 INCDIRS = []
 QUOTED_INCDIRS = []
+SRCDIRS = []
 VAR = {}
 
 
@@ -1006,6 +1159,10 @@ VAR['CODE_LOC'] = None
 VAR['DATA_LOC'] = 0
 VAR['PARAM_HANDLING_ROUTINE'] = 0
 VAR['MDO_SUPPORT'] = 0
+VAR['ADB_SUPPORT'] = 0
+VAR['ZOO_SUPPORT'] = 0
+VAR['ZOO_REFLECTION_LEVEL'] = 'polymorphism'
+VAR['ZOO_PATH'] = ''
 
 VAR['MSX_FILE_NAME'] = 'MSXAPP'
 VAR['PROJECT_TYPE'] = None
@@ -1058,6 +1215,7 @@ try:
 
         collectIncludeDirs()
         collectCompiledLibs()
+        runZooGenerator()
 
         execAction ('before compile')
         if makeAll:
@@ -1069,6 +1227,8 @@ try:
         linkProject()
         buildBinary()
         execAction ('after binary')
+        if VAR['ADB_SUPPORT'] == 1:
+            buildAdbFile()
         buildSymbolFile()
     
     execAction ('build end')
