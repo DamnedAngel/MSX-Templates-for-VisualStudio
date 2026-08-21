@@ -23,7 +23,6 @@ ZOO_REFLECTION_LEVEL    polymorphism                ; inheritance|polymorphism|c
 ;	C Calling Convention
 SDCCCALL                1                           ; SDCCCALL=0    Old C calling convention (STACK)
                                                     ; SDCCCALL=1    New C calling convention (REGs)
-
 ;----------------------------------------------------------
 ;	Code segment (.area _CODE) start address
 ;	If you don't know what you are doing,

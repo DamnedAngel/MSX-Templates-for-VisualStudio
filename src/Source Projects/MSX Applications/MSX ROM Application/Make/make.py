@@ -872,6 +872,26 @@ def collectZooClasses(filename, dirs):
     return classes
 
 
+## RESOLVE ZOO TREE
+def resolveZooTree(classes, inputDirs):
+    tree = set()
+    queue = list(classes)
+    while queue:
+        name = queue.pop()
+        if name in tree:
+            continue
+        tree.add(name)
+        for d in inputDirs:
+            zmlPath = os.path.join(d, name + '.zml')
+            if os.path.exists(zmlPath):
+                with open(zmlPath, 'r') as f3:
+                    m = re.search(r'<parent>\s*(\w+)\s*</parent>', f3.read())
+                if m:
+                    queue.append(m.group(1))
+                break
+    return tree
+
+
 def runZooGenerator():
     debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
     debug(VAR['DBG_STEPS'], 'Running ZOO generator...')
@@ -913,18 +933,13 @@ def runZooGenerator():
     QUOTED_CLASSES = ['"{}"'.format(c) for c in classes]
     QUOTED_ZOO_INPUT_DIRS = ['"{}"'.format(d) for d in inputDirs]
 
-    # -t forces the whole ancestry tree to be (re)generated. This is required
-    # since a class's generated code unconditionally .includes its parent's
-    # interface files. It's safe: MDOs/COMs are separate binaries that are
-    # never linked together, so duplicated ancestor code across modules
-    # doesn't collide, and within one module the shared zooClasses registry
-    # already de-duplicates a common ancestor reached from multiple classes.
-    before = set(os.listdir(VAR['MSX_OBJ_PATH']))
-
+    # -t regenerates the whole ancestor tree (parents are .include-required)
     exe = os.path.join(VAR['ZOO_PATH'], "zoo.py")
     execute (VAR['DBG_CALL2'], f'python "{exe}" -t {" ".join(QUOTED_CLASSES)} -r {VAR["ZOO_REFLECTION_LEVEL"]} -o "{VAR["MSX_OBJ_PATH"]}" -e -i {" ".join(QUOTED_ZOO_INPUT_DIRS)}')
 
-    newFiles = sorted(set(os.listdir(VAR['MSX_OBJ_PATH'])) - before)
+    # zoo.py skips unchanged files (Zoo #26); mtime is a reliable staleness signal
+    allFiles = sorted(os.listdir(VAR['MSX_OBJ_PATH']))
+    zooTree = resolveZooTree(classes, inputDirs)
 
     zooInterfaceDir = fixPath(os.path.join(VAR['ZOO_PATH'], 'engine', 'interface'))
     INCDIRS.append(zooInterfaceDir)
@@ -933,22 +948,35 @@ def runZooGenerator():
     zooEngineLib = fixPath(os.path.join(VAR['ZOO_PATH'], 'engine', 'lib', 'zoo.engine.{}.lib'.format(engineName)))
     OBJLIST.append(zooEngineLib)
 
-    # Compile every newly-generated class file. zoo.s and the .protected.s/
-    # .public.s interface files are .include-only, never compiled standalone.
-    for fName in newFiles:
+    # zoo.s/.protected.s/.public.s interface files are .include-only, never compiled standalone
+    for fName in allFiles:
         if not fName.lower().endswith('.s'):
             continue
         base = fName[:-2]
         if base == 'zoo' or base.endswith('.protected') or base.endswith('.public'):
             continue
+        if base not in zooTree:
+            continue
         sourceFile = fixPath(os.path.join(VAR['MSX_OBJ_PATH'], fName))
         relFile = fixPath(os.path.join(VAR['MSX_OBJ_PATH'], '{}.rel'.format(base)))
-        debug (VAR['DBG_DETAIL'], 'Processing ZOO class file {}...'.format(sourceFile))
-        execute (VAR['DBG_CALL2'], f'sdasz80 {VAR["ASSEMBLER_EXTRA_DIRECTIVES"]} {" ".join(QUOTED_INCDIRS)} -o "{relFile}" "{sourceFile}"')
+        if isUpToDate(sourceFile, relFile):
+            debug (VAR['DBG_DETAIL'], 'Skipping up-to-date ZOO class file {}...'.format(sourceFile))
+        else:
+            debug (VAR['DBG_DETAIL'], 'Processing ZOO class file {}...'.format(sourceFile))
+            execute (VAR['DBG_CALL2'], f'sdasz80 {VAR["ASSEMBLER_EXTRA_DIRECTIVES"]} {" ".join(QUOTED_INCDIRS)} -o "{relFile}" "{sourceFile}"')
         OBJLIST.append(relFile)
 
     debug(VAR['DBG_STEPS'], 'Done running ZOO generator.')
     return
+
+
+## IS UP TO DATE
+def isUpToDate(sourceFile, relFile):
+    if makeAll:
+        return False
+    if not os.path.exists(relFile):
+        return False
+    return os.path.getmtime(relFile) >= os.path.getmtime(sourceFile)
 
 
 def compileLibs():
@@ -977,7 +1005,9 @@ def compileLibs():
                     fDir = os.path.dirname(sourceFile)
                     if fDir not in SRCDIRS:
                         SRCDIRS.append(fDir)
-                    if fExt.lower() == "c":
+                    if isUpToDate(sourceFile, relFile):
+                        debug (VAR['DBG_DETAIL'], 'Skipping up-to-date file {}...'.format(sourceFile))
+                    elif fExt.lower() == "c":
                         debug (VAR['DBG_DETAIL'], 'Processing C file {}...'.format(sourceFile))
                         execute (VAR['DBG_CALL2'], f'sdcc --sdcccall {VAR["SDCC_CALL"]} {VAR["SDCC_DETAIL"]} {VAR["COMPILER_EXTRA_DIRECTIVES"]} -mz80 -c {" ".join(QUOTED_INCDIRS)} -o "{relFile}" "{sourceFile}"')
                     else:
@@ -1015,7 +1045,9 @@ def compileProject():
                     fDir = os.path.dirname(sourceFile)
                     if fDir not in SRCDIRS:
                         SRCDIRS.append(fDir)
-                    if fExt.lower() == "c":
+                    if isUpToDate(sourceFile, relFile):
+                        debug (VAR['DBG_DETAIL'], 'Skipping up-to-date file {}...'.format(sourceFile))
+                    elif fExt.lower() == "c":
                         debug (VAR['DBG_DETAIL'], 'Processing C file {}...'.format(sourceFile))
                         execute (VAR['DBG_CALL2'], f'sdcc --sdcccall {VAR["SDCC_CALL"]} {VAR["SDCC_DETAIL"]} {VAR["COMPILER_EXTRA_DIRECTIVES"]} -mz80 -c {" ".join(QUOTED_INCDIRS)} -o "{relFile}" "{sourceFile}"')
                     else:
@@ -1070,7 +1102,7 @@ def buildBinary():
     source = fixPath('{}/{}.{}'.format(VAR['MSX_OBJ_PATH'], VAR['MSX_FILE_NAME'], VAR['MSX_FILE_EXTENSION']))
     target = fixPath('{}/{}.{}'.format(VAR['MSX_BIN_PATH'], VAR['MSX_FILE_NAME'], VAR['MSX_FILE_EXTENSION']))
     debug(VAR['DBG_EXTROVERT'], 'Moving binary from "{}" to "{}"...'.format(source, target))
-    os.rename(source, target)
+    os.replace(source, target)
         
     debug(VAR['DBG_STEPS'], 'Done building MSX binary.')
     return
@@ -1207,7 +1239,8 @@ try:
     
     configureTarget()
     createDirStruct()
-    clean()
+    if makeClean:
+        clean()
     
     if makeAll or not makeClean and not makeAll:
         saveTargetHeaders()
@@ -1226,8 +1259,7 @@ try:
         runZooGenerator()
 
         execAction ('before compile')
-        if makeAll:
-            compileLibs()
+        compileLibs()
         compileProject()
         execAction ('after compile')
 
