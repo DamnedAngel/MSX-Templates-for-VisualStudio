@@ -24,6 +24,7 @@ LATE_EXECUTION			_OFF     					; _ON: Enables other carts to be initialized befo
                                                     ;       - Don't plug in a mass storage unit
 ZOO_SUPPORT             _OFF                        ; _ON: include the ZOO object-orientation framework; _OFF: Don't include
 ZOO_REFLECTION_LEVEL    polymorphism                ; inheritance|polymorphism|classStructure|namedInheritance|namedMembers|typedMembers
+ZOO_REGENERATE_TREE     _ON                         ; _ON: always regenerate the ZOO ancestor tree here; _OFF: inherit it from an upstream module; _AUTO: _OFF for an MDO whose parent has ZOO_SUPPORT _ON
 
 ;----------------------------------------------------------
 ;	C Calling Convention

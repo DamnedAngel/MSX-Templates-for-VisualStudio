@@ -500,6 +500,9 @@ def configureApplication():
                     elif key == 'ZOO_REFLECTION_LEVEL':
                         setVar ('ZOO_REFLECTION_LEVEL', value)
 
+                    elif key == 'ZOO_REGENERATE_TREE':
+                        setVar ('ZOO_REGENERATE_TREE', value)
+
                     elif key == 'MAX_CMDLINE_PARAMETERS':
                         if int(value) > 63:
                             debug (VAR['DBG_ERROR'], '### MAX_CMDLINE_PARAMETERS is {}, but 63 is the maximum supported.'.format(value))
@@ -896,6 +899,45 @@ def resolveZooTree(classes, inputDirs):
     return tree
 
 
+## ZOO REGENERATE TREE
+#   Decide whether to pass `zoo.py -t` (regenerate the full <parent> ancestor
+#   tree in this project) or let those ancestors resolve as externals from an
+#   upstream ZOO-enabled module.
+#     ZOO_REGENERATE_TREE _ON   -> always -t   (base app; or a standalone
+#                                  ZOO-enabled MDO with no ZOO parent)
+#     ZOO_REGENERATE_TREE _OFF  -> never -t    (ancestors come from upstream)
+#     ZOO_REGENERATE_TREE _AUTO -> -t unless PROJECT_TYPE is MDO and the direct
+#                                  parent (MDO_PARENT_PROJECT_PATH) itself has
+#                                  ZOO_SUPPORT _ON
+#     unset -> _ON for non-MDO projects, _AUTO for MDO projects
+#   Fail-safe (parent config unreadable) is -t on: a duplicate-symbol error is
+#   noticed immediately, an undefined symbol is not.
+def zooRegenerateTree() -> bool:
+    mode = str(VAR.get('ZOO_REGENERATE_TREE') or '').upper()
+    if mode == '_ON':
+        return True
+    if mode == '_OFF':
+        return False
+    # _AUTO or unset
+    if VAR['PROJECT_TYPE'] != 'MDO':
+        return True
+    if not isSet('MDO_PARENT_PROJECT_PATH'):
+        return True
+    cfg = fixPath(os.path.join(VAR['MDO_PARENT_PROJECT_PATH'], 'Config', 'ApplicationSettings.txt'))
+    try:
+        with open(cfg, 'r') as f:
+            for line in f:
+                tokens = line.split(';')[0].split()
+                if len(tokens) >= 2 and tokens[0] == 'ZOO_SUPPORT':
+                    parentHasZoo = tokens[1].lower() == '_on'
+                    debug(VAR['DBG_SETTING'], 'ZOO_REGENERATE_TREE _AUTO: parent ZOO_SUPPORT {} -> {}'.format(
+                        tokens[1], 'inherit ancestors (no -t)' if parentHasZoo else 'regenerate (-t)'))
+                    return not parentHasZoo
+    except OSError:
+        debug(VAR['DBG_ERROR'], '### ZOO_REGENERATE_TREE _AUTO: cannot read {} - assuming _ON.'.format(cfg))
+    return True
+
+
 def runZooGenerator():
     debug(VAR['DBG_STEPS'], '-------------------------------------------------------------------------------')
     debug(VAR['DBG_STEPS'], 'Running ZOO generator...')
@@ -937,9 +979,12 @@ def runZooGenerator():
     QUOTED_CLASSES = ['"{}"'.format(c) for c in classes]
     QUOTED_ZOO_INPUT_DIRS = ['"{}"'.format(d) for d in inputDirs]
 
-    # -t regenerates the whole ancestor tree (parents are .include-required)
+    # -t regenerates the whole <parent> ancestor tree here; without it, ancestors
+    # reached only via <parent> are geometry-only and resolve at link from an
+    # upstream module's exports. See zooRegenerateTree() / ZOO_REGENERATE_TREE.
+    treeFlag = '-t ' if zooRegenerateTree() else ''
     exe = os.path.join(VAR['ZOO_PATH'], "zoo.py")
-    execute (VAR['DBG_CALL2'], f'python "{exe}" -t {" ".join(QUOTED_CLASSES)} -r {VAR["ZOO_REFLECTION_LEVEL"]} -o "{VAR["MSX_OBJ_PATH"]}" -e -i {" ".join(QUOTED_ZOO_INPUT_DIRS)}')
+    execute (VAR['DBG_CALL2'], f'python "{exe}" {treeFlag}{" ".join(QUOTED_CLASSES)} -r {VAR["ZOO_REFLECTION_LEVEL"]} -o "{VAR["MSX_OBJ_PATH"]}" -e -i {" ".join(QUOTED_ZOO_INPUT_DIRS)}')
 
     # zoo.py skips unchanged files (Zoo #26); mtime is a reliable staleness signal
     allFiles = sorted(os.listdir(VAR['MSX_OBJ_PATH']))
@@ -1206,6 +1251,7 @@ VAR['MDO_SUPPORT'] = 0
 VAR['ADB_SUPPORT'] = 0
 VAR['ZOO_SUPPORT'] = 0
 VAR['ZOO_REFLECTION_LEVEL'] = 'polymorphism'
+VAR['ZOO_REGENERATE_TREE'] = ''
 VAR['ZOO_PATH'] = ''
 
 VAR['MSX_FILE_NAME'] = 'MSXAPP'
