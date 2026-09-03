@@ -566,7 +566,7 @@ Settings shared by every template:
 | `PROJECT_TYPE` | `BIN`, `ROM`, `DOS` or `MDO`. Set by the template; don't change it. |
 | `GLOBALS_INITIALIZER` | `_ON`: include the routine that copies initialized globals from ROM/ ` _INITIALIZER` into RAM at startup (`gsinit`). `_OFF`: omit it (only safe if you have no initialized globals). |
 | `VDP_PORT_FIX` | `_ON`: include the routine (fed by `vdpportmacros.s`) that fixes up VDP port addresses for MA-like secondary-VDP devices (e.g. Neos' MA-20) at startup. `_OFF`: omit it. |
-| `ZOO_SUPPORT` / `ZOO_REFLECTION_LEVEL` | See [The ZOO object-orientation framework](#the-zoo-object-orientation-framework) below. |
+| `ZOO_SUPPORT` / `ZOO_REFLECTION_LEVEL` / `ZOO_REGENERATE_TREE` | See [The ZOO object-orientation framework](#the-zoo-object-orientation-framework) below. |
 | `SDCCCALL` | `1`: new SDCC calling convention (parameters in registers, `sdcccall(1)`, smaller/faster). `0`: old convention (parameters on the stack, `sdcccall(0)`). For MSX-DOS + MDO pairs, **both projects must use the same value.** |
 
 #### ApplicationSources.txt
@@ -625,6 +625,28 @@ You must:
 - choose a `ZOO_REFLECTION_LEVEL`, i.e. how much runtime type information the generated classes carry, trading
 memory/speed for reflection capability. From lightest to heaviest: `inheritance`, `polymorphism` (the default),
 `classStructure`, `namedInheritance`, `namedMembers`, `typedMembers`.
+
+**`ZOO_REGENERATE_TREE`** controls whether a project generates the full ancestor chain of its `.zml` classes
+locally, or borrows those ancestors from an upstream module. By default `zoo.py` is run with `-t`: every class's
+`<parent>` chain is regenerated and compiled into *this* project. For a base application that is correct. For an
+MDO that subclasses a class already resident (with its engine tables) in the `.COM` it loads into, it means the
+MDO carries a second copy of that ancestor - wasted space, and it defeats sharing one class hierarchy across
+modules. Set this to let the ancestors resolve at link from the parent's exported symbols instead (the ZOO-class
+counterpart of what an extra `parentinterface.s` does for hand-written symbols):
+
+| Value | Effect |
+|---|---|
+| `_ON` | Always pass `-t`. Regenerate the whole ancestor tree here. Use for a base app, or a standalone ZOO-enabled MDO with no ZOO-enabled parent. |
+| `_OFF` | Never pass `-t`. Ancestors reached only through `<parent>` are emitted as geometry only and must resolve at link from an upstream module. |
+| `_AUTO` | `-t` **unless** this project's `PROJECT_TYPE` is `MDO` **and** its direct parent (`MDO_PARENT_PROJECT_PATH` in `MDOSettings.txt`) itself has `ZOO_SUPPORT _ON`. Only the immediate parent is consulted - a grandparent's ZOO support does not count. |
+
+Unset behaves as `_ON` for non-MDO projects and `_AUTO` for MDO projects (so the shipped MDO template defaults to
+`_AUTO`, the others to `_ON`). If `_AUTO` cannot read the parent's `ApplicationSettings.txt` it falls back to `-t`
+on: an over-regenerated MDO is merely fat, a wrongly-skipped one fails to link (or links against a stale symbol).
+
+> `_OFF` (and `_AUTO` when it resolves to off) needs a ZOO checkout new enough to emit the `.include` directives
+> for an inherited class's ancestor interface files; older `zoo.py` builds emit the inherited-method aliases but
+> not the includes, so the assembly step fails with undefined symbols. Keep `_ON` if in doubt.
 
 ### AlchemiaZ debug symbols (ADB_SUPPORT)
 Setting `ADB_SUPPORT` to `_ON` in a `TargetConfig_*.txt` file makes the build also emit a `.adb` source-level debug
