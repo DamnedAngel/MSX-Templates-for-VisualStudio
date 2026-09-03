@@ -135,6 +135,7 @@ To use the templates outside Visual Studio (Windows, Linux, MacOS):
 			Build:			python ./Make/make.py <PROFILE>
 			Rebuild All: 		python ./Make/make.py <PROFILE> clean all
 			Clean:			python ./Make/make.py <PROFILE> clean
+	1. `Build` recompiles only new or changed sources; use `Rebuild All` to force a full recompile.
 1. Have FUN!
 
 ---
@@ -261,6 +262,9 @@ of project you chose):
         	Clean:			python ./Make/make.py <PROFILE> clean
 
     	![MSX Linux Project Build Script](linux-building-2.png "MSX build script in Linux/Mac")
+1. `Build` is incremental: only source files that are new or have changed since the last build are recompiled;
+unchanged files are linked from their existing `.rel` objects. Use `Rebuild All` (`clean all`) when you want a
+full recompile - for example after changing a header, a compiler flag or a `Config` setting.
 1. When the script ends, you should see the results of the build process and the messages of success:
 1. Windows:
 
@@ -567,11 +571,14 @@ Settings shared by every template:
 
 #### ApplicationSources.txt
 Lists every C/ASM source file that is part of your program (crt0 first - never remove that line - then your `main`
-source, then any additional files). Files listed here are always reprocessed on a normal build.
+source, then any additional files). On a normal build only files that are new or have changed since the last build
+are recompiled - each source is skipped when its `.rel` object already exists and is not older than the source.
+Pass `all` (`make.py <PROFILE> clean all`) to force every listed file to be recompiled regardless of timestamps.
 
 #### LibrarySources.txt
-Like `ApplicationSources.txt`, but for reusable library sources shared across projects: reprocessed on
-Rebuild/`clean all`, but otherwise reused between builds instead of being recompiled every time.
+Like `ApplicationSources.txt`, but for reusable library sources shared across projects. These are now compiled on
+every build using the same new-or-changed check as `ApplicationSources.txt`, so an unchanged library source is
+linked from its existing `.rel` instead of being recompiled. `all` forces them all to be rebuilt.
 
 #### Libraries.txt
 Precompiled `.lib`/`.rel` files to link into the final binary. These are never compiled by the build script, only
