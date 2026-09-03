@@ -591,6 +591,10 @@ listed; uncomment the `[MSX_LIB_PATH]\...` entries if you're using an external l
 #### BuildEvents.txt
 Hooks for running your own scripts around the build: `BUILD_START_ACTION`/`BUILD_END_ACTION` always run;
 `BEFORE_COMPILE_ACTION`/`AFTER_COMPILE_ACTION`/`AFTER_BINARY_ACTION` are skipped on a bare `clean` (no `all`).
+The command is run from the project directory, so any path in it (a helper script, a sibling project) is
+relative to that directory. Write those paths with forward slashes - `python Make/myscript.py [PROFILE]` -
+on every OS; the build script normalises them. A path written with backslashes must be double-quoted
+(`python "Make\myscript.py"`) or its separators are lost.
 
 #### Symbols.txt
 Controls which symbols get exported to the `.sym`/debug output, via Python-style regex matching (one pattern per
