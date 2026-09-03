@@ -383,7 +383,11 @@ def configureBuildEvents():
                         else:
                             value='{} {}'.format(value, token)
                     debug(VAR['DBG_DETAIL'], 'Found action "{}" for event {}.'.format(value, key))
-                    VAR[key] = fixPath(value)
+                    # Keep the command verbatim. fixPath() would rewrite '/' to '\', and the
+                    # POSIX shlex.split() in executeWithoutFix() then treats those backslashes
+                    # as escapes and drops them, deleting every path separator in the command.
+                    # Build-event paths are project-relative and use '/' (see manual).
+                    VAR[key] = value
     f1.close()
     resolveVariables()
 
