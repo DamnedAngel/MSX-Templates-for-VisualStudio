@@ -53,13 +53,30 @@ isMdoLoaded::
 	ret
 
 ;----------------------------------------------------------
-;	Store mdo handler and test if loaded and linked
+;	Retrieve mdo handler, re-prime its address cache,
+;	and test if loaded and linked
 isMdoLinked::
 .if eq __SDCCCALL
 	ld		hl, #6			; first argument, but after three call instructions!
 .endif
 	call	isMdoLoaded
 	jr z,	mdoService_notLoadedError
+
+	; Re-prime the mdoAddress cache from this handler's stored load address
+	; (handler + 12). mdoAddress is a bare global written only by _mdoLoad; once
+	; a different MDO has been loaded it points at that module, and both
+	; callCustomRoutine and getHookImpAddrTable would then reach THIS MDO's
+	; lifecycle callbacks / hook table through the wrong base address.
+	; (This block lived in isMdoLoaded until TKT_00077 dropped it.)
+	ld		de, #12
+	add		hl, de
+	ld		e, (hl)
+	inc		hl
+	ld		d, (hl)
+	ex		de, hl
+	ld		(#mdoAddress), hl
+	ld		hl, (#mdoHandler)
+
 	ld		a, (hl)
 	and		#mdoStatus_linked
 	ret
