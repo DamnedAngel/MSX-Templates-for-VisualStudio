@@ -11,6 +11,8 @@ MDO_PARENT_PROJECT_PATH			../MSX-DOS Application
 ;	MDO_PREVIOUS_PROJECT_PATH lets this MDO snap after any already-loaded
 ;	module (not only its parent) via FILESTART PREVIOUS_AFTERHEAP below.
 ;MDO_PREVIOUS_PROJECT_PATH		../SomeOtherMDO
+;	MDO_EXTRA_INTERFACE pulls in an ancestor's symbols
+;MDO_EXTRA_INTERFACE			../TheRootApplication
 
 ;----------------------------------------------------------
 ;	MDO settings

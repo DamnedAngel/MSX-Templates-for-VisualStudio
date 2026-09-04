@@ -614,6 +614,8 @@ def configureMDO():
     global mi_s                         # mdointerface (s)
     global mim_s                        # mdoimplementation (s)
 
+    mdoExtraInterfaces = []             # ancestor project paths
+
     mi_h = mi_h + '//-------------------------------------------------\n'
     mi_h = mi_h + '// mdointerface.h created automatically\n'
     mi_h = mi_h + '// by make.bat\n'
@@ -664,6 +666,12 @@ def configureMDO():
 
     filename = fixPath (r'{}\MDOSettings.txt'.format(VAR['MSX_CFG_PATH']))
     debug(VAR['DBG_EXTROVERT'], 'Opening file {}.'.format(filename))
+    # MDO_EXTRA_INTERFACE present: parent's .include is deferred to after
+    # the parse loop to win symbol-name collision
+    # MDO_EXTRA_INTERFACE absent: parent's .include is emitted inline
+    with open(filename, 'r') as f2:
+        hasExtraInterfaces = any(
+            l.split(';')[0].split()[0:1] == ['MDO_EXTRA_INTERFACE'] for l in f2)
     with open(filename, 'r') as f1:
         debug(VAR['DBG_VERBOSE'], 'Opened file {}.'.format(filename))
         for line in f1:
@@ -698,7 +706,11 @@ def configureMDO():
                             debug(VAR['DBG_VERBOSE'], 'MDO_PARENT_AFTERHEAP read.')
                         f2.close()
                         setVar ('MDO_PARENT_INTERFACE', '{}/{}/objs/parentinterface.s'.format(value, VAR['PROFILE']))
-                        mim_s = mim_s + '.include "{}"\n'.format(VAR['MDO_PARENT_INTERFACE'])
+                        if not hasExtraInterfaces:
+                            mim_s = mim_s + '.include "{}"\n'.format(VAR['MDO_PARENT_INTERFACE'])
+
+                    elif key == 'MDO_EXTRA_INTERFACE':
+                        mdoExtraInterfaces.append(value)
 
                     elif key == 'MDO_PREVIOUS_PROJECT_PATH':
                         setVar ('MDO_PREVIOUS_PROJECT_PATH', value)
@@ -740,6 +752,30 @@ def configureMDO():
                         mim_s = mim_s + '{} {}\n'.format (key, value)
 
     f1.close()
+
+    for extra in mdoExtraInterfaces:
+        extraSrc = fixPath ('{}/{}/objs/parentinterface.s'.format(extra, VAR['PROFILE']))
+        try:
+            with open(extraSrc, 'r') as f2:
+                extraLines = f2.readlines()
+        except OSError:
+            debug (VAR['DBG_ERROR'], '### MDO_EXTRA_INTERFACE points at "{}",'.format(extra))
+            debug (VAR['DBG_ERROR'], '### but {} was not found.'.format(extraSrc))
+            debug (VAR['DBG_ERROR'], '### Build that project (this PROFILE) before this one.')
+            raise Exception(1)
+        extraName = os.path.basename(os.path.normpath(extra)) or 'ancestor'
+        extraDst = fixPath ('{}/parentinterface.extra.{}.s'.format(VAR['MSX_OBJ_PATH'], extraName))
+        debug (VAR['DBG_EXTROVERT'], 'Writing filtered extra MDO interface {} -> {}.'.format(extraSrc, extraDst))
+        with open(extraDst, 'w') as f2:
+            f2.write ('; extra MDO interface - filtered from {} by make.py.\n'.format(extraSrc))
+            for extraLine in extraLines:
+                if extraLine.split()[0:1] == ['PARENT_AFTERHEAP']:
+                    continue
+                f2.write (extraLine)
+        mim_s = mim_s + '.include "{}"\n'.format(extraDst)
+
+    if hasExtraInterfaces and isSet('MDO_PARENT_INTERFACE'):
+        mim_s = mim_s + '.include "{}"\n'.format(VAR['MDO_PARENT_INTERFACE'])
 
     debug(VAR['DBG_VERBOSE'], 'Finalizing mdointerface.h.')
     mi_h = mi_h + '\n'

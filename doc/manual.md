@@ -49,6 +49,7 @@ Damned Angel / 2020-2026
 		- [MSX ROM Application specific settings](#msx-rom-application-specific-settings)
 		- [MSX-DOS Application specific settings](#msx-dos-application-specific-settings)
 		- [MSX-DOS Overlay (MDO) specific settings and MDOSettings.txt](#msx-dos-overlay-mdo-specific-settings-and-mdosettingstxt)
+			- [Deep MDO trees and `MDO_EXTRA_INTERFACE`](#deep-mdo-trees-and-mdo_extra_interface)
 		- [Advanced: crt0 memory layout and the `_POSTHEAP` area](#advanced-crt0-memory-layout-and-the-_postheap-area)
 
 ---
@@ -690,6 +691,7 @@ describes the project's place in the MDO hierarchy and, for the base application
 | `MDO_APPLICATION_PROJECT_PATH` | Path to the base MSX-DOS application project (the root of the MDO tree). `.` for the application project itself. |
 | `MDO_PARENT_PROJECT_PATH` | Path to this MDO's direct parent project (MDO-only). |
 | `MDO_PREVIOUS_PROJECT_PATH` | Optional. Path to another already-loaded module (not necessarily the parent) that this MDO should load immediately after - see `FILESTART` below. |
+| `MDO_EXTRA_INTERFACE` | Optional, repeatable. Path to another ancestor project whose exported symbols this MDO also needs - see [Deep MDO trees](#deep-mdo-trees-and-mdo_extra_interface) below. |
 | `FILESTART` | Where this module's code is loaded: `PARENT_AFTERHEAP` (default - right after the parent's memory usage ends), `PREVIOUS_AFTERHEAP` (right after `MDO_PREVIOUS_PROJECT_PATH`'s module instead), or a literal address. |
 | `MDO_NAME` | This module's registered MDO name. |
 | `MDO_HOOK` | (Application project) Declares a hook signature that child MDOs may implement. |
@@ -699,6 +701,26 @@ describes the project's place in the MDO hierarchy and, for the base application
 Each MDO's load address is self-describing (embedded in its own header), which is what makes `PARENT_AFTERHEAP` and
 `PREVIOUS_AFTERHEAP` possible: a module doesn't need to be told a fixed address, it snaps to wherever the module it
 depends on actually ended up after that module's own build.
+
+#### Deep MDO trees and `MDO_EXTRA_INTERFACE`
+When an MDO calls into another module, those symbols are resolved at link time from the other module's generated
+`<profile>/objs/parentinterface.s` (symbol name -> resolved address, produced by `symbol.py` from the export
+patterns in that project's `Config/Symbols.txt`). A child MDO automatically gets **one** such interface - its
+direct parent's (`MDO_PARENT_PROJECT_PATH`). `MDO_APPLICATION_PROJECT_PATH` only contributes the MDO macros, not
+the application's symbols.
+
+In a tree deeper than one level - `APP.COM -> mid.MDO -> leaf.MDO` - `leaf` therefore sees only `mid`'s exports.
+Anything it needs from `APP.COM` has to be threaded through: `mid`'s `Symbols.txt` must match those symbols too, so
+they pass through `mid`'s own `parentinterface.s`. Every intermediate module ends up re-exporting a superset of
+everything below it, and a forgotten pattern surfaces only as an undefined-symbol error in the grandchild.
+
+`MDO_EXTRA_INTERFACE <project path>` avoids that: the build copies that ancestor's `parentinterface.s` into this
+project's `objs/` (as `parentinterface.extra.<name>.s`) and `.include`s the copy, so the ancestor's symbols
+resolve directly. List it once per ancestor you need to reach past. It is **symbols only** - `FILESTART` still
+follows the direct parent, and the `PARENT_AFTERHEAP` symbol is dropped from every extra copy (it names one
+module's end-of-heap, and only the direct parent's is meaningful here; the direct parent's interface is
+`.include`d last so it wins any name collision). The referenced project must have been built for the same profile
+first.
 
 ### Advanced: crt0 memory layout and the `_POSTHEAP` area
 *(Applies to the MSX-DOS Application and MSX-DOS Overlay templates.)*
