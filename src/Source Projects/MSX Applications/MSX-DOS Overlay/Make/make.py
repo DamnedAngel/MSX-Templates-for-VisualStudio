@@ -916,7 +916,24 @@ def collectZooClasses(filename, dirs):
 
 
 ## RESOLVE ZOO TREE
-def resolveZooTree(classes, inputDirs):
+def resolveZooTree(classes, inputDirs, manifestDir=None):
+    # zoo.py (DamnedAngel/Zoo#31+) writes classtree.txt into its output dir: the full
+    # class closure it actually touched this run - every input class plus every
+    # ancestor, implicit (no <parent> tag -> Object default) or explicit - one
+    # "<name>\t<input|ancestor>" line each. Prefer that: it's authoritative, straight
+    # from zoo.py's own class graph, and can't miss an implicit default the way
+    # scraping <parent> tags out of .zml XML here can (see DamnedAngel/Zoo#31 - an
+    # unparented class silently drops Object out of the tree that way).
+    if manifestDir:
+        manifestPath = os.path.join(manifestDir, 'classtree.txt')
+        if os.path.exists(manifestPath):
+            with open(manifestPath, 'r') as f2:
+                return {line.split('\t', 1)[0] for line in f2 if line.strip()}
+
+    # Fallback (no manifest - an older zoo.py without DamnedAngel/Zoo#31): re-derive
+    # ancestry by scraping <parent> tags. Misses the implicit no-<parent>-tag -> Object
+    # default; a class relying on it needs an explicit <parent>Object</parent> for its
+    # ancestor to be resolved correctly by this fallback path.
     tree = set()
     queue = list(classes)
     while queue:
@@ -1024,7 +1041,7 @@ def runZooGenerator():
 
     # zoo.py skips unchanged files (Zoo #26); mtime is a reliable staleness signal
     allFiles = sorted(os.listdir(VAR['MSX_OBJ_PATH']))
-    zooTree = resolveZooTree(classes, inputDirs)
+    zooTree = resolveZooTree(classes, inputDirs, VAR['MSX_OBJ_PATH'])
 
     zooInterfaceDir = fixPath(os.path.join(VAR['ZOO_PATH'], 'engine', 'interface'))
     INCDIRS.append(zooInterfaceDir)
