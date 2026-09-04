@@ -327,13 +327,47 @@ getHookImpAddrTable::
 ;		0x00: success
 ;		0x04: mdo not loaded
 ;		0x05: mdo already linked
+;		0x07: a hook this MDO implements is already bound to another linked MDO
 ;----------------------------------------------------------
 _mdoLink::
 	push	ix				; by sdcc standard, ix must be preserved by the callee
 	call	isMdoLinked
 	jr nz,	mdoService_linkedError
 
+	; Verify if hooks are still free (jp _mdoAbend)
+	call	getHookImpAddrTable	; hl <= pointer to first entry of implementation table
+
+mdoLink_checkLoop::
+	ld		e, (hl)
+	inc		hl
+	ld		d, (hl)				; de <= hook address
+	ld		a, e
+	or		d
+	jr z,	mdoLink_install
+	inc		hl
+	inc		hl
+	inc		hl					; hl <= next table entry
+	ld		b, h
+	ld		c, l				; bc <= next table entry (parked)
+	ex		de, hl				; hl <= hook address
+	inc		hl					; hl <= jp operand (low byte)
+	ld		a, (hl)
+	cp		#< _mdoAbend
+	jr nz,	mdoLink_hookBoundError
+	inc		hl					; hl <= jp operand (high byte)
+	ld		a, (hl)
+	cp		#> _mdoAbend
+	jr nz,	mdoLink_hookBoundError
+	ld		h, b
+	ld		l, c				; hl <= next table entry
+	jr		mdoLink_checkLoop
+
+mdoLink_hookBoundError::
+	ld		a, #7
+	jp		mdoService_finalize
+
 	; link
+mdoLink_install::
 	call	getHookImpAddrTable	; hl <= pointer to first entry of implementation table
 
 mdoLink_loop::
@@ -367,7 +401,7 @@ mdoLink_setStatusLinked:
 	
 	; end
 	xor		a
-	jr		mdoService_finalize
+	jp		mdoService_finalize
 
 ;----------------------------------------------------------
 ;	Deactivate and unlink Child MDO
@@ -400,6 +434,8 @@ mdoUnlink_loop::
 	inc		hl
 	ld		(hl), b				; hook uninstalled
 	ex		de, hl				; return next table entry in hl
+	inc		hl
+	inc		hl
 	jr		mdoUnlink_loop
 
 mdoUnlink_setStatusUnlinked:
