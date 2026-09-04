@@ -916,7 +916,13 @@ def collectZooClasses(filename, dirs):
 
 
 ## RESOLVE ZOO TREE
-def resolveZooTree(classes, inputDirs):
+def resolveZooTree(classes, inputDirs, manifestDir=None):
+    if manifestDir:
+        manifestPath = os.path.join(manifestDir, 'classtree.txt')
+        if os.path.exists(manifestPath):
+            with open(manifestPath, 'r') as f2:
+                return {line.split('\t', 1)[0] for line in f2 if line.strip()}
+
     tree = set()
     queue = list(classes)
     while queue:
@@ -1024,7 +1030,7 @@ def runZooGenerator():
 
     # zoo.py skips unchanged files (Zoo #26); mtime is a reliable staleness signal
     allFiles = sorted(os.listdir(VAR['MSX_OBJ_PATH']))
-    zooTree = resolveZooTree(classes, inputDirs)
+    zooTree = resolveZooTree(classes, inputDirs, VAR['MSX_OBJ_PATH'])
 
     zooInterfaceDir = fixPath(os.path.join(VAR['ZOO_PATH'], 'engine', 'interface'))
     INCDIRS.append(zooInterfaceDir)
